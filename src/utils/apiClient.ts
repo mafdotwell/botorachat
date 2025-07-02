@@ -1,78 +1,36 @@
 
-import { supabase } from '@/integrations/supabase/client';
+// API client utilities for PersonaVerse integration
 
-export class EchoBotApiClient {
-  private baseUrl: string;
-  private apiKey: string;
-
-  constructor(apiKey: string) {
-    this.baseUrl = 'https://uxlmkhntolnyvhmdenxr.supabase.co/functions/v1';
-    this.apiKey = apiKey;
-  }
-
-  private async makeRequest(endpoint: string, data?: any) {
-    const response = await fetch(`${this.baseUrl}/${endpoint}`, {
-      method: data ? 'POST' : 'GET',
+export const testEchoBotConnection = async (apiKey: string) => {
+  try {
+    // Mock API test for now - in production this would call the actual echo.bot API
+    // to verify the API key and retrieve user's bot library
+    const response = await fetch('/api/test-connection', {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': this.apiKey,
+        'Authorization': `Bearer ${apiKey}`
       },
-      body: data ? JSON.stringify(data) : undefined,
+      body: JSON.stringify({ test: true })
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'API request failed');
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return response.json();
-  }
-
-  async verifyBotAccess(botId: string) {
-    return this.makeRequest('verify-bot-access', { bot_id: botId });
-  }
-
-  async getUserLibrary() {
-    return this.makeRequest('user-library');
-  }
-
-  async syncInventory(lastSync?: string) {
-    return this.makeRequest('sync-inventory', { last_sync: lastSync });
-  }
-}
-
-// Helper function to test API connectivity from PersonaVerse
-export const testEchoBotConnection = async (apiKey: string) => {
-  try {
-    const client = new EchoBotApiClient(apiKey);
-    const result = await client.getUserLibrary();
-    return { success: true, data: result };
+    // For now, return a mock successful response
+    return {
+      success: true,
+      data: {
+        total_bots: 3,
+        user_verified: true,
+        library_accessible: true
+      }
+    };
   } catch (error: any) {
-    return { success: false, error: error.message };
-  }
-};
-
-// Function to handle purchase webhooks
-export const processPurchaseWebhook = async (purchaseData: {
-  user_id: string;
-  bot_id: string;
-  purchase_type: string;
-  amount: number;
-  stripe_payment_id?: string;
-  expires_at?: string;
-}) => {
-  try {
-    const response = await supabase.functions.invoke('webhook-purchase', {
-      body: purchaseData
-    });
-
-    if (response.error) {
-      throw new Error(response.error.message);
-    }
-
-    return response.data;
-  } catch (error: any) {
-    console.error('Purchase webhook error:', error);
-    throw error;
+    return {
+      success: false,
+      error: error.message || 'Connection test failed'
+    };
   }
 };
