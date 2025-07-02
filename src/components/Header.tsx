@@ -2,8 +2,9 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { User, Heart, Search } from "lucide-react";
+import { User, Heart, Search, ExternalLink } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { CrossAppNavigation } from "./CrossAppNavigation";
 
 const Header = () => {
   const { user } = useAuth();
@@ -33,6 +34,10 @@ const Header = () => {
           </nav>
 
           <div className="flex items-center space-x-4">
+            {user && (
+              <CrossAppNavigation variant="link" showBadge={false} />
+            )}
+            
             <Button variant="ghost" size="sm" className="text-slate-300 hover:text-white hover:bg-white/10">
               <Heart className="w-4 h-4 mr-2" />
               <span className="hidden sm:inline">Wishlist</span>
