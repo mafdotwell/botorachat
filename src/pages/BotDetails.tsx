@@ -21,7 +21,7 @@ const BotDetails = () => {
     avatar: "🧑‍🔬",
     category: "Education",
     rating: 4.9,
-    reviews: 1247,
+    reviewCount: 1247,
     price: "$9.99",
     originalPrice: "$14.99",
     description: "Meet Dr. Einstein, your personal physics tutor with the wit and wisdom of Albert Einstein himself. This AI personality combines deep scientific knowledge with Einstein's characteristic humor and philosophical insights.",
@@ -57,7 +57,7 @@ const BotDetails = () => {
       ar: "Apple Vision Pro, Meta Quest, or ARCore/ARKit device",
       storage: "250 MB"
     },
-    reviews: [
+    userReviews: [
       {
         id: 1,
         user: "PhysicsStudent123",
@@ -116,7 +116,7 @@ const BotDetails = () => {
                       <div className="flex items-center">
                         <Star className="w-5 h-5 text-yellow-400 mr-1 fill-current" />
                         <span>{bot.rating}</span>
-                        <span className="ml-1">({bot.reviews} reviews)</span>
+                        <span className="ml-1">({bot.reviewCount} reviews)</span>
                       </div>
                       <div className="flex items-center">
                         <Download className="w-5 h-5 mr-1" />
@@ -226,7 +226,7 @@ const BotDetails = () => {
                     </div>
                     
                     <div className="space-y-6">
-                      {bot.reviews.map((review) => (
+                      {bot.userReviews.map((review) => (
                         <div key={review.id} className="border-b border-white/10 pb-6 last:border-b-0">
                           <div className="flex items-center gap-3 mb-3">
                             <Avatar className="w-8 h-8">
