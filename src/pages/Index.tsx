@@ -1,12 +1,200 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Search, Star, Users, Zap, Eye, Heart } from "lucide-react";
+import BotCard from "@/components/BotCard";
+import Header from "@/components/Header";
 
 const Index = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const featuredBots = [
+    {
+      id: "1",
+      name: "Dr. Einstein",
+      avatar: "🧑‍🔬",
+      category: "Education",
+      rating: 4.9,
+      price: "$9.99",
+      description: "Physics tutor with Einstein's personality and wit",
+      creator: "ScienceStudio",
+      downloads: 12500,
+      isAvr: true
+    },
+    {
+      id: "2", 
+      name: "Maya Therapist",
+      avatar: "👩‍⚕️",
+      category: "Therapy",
+      rating: 5.0,
+      price: "$19.99/mo",
+      description: "Empathetic counselor specializing in anxiety and stress",
+      creator: "WellnessAI",
+      downloads: 8300,
+      isAvr: true
+    },
+    {
+      id: "3",
+      name: "Captain Adventure",
+      avatar: "🏴‍☠️",
+      category: "Entertainment", 
+      rating: 4.7,
+      price: "Free",
+      description: "Swashbuckling storyteller for interactive adventures",
+      creator: "GameMakers",
+      downloads: 25600,
+      isAvr: false
+    },
+    {
+      id: "4",
+      name: "Biz Mentor Pro",
+      avatar: "💼",
+      category: "Business",
+      rating: 4.8,
+      price: "$29.99",
+      description: "Strategic business advisor with real-world experience",
+      creator: "StartupGuru",
+      downloads: 5200,
+      isAvr: true
+    }
+  ];
+
+  const categories = [
+    { name: "Education", icon: "📚", count: 1250 },
+    { name: "Entertainment", icon: "🎭", count: 890 },
+    { name: "Therapy", icon: "💚", count: 640 },
+    { name: "Business", icon: "💼", count: 430 }
+  ];
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <Header />
+      
+      {/* Hero Section */}
+      <section className="relative py-20 px-4">
+        <div className="max-w-6xl mx-auto text-center">
+          <div className="mb-8">
+            <Badge className="mb-4 bg-purple-500/20 text-purple-300 border-purple-500/30">
+              <Zap className="w-4 h-4 mr-1" />
+              Next-Gen AI Marketplace
+            </Badge>
+          </div>
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-purple-200 to-cyan-200 bg-clip-text text-transparent">
+            PersonaVerse
+          </h1>
+          <p className="text-xl md:text-2xl text-slate-300 mb-8 max-w-3xl mx-auto">
+            Discover, buy, and create AI personality bots with immersive AR/VR experiences. 
+            The future of digital companions is here.
+          </p>
+          
+          {/* Search Bar */}
+          <div className="max-w-2xl mx-auto mb-12">
+            <div className="relative">
+              <Search className="absolute left-4 top-4 h-5 w-5 text-slate-400" />
+              <Input
+                placeholder="Search for AI personalities, creators, or AVR content..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-12 py-6 text-lg bg-white/10 border-white/20 text-white placeholder:text-slate-400 backdrop-blur-sm"
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button asChild size="lg" className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white px-8 py-6 text-lg">
+              <Link to="/marketplace">Explore Marketplace</Link>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="border-white/20 text-white hover:bg-white/10 px-8 py-6 text-lg">
+              <Link to="/creator">Become a Creator</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="py-16 px-4 border-y border-white/10">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div>
+              <div className="text-3xl font-bold text-white mb-2">15,000+</div>
+              <div className="text-slate-400">AI Personalities</div>
+            </div>
+            <div>
+              <div className="text-3xl font-bold text-white mb-2">5,000+</div>
+              <div className="text-slate-400">Creators</div>
+            </div>
+            <div>
+              <div className="text-3xl font-bold text-white mb-2">250K+</div>
+              <div className="text-slate-400">Downloads</div>
+            </div>
+            <div>
+              <div className="text-3xl font-bold text-white mb-2">98%</div>
+              <div className="text-slate-400">Satisfaction</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Categories */}
+      <section className="py-16 px-4">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold text-white mb-12 text-center">Browse by Category</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {categories.map((category) => (
+              <Link key={category.name} to={`/marketplace?category=${category.name.toLowerCase()}`}>
+                <Card className="bg-white/5 border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-105 cursor-pointer backdrop-blur-sm">
+                  <CardContent className="p-6 text-center">
+                    <div className="text-4xl mb-4">{category.icon}</div>
+                    <h3 className="text-xl font-semibold text-white mb-2">{category.name}</h3>
+                    <p className="text-slate-400">{category.count} bots</p>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Bots */}
+      <section className="py-16 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center justify-between mb-12">
+            <h2 className="text-3xl font-bold text-white">Featured AI Personalities</h2>
+            <Button asChild variant="outline" className="border-white/20 text-white hover:bg-white/10">
+              <Link to="/marketplace">View All</Link>
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {featuredBots.map((bot) => (
+              <BotCard key={bot.id} bot={bot} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 px-4">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl font-bold text-white mb-6">Ready to Create Your AI Personality?</h2>
+          <p className="text-xl text-slate-300 mb-8">
+            Join thousands of creators building the next generation of digital companions with our intuitive Creator Studio.
+          </p>
+          <Button asChild size="lg" className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white px-8 py-6 text-lg">
+            <Link to="/creator">Start Creating</Link>
+          </Button>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-white/10 py-12 px-4">
+        <div className="max-w-6xl mx-auto text-center text-slate-400">
+          <p>&copy; 2024 PersonaVerse. Building the future of AI personalities.</p>
+        </div>
+      </footer>
     </div>
   );
 };
