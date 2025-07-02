@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Copy, Plus, Trash2, Key } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
+import { ApiConnectionTest } from './ApiConnectionTest';
 
 interface ApiKey {
   id: string;
@@ -205,7 +206,7 @@ export const ApiKeyManager = () => {
               Copy this key now - you won't be able to see it again!
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
             <div className="flex items-center space-x-2 p-3 bg-slate-800/50 rounded-lg">
               <code className="flex-1 text-green-300 font-mono text-sm break-all">
                 {generatedKey}
@@ -219,10 +220,11 @@ export const ApiKeyManager = () => {
                 <Copy className="w-4 h-4" />
               </Button>
             </div>
+            <ApiConnectionTest apiKey={generatedKey} />
             <Button
               onClick={() => setGeneratedKey(null)}
               variant="outline"
-              className="mt-3 border-slate-600 text-slate-300"
+              className="border-slate-600 text-slate-300"
             >
               I've copied the key
             </Button>
