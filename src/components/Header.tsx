@@ -2,7 +2,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { User, Heart, Search, ExternalLink } from "lucide-react";
+import { User, Heart, Search, ExternalLink, Palette } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { CrossAppNavigation } from "./CrossAppNavigation";
 
@@ -25,9 +25,12 @@ const Header = () => {
             <Link to="/marketplace" className="text-slate-300 hover:text-white transition-colors">
               Marketplace
             </Link>
-            <Link to="/creator" className="text-slate-300 hover:text-white transition-colors">
-              Creator Studio
-            </Link>
+            {user && (
+              <Link to="/creator" className="text-slate-300 hover:text-white transition-colors flex items-center">
+                <Palette className="w-4 h-4 mr-1" />
+                Creator Studio
+              </Link>
+            )}
             <Link to="/docs" className="text-slate-300 hover:text-white transition-colors">
               Documentation
             </Link>

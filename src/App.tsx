@@ -10,6 +10,8 @@ import Index from "./pages/Index";
 import Marketplace from "./pages/Marketplace";
 import BotDetails from "./pages/BotDetails";
 import CreatorProfile from "./pages/CreatorProfile";
+import CreatorStudio from "./pages/CreatorStudio";
+import CreateBot from "./pages/CreateBot";
 import Auth from "./pages/Auth";
 import { UserProfile } from "./components/UserProfile";
 import NotFound from "./pages/NotFound";
@@ -36,6 +38,21 @@ const AppContent = () => {
       <Route path="/marketplace" element={<Marketplace />} />
       <Route path="/bot/:id" element={<BotDetails />} />
       <Route path="/creator/:id" element={<CreatorProfile />} />
+      <Route path="/creator" element={
+        <ProtectedRoute>
+          <CreatorStudio />
+        </ProtectedRoute>
+      } />
+      <Route path="/creator/new-bot" element={
+        <ProtectedRoute>
+          <CreateBot />
+        </ProtectedRoute>
+      } />
+      <Route path="/creator/edit-bot/:id" element={
+        <ProtectedRoute>
+          <CreateBot />
+        </ProtectedRoute>
+      } />
       <Route path="/auth" element={
         <PublicRoute>
           <Auth />
