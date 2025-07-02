@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -102,7 +101,7 @@ const CreateBot = () => {
         is_published: data.is_published,
         is_avr_compatible: data.is_avr_compatible,
         personality_config: data.personality_config || {},
-        knowledge_sources: data.knowledge_sources || [],
+        knowledge_sources: Array.isArray(data.knowledge_sources) ? data.knowledge_sources : [],
         system_requirements: data.system_requirements || {}
       });
     } catch (error) {
