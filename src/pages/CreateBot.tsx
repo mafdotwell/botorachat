@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -124,7 +125,10 @@ const CreateBot = () => {
         : [];
 
       // Parse output_types from system_requirements or default to ["text"]
-      const outputTypes = data.system_requirements?.output_types || ["text"];
+      const systemReqs = data.system_requirements as any;
+      const outputTypes = (systemReqs && typeof systemReqs === 'object' && systemReqs.output_types) 
+        ? systemReqs.output_types 
+        : ["text"];
 
       setFormData({
         name: data.name,
