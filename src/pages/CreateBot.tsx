@@ -14,6 +14,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
+import type { Json } from "@/integrations/supabase/types";
 
 const categories = [
   "Education",
@@ -100,6 +101,17 @@ const CreateBot = () => {
 
       if (error) throw error;
 
+      // Parse knowledge_sources from Json to KnowledgeSource[]
+      const knowledgeSources: KnowledgeSource[] = Array.isArray(data.knowledge_sources) 
+        ? (data.knowledge_sources as any[]).map((source: any) => ({
+            id: source.id || Date.now().toString(),
+            type: source.type || "text",
+            title: source.title || "",
+            content: source.content || "",
+            url: source.url || ""
+          }))
+        : [];
+
       setFormData({
         name: data.name,
         description: data.description || "",
@@ -110,7 +122,7 @@ const CreateBot = () => {
         is_published: data.is_published,
         is_avr_compatible: data.is_avr_compatible,
         personality_config: data.personality_config || {},
-        knowledge_sources: Array.isArray(data.knowledge_sources) ? data.knowledge_sources : [],
+        knowledge_sources: knowledgeSources,
         system_requirements: data.system_requirements || {}
       });
     } catch (error) {
@@ -129,8 +141,27 @@ const CreateBot = () => {
     setLoading(true);
 
     try {
+      // Convert knowledge_sources to Json format for database
+      const knowledgeSourcesJson: Json = formData.knowledge_sources.map(source => ({
+        id: source.id,
+        type: source.type,
+        title: source.title,
+        content: source.content,
+        url: source.url || ""
+      }));
+
       const botData = {
-        ...formData,
+        name: formData.name,
+        description: formData.description,
+        category: formData.category,
+        avatar: formData.avatar,
+        price_type: formData.price_type,
+        price: formData.price,
+        is_published: formData.is_published,
+        is_avr_compatible: formData.is_avr_compatible,
+        personality_config: formData.personality_config,
+        knowledge_sources: knowledgeSourcesJson,
+        system_requirements: formData.system_requirements,
         creator_id: user?.id,
         updated_at: new Date().toISOString()
       };
