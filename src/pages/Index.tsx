@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -84,7 +85,7 @@ const Index = () => {
             </Badge>
           </div>
           <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-purple-200 to-cyan-200 bg-clip-text text-transparent">
-            PersonaVerse
+            EchoVerse
           </h1>
           <p className="text-xl md:text-2xl text-slate-300 mb-8 max-w-3xl mx-auto">
             Discover, buy, and create AI personality bots with immersive AR/VR experiences. 
@@ -199,7 +200,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="border-t border-white/10 py-12 px-4">
         <div className="max-w-6xl mx-auto text-center text-slate-400">
-          <p>&copy; 2024 PersonaVerse. Building the future of AI personalities.</p>
+          <p>&copy; 2024 EchoVerse. Building the future of AI personalities.</p>
         </div>
       </footer>
     </div>

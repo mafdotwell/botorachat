@@ -30,7 +30,7 @@ export const CrossAppNavigation = ({
           <div className="flex items-center space-x-3">
             <Bot className="w-8 h-8 text-purple-400" />
             <div>
-              <h3 className="text-lg font-semibold text-white">echo.bot</h3>
+              <h3 className="text-lg font-semibold text-white">Echo Chat</h3>
               <p className="text-sm text-slate-300">Start chatting with your AI personalities</p>
             </div>
           </div>
@@ -57,7 +57,7 @@ export const CrossAppNavigation = ({
         onClick={handleNavigateToEchoBot}
         className="text-purple-400 hover:text-purple-300 flex items-center space-x-1 transition-colors"
       >
-        <span>Open echo.bot</span>
+        <span>Open Echo Chat</span>
         <ExternalLink className="w-4 h-4" />
       </button>
     );
