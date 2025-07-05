@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, Save, Eye, Plus, Trash2, FileText } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
@@ -35,6 +35,13 @@ const priceTypes = [
   { value: "subscription", label: "Subscription" }
 ];
 
+const outputTypes = [
+  { id: "text", label: "Text", description: "Generate text responses and content" },
+  { id: "documents", label: "Documents", description: "Create documents (PDF, Word, etc.)" },
+  { id: "images", label: "Images", description: "Generate and create images" },
+  { id: "videos", label: "Videos", description: "Create and edit videos" }
+];
+
 interface KnowledgeSource {
   id: string;
   type: string;
@@ -55,6 +62,7 @@ interface BotFormData {
   personality_config: any;
   knowledge_sources: KnowledgeSource[];
   system_requirements: any;
+  output_types: string[];
 }
 
 const CreateBot = () => {
@@ -74,7 +82,8 @@ const CreateBot = () => {
     is_avr_compatible: false,
     personality_config: {},
     knowledge_sources: [],
-    system_requirements: {}
+    system_requirements: {},
+    output_types: ["text"]
   });
 
   const isEditing = Boolean(id);
@@ -114,6 +123,9 @@ const CreateBot = () => {
           }))
         : [];
 
+      // Parse output_types from system_requirements or default to ["text"]
+      const outputTypes = data.system_requirements?.output_types || ["text"];
+
       setFormData({
         name: data.name,
         description: data.description || "",
@@ -125,7 +137,8 @@ const CreateBot = () => {
         is_avr_compatible: data.is_avr_compatible,
         personality_config: data.personality_config || {},
         knowledge_sources: knowledgeSources,
-        system_requirements: data.system_requirements || {}
+        system_requirements: data.system_requirements || {},
+        output_types: outputTypes
       });
     } catch (error) {
       console.error('Error fetching bot:', error);
@@ -152,6 +165,12 @@ const CreateBot = () => {
         url: source.url || ""
       }));
 
+      // Include output_types in system_requirements
+      const systemRequirements = {
+        ...formData.system_requirements,
+        output_types: formData.output_types
+      };
+
       const botData = {
         name: formData.name,
         description: formData.description,
@@ -163,7 +182,7 @@ const CreateBot = () => {
         is_avr_compatible: formData.is_avr_compatible,
         personality_config: formData.personality_config,
         knowledge_sources: knowledgeSourcesJson,
-        system_requirements: formData.system_requirements,
+        system_requirements: systemRequirements,
         creator_id: user?.id,
         updated_at: new Date().toISOString()
       };
@@ -206,6 +225,15 @@ const CreateBot = () => {
     setFormData(prev => ({
       ...prev,
       [field]: value
+    }));
+  };
+
+  const handleOutputTypeChange = (outputTypeId: string, checked: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      output_types: checked 
+        ? [...prev.output_types, outputTypeId]
+        : prev.output_types.filter(type => type !== outputTypeId)
     }));
   };
 
@@ -328,6 +356,33 @@ const CreateBot = () => {
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+
+              <Separator className="bg-white/20" />
+
+              {/* Output Types */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-white">Output Types</h3>
+                <p className="text-sm text-slate-400">Select what types of content your bot can generate</p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {outputTypes.map((outputType) => (
+                    <div key={outputType.id} className="flex items-start space-x-3 p-3 rounded-lg bg-white/5 border border-white/10">
+                      <Checkbox
+                        id={outputType.id}
+                        checked={formData.output_types.includes(outputType.id)}
+                        onCheckedChange={(checked) => handleOutputTypeChange(outputType.id, checked as boolean)}
+                        className="mt-1"
+                      />
+                      <div className="space-y-1">
+                        <Label htmlFor={outputType.id} className="text-white font-medium cursor-pointer">
+                          {outputType.label}
+                        </Label>
+                        <p className="text-sm text-slate-400">{outputType.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <Separator className="bg-white/20" />
