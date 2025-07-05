@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -9,97 +9,106 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, Filter, Grid, List } from "lucide-react";
 import Header from "@/components/Header";
 import BotCard from "@/components/BotCard";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+
+interface Bot {
+  id: string;
+  name: string;
+  avatar: string | null;
+  category: string;
+  rating: number | null;
+  price: number | null;
+  price_type: string | null;
+  description: string | null;
+  creator_id: string;
+  downloads: number;
+  isAvr: boolean;
+  creator?: {
+    display_name?: string;
+  };
+}
 
 const Marketplace = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [bots, setBots] = useState<Bot[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   const categories = ["all", "education", "entertainment", "therapy", "business"];
   const sortOptions = ["popular", "rating", "price-low", "price-high", "newest"];
 
-  const allBots = [
-    {
-      id: "1",
-      name: "Dr. Einstein",
-      avatar: "🧑‍🔬",
-      category: "Education",
-      rating: 4.9,
-      price: "$9.99",
-      description: "Physics tutor with Einstein's personality and wit, complete with interactive lab environment",
-      creator: "ScienceStudio",
-      downloads: 12500,
-      isAvr: true
-    },
-    {
-      id: "2", 
-      name: "Maya Therapist",
-      avatar: "👩‍⚕️",
-      category: "Therapy",
-      rating: 5.0,
-      price: "$19.99/mo",
-      description: "Empathetic counselor specializing in anxiety and stress management with calming virtual environments",
-      creator: "WellnessAI",
-      downloads: 8300,
-      isAvr: true
-    },
-    {
-      id: "3",
-      name: "Captain Adventure",
-      avatar: "🏴‍☠️",
-      category: "Entertainment", 
-      rating: 4.7,
-      price: "Free",
-      description: "Swashbuckling storyteller for interactive adventures on the high seas",
-      creator: "GameMakers",
-      downloads: 25600,
-      isAvr: false
-    },
-    {
-      id: "4",
-      name: "Biz Mentor Pro",
-      avatar: "💼",
-      category: "Business",
-      rating: 4.8,
-      price: "$29.99",
-      description: "Strategic business advisor with real-world experience and virtual boardroom environment",
-      creator: "StartupGuru",
-      downloads: 5200,
-      isAvr: true
-    },
-    {
-      id: "5",
-      name: "Chef Isabella",
-      avatar: "👩‍🍳",
-      category: "Education",
-      rating: 4.6,
-      price: "$14.99",
-      description: "Master chef teaching cooking techniques with interactive kitchen simulation",
-      creator: "CulinaryAI",
-      downloads: 9800,
-      isAvr: true
-    },
-    {
-      id: "6",
-      name: "Zen Master Li",
-      avatar: "🧘‍♂️",
-      category: "Therapy",
-      rating: 4.9,
-      price: "$12.99/mo",
-      description: "Meditation guide with serene virtual temples and mindfulness practices",
-      creator: "MindfulTech",
-      downloads: 7200,
-      isAvr: true
-    }
-  ];
+  useEffect(() => {
+    fetchPublishedBots();
+  }, []);
 
-  const filteredBots = allBots.filter(bot => {
+  const fetchPublishedBots = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('bots')
+        .select(`
+          *,
+          creators (
+            display_name
+          )
+        `)
+        .eq('is_published', true)
+        .order('download_count', { ascending: false });
+
+      if (error) throw error;
+
+      const formattedBots = data?.map(bot => ({
+        id: bot.id,
+        name: bot.name,
+        avatar: bot.avatar || '🤖',
+        category: bot.category,
+        rating: bot.rating || 0,
+        price: formatPrice(bot.price, bot.price_type),
+        description: bot.description || '',
+        creator: bot.creators?.display_name || 'Unknown Creator',
+        downloads: bot.download_count || 0,
+        isAvr: bot.is_avr_compatible || false
+      })) || [];
+
+      setBots(formattedBots);
+    } catch (error: any) {
+      console.error('Error fetching bots:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to load bots from marketplace"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatPrice = (price: number | null, priceType: string | null) => {
+    if (!price || price === 0) return "Free";
+    const formattedPrice = `$${price}`;
+    return priceType === 'subscription' ? `${formattedPrice}/mo` : formattedPrice;
+  };
+
+  const filteredBots = bots.filter(bot => {
     const matchesSearch = bot.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          bot.description.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === "all" || bot.category.toLowerCase() === selectedCategory;
     return matchesSearch && matchesCategory;
   });
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        <Header />
+        <div className="flex items-center justify-center py-20">
+          <div className="text-white">Loading marketplace...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
