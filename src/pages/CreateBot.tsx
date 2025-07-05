@@ -336,21 +336,16 @@ const CreateBot = () => {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-semibold text-white">Knowledge Base</h3>
-                  <div className="flex gap-2">
-                    <DocumentUpload
-                      onDocumentUpload={addDocumentKnowledgeSource}
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={addKnowledgeSource}
-                      className="border-white/20 text-white hover:bg-white/10"
-                    >
-                      <Plus className="w-4 h-4 mr-2" />
-                      Add Text Source
-                    </Button>
-                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={addKnowledgeSource}
+                    className="border-white/20 text-white hover:bg-white/10"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Knowledge Source
+                  </Button>
                 </div>
                 
                 {formData.knowledge_sources.length === 0 ? (
@@ -391,7 +386,7 @@ const CreateBot = () => {
                                   <SelectItem value="url">Website URL</SelectItem>
                                   <SelectItem value="faq">FAQ</SelectItem>
                                   <SelectItem value="manual">User Manual</SelectItem>
-                                  <SelectItem value="document">Uploaded Document</SelectItem>
+                                  <SelectItem value="document">Upload Document</SelectItem>
                                 </SelectContent>
                               </Select>
                             </div>
@@ -419,22 +414,31 @@ const CreateBot = () => {
                             </div>
                           )}
 
-                          {source.type === 'document' && source.url && (
+                          {source.type === 'document' && (
                             <div className="space-y-2 mb-4">
-                              <Label className="text-white">Document</Label>
-                              <div className="flex items-center gap-2 p-2 bg-white/5 rounded border border-white/10">
-                                <FileText className="w-4 h-4 text-slate-400" />
-                                <span className="text-sm text-slate-300">{source.title}</span>
-                                <Button
-                                  type="button"
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => window.open(source.url, '_blank')}
-                                  className="text-cyan-400 hover:text-cyan-300 ml-auto"
-                                >
-                                  View
-                                </Button>
-                              </div>
+                              <Label className="text-white">Upload Document</Label>
+                              <DocumentUpload
+                                onDocumentUpload={(fileName, content, url) => {
+                                  updateKnowledgeSource(source.id, 'title', fileName);
+                                  updateKnowledgeSource(source.id, 'content', content);
+                                  updateKnowledgeSource(source.id, 'url', url);
+                                }}
+                              />
+                              {source.url && (
+                                <div className="flex items-center gap-2 p-2 bg-white/5 rounded border border-white/10 mt-2">
+                                  <FileText className="w-4 h-4 text-slate-400" />
+                                  <span className="text-sm text-slate-300">{source.title}</span>
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => window.open(source.url, '_blank')}
+                                    className="text-cyan-400 hover:text-cyan-300 ml-auto"
+                                  >
+                                    View
+                                  </Button>
+                                </div>
+                              )}
                             </div>
                           )}
                           
