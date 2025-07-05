@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import AvatarUpload from "@/components/AvatarUpload";
 import DocumentUpload from "@/components/DocumentUpload";
+import VoiceSelector from "@/components/VoiceSelector";
 import type { Json } from "@/integrations/supabase/types";
 
 const categories = [
@@ -60,6 +61,7 @@ interface BotFormData {
   is_published: boolean;
   is_avr_compatible: boolean;
   has_voice_chat: boolean;
+  voice_id: string;
   personality_config: any;
   knowledge_sources: KnowledgeSource[];
   system_requirements: any;
@@ -82,6 +84,7 @@ const CreateBot = () => {
     is_published: false,
     is_avr_compatible: false,
     has_voice_chat: false,
+    voice_id: "",
     personality_config: {},
     knowledge_sources: [],
     system_requirements: {},
@@ -125,16 +128,19 @@ const CreateBot = () => {
           }))
         : [];
 
-      // Parse output_types from system_requirements or default to ["text"]
+      // Parse output_types and voice settings from system_requirements
       const systemReqs = data.system_requirements as any;
       const outputTypes = (systemReqs && typeof systemReqs === 'object' && systemReqs.output_types) 
         ? systemReqs.output_types 
         : ["text"];
 
-      // Parse has_voice_chat from system_requirements or default to false
       const hasVoiceChat = (systemReqs && typeof systemReqs === 'object' && systemReqs.has_voice_chat) 
         ? systemReqs.has_voice_chat 
         : false;
+
+      const voiceId = (systemReqs && typeof systemReqs === 'object' && systemReqs.voice_id) 
+        ? systemReqs.voice_id 
+        : "";
 
       setFormData({
         name: data.name,
@@ -146,6 +152,7 @@ const CreateBot = () => {
         is_published: data.is_published,
         is_avr_compatible: data.is_avr_compatible,
         has_voice_chat: hasVoiceChat,
+        voice_id: voiceId,
         personality_config: data.personality_config || {},
         knowledge_sources: knowledgeSources,
         system_requirements: data.system_requirements || {},
@@ -176,11 +183,12 @@ const CreateBot = () => {
         url: source.url || ""
       }));
 
-      // Include output_types and has_voice_chat in system_requirements
+      // Include output_types, has_voice_chat, and voice_id in system_requirements
       const systemRequirements = {
         ...formData.system_requirements,
         output_types: formData.output_types,
-        has_voice_chat: formData.has_voice_chat
+        has_voice_chat: formData.has_voice_chat,
+        voice_id: formData.voice_id
       };
 
       const botData = {
@@ -421,6 +429,15 @@ const CreateBot = () => {
                       <p className="text-sm text-slate-400">Enable real-time voice conversations with your bot</p>
                     </div>
                   </div>
+
+                  {formData.has_voice_chat && (
+                    <div className="mt-4 p-4 rounded-lg bg-white/5 border border-white/10">
+                      <VoiceSelector
+                        selectedVoiceId={formData.voice_id}
+                        onVoiceChange={(voiceId) => handleInputChange('voice_id', voiceId)}
+                      />
+                    </div>
+                  )}
                 </div>
 
                 {/* Knowledge Base */}
