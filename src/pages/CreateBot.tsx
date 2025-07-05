@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -8,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, Save, Eye } from "lucide-react";
+import { ArrowLeft, Save, Eye, Plus, Trash2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -31,6 +32,14 @@ const priceTypes = [
   { value: "subscription", label: "Subscription" }
 ];
 
+interface KnowledgeSource {
+  id: string;
+  type: string;
+  title: string;
+  content: string;
+  url?: string;
+}
+
 interface BotFormData {
   name: string;
   description: string;
@@ -41,7 +50,7 @@ interface BotFormData {
   is_published: boolean;
   is_avr_compatible: boolean;
   personality_config: any;
-  knowledge_sources: any[];
+  knowledge_sources: KnowledgeSource[];
   system_requirements: any;
 }
 
@@ -167,6 +176,37 @@ const CreateBot = () => {
     }));
   };
 
+  const addKnowledgeSource = () => {
+    const newSource: KnowledgeSource = {
+      id: Date.now().toString(),
+      type: "text",
+      title: "",
+      content: "",
+      url: ""
+    };
+    
+    setFormData(prev => ({
+      ...prev,
+      knowledge_sources: [...prev.knowledge_sources, newSource]
+    }));
+  };
+
+  const updateKnowledgeSource = (id: string, field: keyof KnowledgeSource, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      knowledge_sources: prev.knowledge_sources.map(source =>
+        source.id === id ? { ...source, [field]: value } : source
+      )
+    }));
+  };
+
+  const removeKnowledgeSource = (id: string) => {
+    setFormData(prev => ({
+      ...prev,
+      knowledge_sources: prev.knowledge_sources.filter(source => source.id !== id)
+    }));
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       <Header />
@@ -244,6 +284,106 @@ const CreateBot = () => {
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+
+              <Separator className="bg-white/20" />
+
+              {/* Knowledge Base */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-white">Knowledge Base</h3>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={addKnowledgeSource}
+                    className="border-white/20 text-white hover:bg-white/10"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Knowledge Source
+                  </Button>
+                </div>
+                
+                {formData.knowledge_sources.length === 0 ? (
+                  <div className="text-center py-8 border border-dashed border-white/20 rounded-lg">
+                    <p className="text-slate-400">No knowledge sources added yet</p>
+                    <p className="text-sm text-slate-500 mt-1">Add knowledge sources to enhance your bot's capabilities</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {formData.knowledge_sources.map((source, index) => (
+                      <Card key={source.id} className="bg-white/5 border-white/10">
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between mb-4">
+                            <h4 className="text-white font-medium">Knowledge Source #{index + 1}</h4>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeKnowledgeSource(source.id)}
+                              className="text-red-400 hover:text-red-300 hover:bg-red-500/20"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div className="space-y-2">
+                              <Label className="text-white">Type</Label>
+                              <Select 
+                                value={source.type} 
+                                onValueChange={(value) => updateKnowledgeSource(source.id, 'type', value)}
+                              >
+                                <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="text">Text Document</SelectItem>
+                                  <SelectItem value="url">Website URL</SelectItem>
+                                  <SelectItem value="faq">FAQ</SelectItem>
+                                  <SelectItem value="manual">User Manual</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label className="text-white">Title</Label>
+                              <Input
+                                value={source.title}
+                                onChange={(e) => updateKnowledgeSource(source.id, 'title', e.target.value)}
+                                placeholder="Knowledge source title"
+                                className="bg-white/10 border-white/20 text-white placeholder:text-slate-400"
+                              />
+                            </div>
+                          </div>
+                          
+                          {source.type === 'url' && (
+                            <div className="space-y-2 mb-4">
+                              <Label className="text-white">URL</Label>
+                              <Input
+                                value={source.url || ''}
+                                onChange={(e) => updateKnowledgeSource(source.id, 'url', e.target.value)}
+                                placeholder="https://example.com"
+                                className="bg-white/10 border-white/20 text-white placeholder:text-slate-400"
+                              />
+                            </div>
+                          )}
+                          
+                          <div className="space-y-2">
+                            <Label className="text-white">Content</Label>
+                            <Textarea
+                              value={source.content}
+                              onChange={(e) => updateKnowledgeSource(source.id, 'content', e.target.value)}
+                              placeholder="Enter the knowledge content that your bot should learn from..."
+                              rows={4}
+                              className="bg-white/10 border-white/20 text-white placeholder:text-slate-400 resize-none"
+                            />
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <Separator className="bg-white/20" />
