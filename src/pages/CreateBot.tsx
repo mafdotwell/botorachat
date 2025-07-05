@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -14,11 +13,13 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
+import AvatarUpload from "@/components/AvatarUpload";
+import DocumentUpload from "@/components/DocumentUpload";
 import type { Json } from "@/integrations/supabase/types";
 
 const categories = [
   "Education",
-  "Entertainment",
+  "Entertainment", 
   "Productivity",
   "Health & Fitness",
   "Business",
@@ -222,6 +223,21 @@ const CreateBot = () => {
     }));
   };
 
+  const addDocumentKnowledgeSource = (fileName: string, content: string, url: string) => {
+    const newSource: KnowledgeSource = {
+      id: Date.now().toString(),
+      type: "document",
+      title: fileName,
+      content: content,
+      url: url
+    };
+    
+    setFormData(prev => ({
+      ...prev,
+      knowledge_sources: [...prev.knowledge_sources, newSource]
+    }));
+  };
+
   const updateKnowledgeSource = (id: string, field: keyof KnowledgeSource, value: string) => {
     setFormData(prev => ({
       ...prev,
@@ -277,13 +293,9 @@ const CreateBot = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="avatar" className="text-white">Avatar Emoji</Label>
-                  <Input
-                    id="avatar"
-                    value={formData.avatar}
-                    onChange={(e) => handleInputChange('avatar', e.target.value)}
-                    placeholder="🤖"
-                    className="bg-white/10 border-white/20 text-white placeholder:text-slate-400"
+                  <AvatarUpload
+                    currentAvatar={formData.avatar}
+                    onAvatarChange={(avatarUrl) => handleInputChange('avatar', avatarUrl)}
                   />
                 </div>
               </div>
@@ -323,16 +335,21 @@ const CreateBot = () => {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-semibold text-white">Knowledge Base</h3>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={addKnowledgeSource}
-                    className="border-white/20 text-white hover:bg-white/10"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Knowledge Source
-                  </Button>
+                  <div className="flex gap-2">
+                    <DocumentUpload
+                      onDocumentUpload={addDocumentKnowledgeSource}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={addKnowledgeSource}
+                      className="border-white/20 text-white hover:bg-white/10"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Text Source
+                    </Button>
+                  </div>
                 </div>
                 
                 {formData.knowledge_sources.length === 0 ? (
@@ -373,6 +390,7 @@ const CreateBot = () => {
                                   <SelectItem value="url">Website URL</SelectItem>
                                   <SelectItem value="faq">FAQ</SelectItem>
                                   <SelectItem value="manual">User Manual</SelectItem>
+                                  <SelectItem value="document">Uploaded Document</SelectItem>
                                 </SelectContent>
                               </Select>
                             </div>
@@ -399,6 +417,25 @@ const CreateBot = () => {
                               />
                             </div>
                           )}
+
+                          {source.type === 'document' && source.url && (
+                            <div className="space-y-2 mb-4">
+                              <Label className="text-white">Document</Label>
+                              <div className="flex items-center gap-2 p-2 bg-white/5 rounded border border-white/10">
+                                <FileText className="w-4 h-4 text-slate-400" />
+                                <span className="text-sm text-slate-300">{source.title}</span>
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => window.open(source.url, '_blank')}
+                                  className="text-cyan-400 hover:text-cyan-300 ml-auto"
+                                >
+                                  View
+                                </Button>
+                              </div>
+                            </div>
+                          )}
                           
                           <div className="space-y-2">
                             <Label className="text-white">Content</Label>
@@ -408,6 +445,7 @@ const CreateBot = () => {
                               placeholder="Enter the knowledge content that your bot should learn from..."
                               rows={4}
                               className="bg-white/10 border-white/20 text-white placeholder:text-slate-400 resize-none"
+                              readOnly={source.type === 'document'}
                             />
                           </div>
                         </CardContent>
