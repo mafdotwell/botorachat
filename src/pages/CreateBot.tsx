@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -10,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, Save, Eye, Plus, Trash2, FileText } from "lucide-react";
+import { ArrowLeft, Save, Eye, Plus, Trash2, FileText, Mic } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -60,6 +59,7 @@ interface BotFormData {
   price: number;
   is_published: boolean;
   is_avr_compatible: boolean;
+  has_voice_chat: boolean;
   personality_config: any;
   knowledge_sources: KnowledgeSource[];
   system_requirements: any;
@@ -81,6 +81,7 @@ const CreateBot = () => {
     price: 0,
     is_published: false,
     is_avr_compatible: false,
+    has_voice_chat: false,
     personality_config: {},
     knowledge_sources: [],
     system_requirements: {},
@@ -130,6 +131,11 @@ const CreateBot = () => {
         ? systemReqs.output_types 
         : ["text"];
 
+      // Parse has_voice_chat from system_requirements or default to false
+      const hasVoiceChat = (systemReqs && typeof systemReqs === 'object' && systemReqs.has_voice_chat) 
+        ? systemReqs.has_voice_chat 
+        : false;
+
       setFormData({
         name: data.name,
         description: data.description || "",
@@ -139,6 +145,7 @@ const CreateBot = () => {
         price: data.price || 0,
         is_published: data.is_published,
         is_avr_compatible: data.is_avr_compatible,
+        has_voice_chat: hasVoiceChat,
         personality_config: data.personality_config || {},
         knowledge_sources: knowledgeSources,
         system_requirements: data.system_requirements || {},
@@ -169,10 +176,11 @@ const CreateBot = () => {
         url: source.url || ""
       }));
 
-      // Include output_types in system_requirements
+      // Include output_types and has_voice_chat in system_requirements
       const systemRequirements = {
         ...formData.system_requirements,
-        output_types: formData.output_types
+        output_types: formData.output_types,
+        has_voice_chat: formData.has_voice_chat
       };
 
       const botData = {
@@ -364,159 +372,184 @@ const CreateBot = () => {
 
               <Separator className="bg-white/20" />
 
-              {/* Output Types */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-white">Output Types</h3>
-                <p className="text-sm text-slate-400">Select what types of content your bot can generate</p>
+              {/* Advanced Abilities */}
+              <div className="space-y-6">
+                <h3 className="text-xl font-semibold text-white">Advanced Abilities</h3>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {outputTypes.map((outputType) => (
-                    <div key={outputType.id} className="flex items-start space-x-3 p-3 rounded-lg bg-white/5 border border-white/10">
-                      <Checkbox
-                        id={outputType.id}
-                        checked={formData.output_types.includes(outputType.id)}
-                        onCheckedChange={(checked) => handleOutputTypeChange(outputType.id, checked as boolean)}
-                        className="mt-1"
-                      />
-                      <div className="space-y-1">
-                        <Label htmlFor={outputType.id} className="text-white font-medium cursor-pointer">
-                          {outputType.label}
-                        </Label>
-                        <p className="text-sm text-slate-400">{outputType.description}</p>
+                {/* Output Types */}
+                <div className="space-y-4">
+                  <h4 className="text-lg font-semibold text-white">Output Types</h4>
+                  <p className="text-sm text-slate-400">Select what types of content your bot can generate</p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {outputTypes.map((outputType) => (
+                      <div key={outputType.id} className="flex items-start space-x-3 p-3 rounded-lg bg-white/5 border border-white/10">
+                        <Checkbox
+                          id={outputType.id}
+                          checked={formData.output_types.includes(outputType.id)}
+                          onCheckedChange={(checked) => handleOutputTypeChange(outputType.id, checked as boolean)}
+                          className="mt-1"
+                        />
+                        <div className="space-y-1">
+                          <Label htmlFor={outputType.id} className="text-white font-medium cursor-pointer">
+                            {outputType.label}
+                          </Label>
+                          <p className="text-sm text-slate-400">{outputType.description}</p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <Separator className="bg-white/20" />
-
-              {/* Knowledge Base */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-white">Knowledge Base</h3>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={addKnowledgeSource}
-                    className="border-white/20 text-white hover:bg-white/10"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Knowledge Source
-                  </Button>
-                </div>
-                
-                {formData.knowledge_sources.length === 0 ? (
-                  <div className="text-center py-8 border border-dashed border-white/20 rounded-lg">
-                    <p className="text-slate-400">No knowledge sources added yet</p>
-                    <p className="text-sm text-slate-500 mt-1">Add knowledge sources to enhance your bot's capabilities</p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {formData.knowledge_sources.map((source, index) => (
-                      <Card key={source.id} className="bg-white/5 border-white/10">
-                        <CardContent className="p-4">
-                          <div className="flex items-start justify-between mb-4">
-                            <h4 className="text-white font-medium">Knowledge Source #{index + 1}</h4>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => removeKnowledgeSource(source.id)}
-                              className="text-red-400 hover:text-red-300 hover:bg-red-500/20"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                          
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div className="space-y-2">
-                              <Label className="text-white">Type</Label>
-                              <Select 
-                                value={source.type} 
-                                onValueChange={(value) => updateKnowledgeSource(source.id, 'type', value)}
-                              >
-                                <SelectTrigger className="bg-white/10 border-white/20 text-white">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="text">Text Document</SelectItem>
-                                  <SelectItem value="url">Website URL</SelectItem>
-                                  <SelectItem value="faq">FAQ</SelectItem>
-                                  <SelectItem value="manual">User Manual</SelectItem>
-                                  <SelectItem value="document">Upload Document</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </div>
-                            
-                            <div className="space-y-2">
-                              <Label className="text-white">Title</Label>
-                              <Input
-                                value={source.title}
-                                onChange={(e) => updateKnowledgeSource(source.id, 'title', e.target.value)}
-                                placeholder="Knowledge source title"
-                                className="bg-white/10 border-white/20 text-white placeholder:text-slate-400"
-                              />
-                            </div>
-                          </div>
-                          
-                          {source.type === 'url' && (
-                            <div className="space-y-2 mb-4">
-                              <Label className="text-white">URL</Label>
-                              <Input
-                                value={source.url || ''}
-                                onChange={(e) => updateKnowledgeSource(source.id, 'url', e.target.value)}
-                                placeholder="https://example.com"
-                                className="bg-white/10 border-white/20 text-white placeholder:text-slate-400"
-                              />
-                            </div>
-                          )}
-
-                          {source.type === 'document' && (
-                            <div className="space-y-2 mb-4">
-                              <Label className="text-white">Upload Document</Label>
-                              <DocumentUpload
-                                onDocumentUpload={(fileName, content, url) => {
-                                  updateKnowledgeSource(source.id, 'title', fileName);
-                                  updateKnowledgeSource(source.id, 'content', content);
-                                  updateKnowledgeSource(source.id, 'url', url);
-                                }}
-                              />
-                              {source.url && (
-                                <div className="flex items-center gap-2 p-2 bg-white/5 rounded border border-white/10 mt-2">
-                                  <FileText className="w-4 h-4 text-slate-400" />
-                                  <span className="text-sm text-slate-300">{source.title}</span>
-                                  <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => window.open(source.url, '_blank')}
-                                    className="text-cyan-400 hover:text-cyan-300 ml-auto"
-                                  >
-                                    View
-                                  </Button>
-                                </div>
-                              )}
-                            </div>
-                          )}
-                          
-                          <div className="space-y-2">
-                            <Label className="text-white">Content</Label>
-                            <Textarea
-                              value={source.content}
-                              onChange={(e) => updateKnowledgeSource(source.id, 'content', e.target.value)}
-                              placeholder="Enter the knowledge content that your bot should learn from..."
-                              rows={4}
-                              className="bg-white/10 border-white/20 text-white placeholder:text-slate-400 resize-none"
-                              readOnly={source.type === 'document'}
-                            />
-                          </div>
-                        </CardContent>
-                      </Card>
                     ))}
                   </div>
-                )}
+                </div>
+
+                {/* Voice Chat */}
+                <div className="space-y-4">
+                  <h4 className="text-lg font-semibold text-white">Voice Interaction</h4>
+                  
+                  <div className="flex items-start space-x-3 p-3 rounded-lg bg-white/5 border border-white/10">
+                    <div className="mt-1">
+                      <Switch
+                        id="voice-chat"
+                        checked={formData.has_voice_chat}
+                        onCheckedChange={(checked) => handleInputChange('has_voice_chat', checked)}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor="voice-chat" className="text-white font-medium cursor-pointer flex items-center gap-2">
+                        <Mic className="w-4 h-4" />
+                        Voice Chat
+                      </Label>
+                      <p className="text-sm text-slate-400">Enable real-time voice conversations with your bot</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Knowledge Base */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-lg font-semibold text-white">Knowledge Base</h4>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={addKnowledgeSource}
+                      className="border-white/20 text-white hover:bg-white/10"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Knowledge Source
+                    </Button>
+                  </div>
+                  
+                  {formData.knowledge_sources.length === 0 ? (
+                    <div className="text-center py-8 border border-dashed border-white/20 rounded-lg">
+                      <p className="text-slate-400">No knowledge sources added yet</p>
+                      <p className="text-sm text-slate-500 mt-1">Add knowledge sources to enhance your bot's capabilities</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {formData.knowledge_sources.map((source, index) => (
+                        <Card key={source.id} className="bg-white/5 border-white/10">
+                          <CardContent className="p-4">
+                            <div className="flex items-start justify-between mb-4">
+                              <h5 className="text-white font-medium">Knowledge Source #{index + 1}</h5>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeKnowledgeSource(source.id)}
+                                className="text-red-400 hover:text-red-300 hover:bg-red-500/20"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                              <div className="space-y-2">
+                                <Label className="text-white">Type</Label>
+                                <Select 
+                                  value={source.type} 
+                                  onValueChange={(value) => updateKnowledgeSource(source.id, 'type', value)}
+                                >
+                                  <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="text">Text Document</SelectItem>
+                                    <SelectItem value="url">Website URL</SelectItem>
+                                    <SelectItem value="faq">FAQ</SelectItem>
+                                    <SelectItem value="manual">User Manual</SelectItem>
+                                    <SelectItem value="document">Upload Document</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              
+                              <div className="space-y-2">
+                                <Label className="text-white">Title</Label>
+                                <Input
+                                  value={source.title}
+                                  onChange={(e) => updateKnowledgeSource(source.id, 'title', e.target.value)}
+                                  placeholder="Knowledge source title"
+                                  className="bg-white/10 border-white/20 text-white placeholder:text-slate-400"
+                                />
+                              </div>
+                            </div>
+                            
+                            {source.type === 'url' && (
+                              <div className="space-y-2 mb-4">
+                                <Label className="text-white">URL</Label>
+                                <Input
+                                  value={source.url || ''}
+                                  onChange={(e) => updateKnowledgeSource(source.id, 'url', e.target.value)}
+                                  placeholder="https://example.com"
+                                  className="bg-white/10 border-white/20 text-white placeholder:text-slate-400"
+                                />
+                              </div>
+                            )}
+
+                            {source.type === 'document' && (
+                              <div className="space-y-2 mb-4">
+                                <Label className="text-white">Upload Document</Label>
+                                <DocumentUpload
+                                  onDocumentUpload={(fileName, content, url) => {
+                                    updateKnowledgeSource(source.id, 'title', fileName);
+                                    updateKnowledgeSource(source.id, 'content', content);
+                                    updateKnowledgeSource(source.id, 'url', url);
+                                  }}
+                                />
+                                {source.url && (
+                                  <div className="flex items-center gap-2 p-2 bg-white/5 rounded border border-white/10 mt-2">
+                                    <FileText className="w-4 h-4 text-slate-400" />
+                                    <span className="text-sm text-slate-300">{source.title}</span>
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => window.open(source.url, '_blank')}
+                                      className="text-cyan-400 hover:text-cyan-300 ml-auto"
+                                    >
+                                      View
+                                    </Button>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                            
+                            <div className="space-y-2">
+                              <Label className="text-white">Content</Label>
+                              <Textarea
+                                value={source.content}
+                                onChange={(e) => updateKnowledgeSource(source.id, 'content', e.target.value)}
+                                placeholder="Enter the knowledge content that your bot should learn from..."
+                                rows={4}
+                                className="bg-white/10 border-white/20 text-white placeholder:text-slate-400 resize-none"
+                                readOnly={source.type === 'document'}
+                              />
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
 
               <Separator className="bg-white/20" />
