@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,9 +28,17 @@ interface ChatMode {
 interface ChatWindowProps {
   isOpen: boolean;
   onClose: () => void;
+  initialMode?: string;
 }
 
 const chatModes: ChatMode[] = [
+  {
+    id: "one-on-one",
+    name: "One-on-One Chat",
+    description: "Have personal conversations with individual AI personalities",
+    icon: MessageSquare,
+    systemPrompt: "You are having a one-on-one conversation. Be engaging, helpful, and stay in character."
+  },
   {
     id: "debate",
     name: "Debate Room",
@@ -62,14 +69,21 @@ const chatModes: ChatMode[] = [
   }
 ];
 
-const ChatWindow = ({ isOpen, onClose }: ChatWindowProps) => {
+const ChatWindow = ({ isOpen, onClose, initialMode = "debate" }: ChatWindowProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState("");
-  const [selectedMode, setSelectedMode] = useState<string>("debate");
+  const [selectedMode, setSelectedMode] = useState<string>(initialMode);
   const [selectedBots, setSelectedBots] = useState<string[]>([]);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Update selected mode when initialMode changes
+  useEffect(() => {
+    if (initialMode) {
+      setSelectedMode(initialMode);
+    }
+  }, [initialMode]);
 
   const availableBots = [
     { id: "einstein", name: "Dr. Einstein", avatar: "🧑‍🔬" },
@@ -77,7 +91,9 @@ const ChatWindow = ({ isOpen, onClose }: ChatWindowProps) => {
     { id: "captain", name: "Captain Adventure", avatar: "🏴‍☠️" },
     { id: "mentor", name: "Biz Mentor Pro", avatar: "💼" },
     { id: "tesla", name: "Tesla Inventor", avatar: "⚡" },
-    { id: "curie", name: "Marie Curie", avatar: "🧪" }
+    { id: "curie", name: "Marie Curie", avatar: "🧪" },
+    { id: "shakespeare", name: "Shakespeare", avatar: "🎭" },
+    { id: "lincoln", name: "Abraham Lincoln", avatar: "🎩" }
   ];
 
   const scrollToBottom = () => {
@@ -102,6 +118,9 @@ const ChatWindow = ({ isOpen, onClose }: ChatWindowProps) => {
     
     // Generate contextual responses based on mode and bot
     switch (selectedMode) {
+      case "one-on-one":
+        response = generateOneOnOneResponse(userMessage, bot.name);
+        break;
       case "debate":
         response = generateDebateResponse(userMessage, bot.name);
         break;
@@ -131,6 +150,16 @@ const ChatWindow = ({ isOpen, onClose }: ChatWindowProps) => {
     setIsTyping(false);
   };
 
+  const generateOneOnOneResponse = (topic: string, botName: string): string => {
+    const responses = {
+      "Dr. Einstein": `Fascinating question about "${topic}"! In my experience with physics, I've found that curiosity is the most important thing. Let me share what I think about this...`,
+      "Maya Therapist": `Thank you for sharing that with me. When it comes to "${topic}", I want you to know that your feelings are completely valid. Let's explore this together...`,
+      "Captain Adventure": `Ahoy there, matey! "${topic}" reminds me of an adventure I had on the high seas. Let me tell ye about it...`,
+      "Shakespeare": `Ah, "${topic}" - what a splendid subject for contemplation! As I once wrote, there are more things in heaven and earth than are dreamt of in our philosophy...`
+    };
+    return responses[botName as keyof typeof responses] || `${botName}: That's a wonderful topic to discuss. Let me share my thoughts on "${topic}"...`;
+  };
+
   const generateDebateResponse = (topic: string, botName: string): string => {
     const responses = {
       "Dr. Einstein": `From a scientific perspective, we must consider the empirical evidence. When examining "${topic}", I believe we should approach this with both curiosity and skepticism...`,
@@ -147,7 +176,9 @@ const ChatWindow = ({ isOpen, onClose }: ChatWindowProps) => {
     const responses = {
       "Dr. Einstein": `In my time at Princeton, we pondered such questions deeply. "${topic}" reminds me of the discussions I had with Bohr about the nature of reality...`,
       "Tesla Inventor": `Ah, in my laboratory in Colorado Springs, I dreamed of wireless power transmission. "${topic}" speaks to the very essence of human progress...`,
-      "Marie Curie": `When I was working with Pierre in our laboratory shed, we faced many challenges. "${topic}" requires the same dedication to truth that guided our research...`
+      "Marie Curie": `When I was working with Pierre in our laboratory shed, we faced many challenges. "${topic}" requires the same dedication to truth that guided our research...`,
+      "Shakespeare": `In the court of Queen Elizabeth, we oft discussed such matters. "${topic}" brings to mind the eternal struggles of the human condition that I portrayed in my plays...`,
+      "Abraham Lincoln": `During my time as President, I faced many difficult decisions. "${topic}" reminds me that a house divided against itself cannot stand...`
     };
     return responses[botName as keyof typeof responses] || `${botName}: In my era, "${topic}" was viewed quite differently than today...`;
   };
@@ -200,7 +231,7 @@ const ChatWindow = ({ isOpen, onClose }: ChatWindowProps) => {
       <div className="flex items-center justify-between p-4 border-b border-white/10">
         <div className="flex items-center space-x-2">
           <MessageSquare className="w-5 h-5 text-purple-400" />
-          <span className="font-semibold text-slate-800">Multi-Bot Chat</span>
+          <span className="font-semibold text-slate-800">AI Chat Experience</span>
         </div>
         <div className="flex items-center space-x-2">
           <Button
@@ -248,7 +279,7 @@ const ChatWindow = ({ isOpen, onClose }: ChatWindowProps) => {
 
           {/* Bot Selection */}
           <div className="p-4 border-b border-white/10">
-            <p className="text-sm font-medium text-slate-700 mb-2">Select Bots for Conversation:</p>
+            <p className="text-sm font-medium text-slate-700 mb-2">Select AI Personalities:</p>
             <div className="flex flex-wrap gap-2">
               {availableBots.map((bot) => (
                 <Badge
