@@ -2,11 +2,14 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { User, Heart, Search, ExternalLink, Palette } from "lucide-react";
+import { User, Heart, Search, ExternalLink, Palette, MessageSquare } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { CrossAppNavigation } from "./CrossAppNavigation";
 
-const Header = () => {
+interface HeaderProps {
+  onChatToggle?: () => void;
+}
+
+const Header = ({ onChatToggle }: HeaderProps) => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -37,8 +40,16 @@ const Header = () => {
           </nav>
 
           <div className="flex items-center space-x-4">
-            {user && (
-              <CrossAppNavigation variant="link" showBadge={false} />
+            {onChatToggle && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-slate-300 hover:text-white hover:bg-white/10"
+                onClick={onChatToggle}
+              >
+                <MessageSquare className="w-4 h-4 mr-2" />
+                <span className="hidden sm:inline">Chat</span>
+              </Button>
             )}
             
             <Button variant="ghost" size="sm" className="text-slate-300 hover:text-white hover:bg-white/10">

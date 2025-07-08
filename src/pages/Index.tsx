@@ -8,10 +8,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Search, Star, Users, Zap, Eye, Heart } from "lucide-react";
 import BotCard from "@/components/BotCard";
 import Header from "@/components/Header";
-import { CrossAppNavigation } from "@/components/CrossAppNavigation";
+import ChatWindow from "@/components/ChatWindow";
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const featuredBots = [
     {
@@ -77,7 +78,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      <Header />
+      <Header onChatToggle={() => setIsChatOpen(!isChatOpen)} />
       
       {/* Hero Section */}
       <section className="relative py-20 px-4">
@@ -117,13 +118,6 @@ const Index = () => {
               <Link to="/creator">Become a Creator</Link>
             </Button>
           </div>
-        </div>
-      </section>
-
-      {/* Cross-App Navigation Section */}
-      <section className="py-16 px-4">
-        <div className="max-w-6xl mx-auto">
-          <CrossAppNavigation variant="card" />
         </div>
       </section>
 
@@ -207,6 +201,9 @@ const Index = () => {
           <p>&copy; 2024 EchoVerse. Building the future of AI personalities.</p>
         </div>
       </footer>
+
+      {/* Chat Window */}
+      <ChatWindow isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
     </div>
   );
 };
