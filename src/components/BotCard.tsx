@@ -11,16 +11,23 @@ interface BotCardProps {
     name: string;
     avatar: string | null;
     category: string;
-    rating: number;
-    price: string;
+    rating: number | null;
+    price: number | null;
+    price_type: string | null;
     description: string | null;
-    creator: string;
+    creator_id: string;
     downloads: number;
     isAvr: boolean;
   };
 }
 
 const BotCard = ({ bot }: BotCardProps) => {
+  const formatPrice = (price: number | null, priceType: string | null) => {
+    if (!price || price === 0) return "Free";
+    const formattedPrice = `$${price}`;
+    return priceType === 'subscription' ? `${formattedPrice}/mo` : formattedPrice;
+  };
+
   return (
     <Card className="bg-white/5 border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-105 cursor-pointer backdrop-blur-sm group">
       <CardHeader className="pb-3">
@@ -41,7 +48,7 @@ const BotCard = ({ bot }: BotCardProps) => {
           <h3 className="text-lg font-semibold text-white mb-1 group-hover:text-purple-300 transition-colors">
             {bot.name}
           </h3>
-          <p className="text-sm text-slate-400">by {bot.creator}</p>
+          <p className="text-sm text-slate-400">by Creator</p>
         </div>
       </CardHeader>
 
@@ -52,7 +59,7 @@ const BotCard = ({ bot }: BotCardProps) => {
           <div className="flex items-center space-x-4 text-slate-400">
             <div className="flex items-center">
               <Star className="w-4 h-4 text-yellow-400 mr-1 fill-current" />
-              <span>{bot.rating}</span>
+              <span>{bot.rating || 0}</span>
             </div>
             <div className="flex items-center">
               <Download className="w-4 h-4 mr-1" />
@@ -63,7 +70,7 @@ const BotCard = ({ bot }: BotCardProps) => {
       </CardContent>
 
       <CardFooter className="pt-3 flex items-center justify-between">
-        <div className="text-lg font-semibold text-white">{bot.price}</div>
+        <div className="text-lg font-semibold text-white">{formatPrice(bot.price, bot.price_type)}</div>
         <div className="flex gap-2">
           <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white hover:bg-white/10 p-2">
             <Heart className="w-4 h-4" />

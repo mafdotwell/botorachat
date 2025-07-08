@@ -18,9 +18,10 @@ interface Bot {
   avatar: string | null;
   category: string;
   rating: number | null;
-  price: string;
+  price: number | null;
+  price_type: string | null;
   description: string | null;
-  creator: string;
+  creator_id: string;
   downloads: number;
   isAvr: boolean;
 }
@@ -34,7 +35,25 @@ const Marketplace = () => {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  const categories = ["all", "education", "entertainment", "therapy", "business"];
+  const categories = [
+    "all", 
+    "education", 
+    "entertainment", 
+    "therapy", 
+    "business", 
+    "healthcare", 
+    "fitness", 
+    "productivity", 
+    "gaming", 
+    "social", 
+    "finance", 
+    "travel", 
+    "cooking", 
+    "art", 
+    "music", 
+    "sports"
+  ];
+  
   const sortOptions = ["popular", "rating", "price-low", "price-high", "newest"];
 
   useEffect(() => {
@@ -57,9 +76,10 @@ const Marketplace = () => {
         avatar: bot.avatar || '🤖',
         category: bot.category,
         rating: bot.rating || 0,
-        price: formatPrice(bot.price, bot.price_type),
+        price: bot.price,
+        price_type: bot.price_type,
         description: bot.description || '',
-        creator: 'Creator', // Placeholder since we don't have creator relationship
+        creator_id: bot.creator_id,
         downloads: bot.download_count || 0,
         isAvr: bot.is_avr_compatible || false
       })) || [];
@@ -75,12 +95,6 @@ const Marketplace = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const formatPrice = (price: number | null, priceType: string | null) => {
-    if (!price || price === 0) return "Free";
-    const formattedPrice = `$${price}`;
-    return priceType === 'subscription' ? `${formattedPrice}/mo` : formattedPrice;
   };
 
   const filteredBots = bots.filter(bot => {
@@ -158,18 +172,18 @@ const Marketplace = () => {
               {/* View Toggle */}
               <div className="flex border border-white/20 rounded-lg overflow-hidden">
                 <Button
-                  variant={viewMode === "grid" ? "default" : "ghost"}
+                  variant={viewMode === "grid" ? "secondary" : "ghost"}
                   size="sm"
                   onClick={() => setViewMode("grid")}
-                  className="rounded-none"
+                  className="rounded-none bg-white/10 border-white/20 text-white hover:bg-white/20"
                 >
                   <Grid className="w-4 h-4" />
                 </Button>
                 <Button
-                  variant={viewMode === "list" ? "default" : "ghost"}
+                  variant={viewMode === "list" ? "secondary" : "ghost"}
                   size="sm"
                   onClick={() => setViewMode("list")}
-                  className="rounded-none"
+                  className="rounded-none bg-white/10 border-white/20 text-white hover:bg-white/20"
                 >
                   <List className="w-4 h-4" />
                 </Button>
@@ -211,7 +225,7 @@ const Marketplace = () => {
         {/* Load More */}
         {filteredBots.length > 0 && (
           <div className="text-center mt-12">
-            <Button variant="outline" className="border-white/20 text-white hover:bg-white/10">
+            <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 bg-transparent">
               Load More Results
             </Button>
           </div>
@@ -223,10 +237,13 @@ const Marketplace = () => {
             <div className="text-6xl mb-4">🤖</div>
             <h3 className="text-2xl font-semibold text-white mb-2">No AI personalities found</h3>
             <p className="text-slate-400 mb-6">Try adjusting your search or filters</p>
-            <Button onClick={() => {
-              setSearchQuery("");
-              setSelectedCategory("all");
-            }}>
+            <Button 
+              onClick={() => {
+                setSearchQuery("");
+                setSelectedCategory("all");
+              }}
+              className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white"
+            >
               Clear All Filters
             </Button>
           </div>
