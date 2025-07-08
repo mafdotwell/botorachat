@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Send, MessageSquare, Users, Clock, Sparkles, X, Minimize2, Maximize2 } from "lucide-react";
+import { useChatAI } from "@/hooks/useChatAI";
 
 interface ChatMessage {
   id: string;
@@ -77,6 +79,7 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "debate" }: ChatWindowProps
   const [isMinimized, setIsMinimized] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { sendMessage } = useChatAI();
 
   // Update selected mode when initialMode changes
   useEffect(() => {
@@ -104,91 +107,39 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "debate" }: ChatWindowProps
     scrollToBottom();
   }, [messages]);
 
-  const simulateBotResponse = async (userMessage: string, botId: string) => {
+  const getAIResponse = async (userMessage: string, botId: string) => {
     const bot = availableBots.find(b => b.id === botId);
     if (!bot) return;
 
     setIsTyping(true);
     
-    // Simulate typing delay
-    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
-    
-    let response = "";
-    const mode = chatModes.find(m => m.id === selectedMode);
-    
-    // Generate contextual responses based on mode and bot
-    switch (selectedMode) {
-      case "one-on-one":
-        response = generateOneOnOneResponse(userMessage, bot.name);
-        break;
-      case "debate":
-        response = generateDebateResponse(userMessage, bot.name);
-        break;
-      case "history":
-        response = generateHistoricalResponse(userMessage, bot.name);
-        break;
-      case "motivate":
-        response = generateMotivationalResponse(userMessage, bot.name);
-        break;
-      case "interview":
-        response = generateInterviewResponse(userMessage, bot.name);
-        break;
-      default:
-        response = `${bot.name}: That's an interesting point about "${userMessage}". Let me share my perspective...`;
+    try {
+      const response = await sendMessage(userMessage, bot.name, selectedMode);
+      
+      const botMessage: ChatMessage = {
+        id: Date.now().toString() + bot.id,
+        sender: 'bot',
+        botName: bot.name,
+        botAvatar: bot.avatar,
+        content: response,
+        timestamp: new Date()
+      };
+
+      setMessages(prev => [...prev, botMessage]);
+    } catch (error) {
+      console.error('Error getting AI response:', error);
+      const errorMessage: ChatMessage = {
+        id: Date.now().toString() + bot.id,
+        sender: 'bot',
+        botName: bot.name,
+        botAvatar: bot.avatar,
+        content: "I'm sorry, I'm having trouble responding right now. Please try again later.",
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsTyping(false);
     }
-
-    const botMessage: ChatMessage = {
-      id: Date.now().toString() + bot.id,
-      sender: 'bot',
-      botName: bot.name,
-      botAvatar: bot.avatar,
-      content: response,
-      timestamp: new Date()
-    };
-
-    setMessages(prev => [...prev, botMessage]);
-    setIsTyping(false);
-  };
-
-  const generateOneOnOneResponse = (topic: string, botName: string): string => {
-    const responses = {
-      "Dr. Einstein": `Fascinating question about "${topic}"! In my experience with physics, I've found that curiosity is the most important thing. Let me share what I think about this...`,
-      "Maya Therapist": `Thank you for sharing that with me. When it comes to "${topic}", I want you to know that your feelings are completely valid. Let's explore this together...`,
-      "Captain Adventure": `Ahoy there, matey! "${topic}" reminds me of an adventure I had on the high seas. Let me tell ye about it...`,
-      "Shakespeare": `Ah, "${topic}" - what a splendid subject for contemplation! As I once wrote, there are more things in heaven and earth than are dreamt of in our philosophy...`
-    };
-    return responses[botName as keyof typeof responses] || `${botName}: That's a wonderful topic to discuss. Let me share my thoughts on "${topic}"...`;
-  };
-
-  const generateDebateResponse = (topic: string, botName: string): string => {
-    const responses = {
-      "Dr. Einstein": `From a scientific perspective, we must consider the empirical evidence. When examining "${topic}", I believe we should approach this with both curiosity and skepticism...`,
-      "Maya Therapist": `I think it's important to consider the human element here. In my therapeutic practice, I've seen how "${topic}" affects people on a deeply personal level...`,
-      "Captain Adventure": `Ahoy! In my many adventures across the seven seas, I've encountered situations like this. Let me tell ye about "${topic}" from a swashbuckler's perspective...`,
-      "Biz Mentor Pro": `From a business standpoint, "${topic}" presents both opportunities and challenges. Let's analyze the market implications and strategic considerations...`,
-      "Tesla Inventor": `The future holds infinite possibilities! When I consider "${topic}", I see innovation and electrical potential in ways others might not...`,
-      "Marie Curie": `Through my research in radioactivity, I've learned that persistence and scientific rigor are key. Regarding "${topic}", we must approach this systematically...`
-    };
-    return responses[botName as keyof typeof responses] || `${botName}: Let me share my thoughts on "${topic}"...`;
-  };
-
-  const generateHistoricalResponse = (topic: string, botName: string): string => {
-    const responses = {
-      "Dr. Einstein": `In my time at Princeton, we pondered such questions deeply. "${topic}" reminds me of the discussions I had with Bohr about the nature of reality...`,
-      "Tesla Inventor": `Ah, in my laboratory in Colorado Springs, I dreamed of wireless power transmission. "${topic}" speaks to the very essence of human progress...`,
-      "Marie Curie": `When I was working with Pierre in our laboratory shed, we faced many challenges. "${topic}" requires the same dedication to truth that guided our research...`,
-      "Shakespeare": `In the court of Queen Elizabeth, we oft discussed such matters. "${topic}" brings to mind the eternal struggles of the human condition that I portrayed in my plays...`,
-      "Abraham Lincoln": `During my time as President, I faced many difficult decisions. "${topic}" reminds me that a house divided against itself cannot stand...`
-    };
-    return responses[botName as keyof typeof responses] || `${botName}: In my era, "${topic}" was viewed quite differently than today...`;
-  };
-
-  const generateMotivationalResponse = (topic: string, botName: string): string => {
-    return `${botName}: You have the power to overcome any challenge! Remember, "${topic}" is just another stepping stone on your journey to greatness. Believe in yourself and take action today!`;
-  };
-
-  const generateInterviewResponse = (topic: string, botName: string): string => {
-    return `${botName}: That's a fascinating question. When I reflect on "${topic}", I think about my journey and the lessons I've learned. Let me share what shaped my perspective on this...`;
   };
 
   const handleSendMessage = async () => {
@@ -202,13 +153,14 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "debate" }: ChatWindowProps
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const messageToSend = inputMessage;
     setInputMessage("");
 
-    // Simulate responses from selected bots with staggered timing
+    // Get responses from selected bots with staggered timing
     for (let i = 0; i < selectedBots.length; i++) {
       setTimeout(() => {
-        simulateBotResponse(inputMessage, selectedBots[i]);
-      }, i * 3000); // Stagger responses by 3 seconds
+        getAIResponse(messageToSend, selectedBots[i]);
+      }, i * 2000); // Stagger responses by 2 seconds
     }
   };
 
