@@ -9,11 +9,11 @@ interface BotCardProps {
   bot: {
     id: string;
     name: string;
-    avatar: string;
+    avatar: string | null;
     category: string;
     rating: number;
     price: string;
-    description: string;
+    description: string | null;
     creator: string;
     downloads: number;
     isAvr: boolean;

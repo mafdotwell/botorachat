@@ -18,15 +18,11 @@ interface Bot {
   avatar: string | null;
   category: string;
   rating: number | null;
-  price: number | null;
-  price_type: string | null;
+  price: string;
   description: string | null;
-  creator_id: string;
+  creator: string;
   downloads: number;
   isAvr: boolean;
-  creator?: {
-    display_name?: string;
-  };
 }
 
 const Marketplace = () => {
@@ -49,12 +45,7 @@ const Marketplace = () => {
     try {
       const { data, error } = await supabase
         .from('bots')
-        .select(`
-          *,
-          creators (
-            display_name
-          )
-        `)
+        .select('*')
         .eq('is_published', true)
         .order('download_count', { ascending: false });
 
@@ -68,7 +59,7 @@ const Marketplace = () => {
         rating: bot.rating || 0,
         price: formatPrice(bot.price, bot.price_type),
         description: bot.description || '',
-        creator: bot.creators?.display_name || 'Unknown Creator',
+        creator: 'Creator', // Placeholder since we don't have creator relationship
         downloads: bot.download_count || 0,
         isAvr: bot.is_avr_compatible || false
       })) || [];
@@ -94,7 +85,7 @@ const Marketplace = () => {
 
   const filteredBots = bots.filter(bot => {
     const matchesSearch = bot.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         bot.description.toLowerCase().includes(searchQuery.toLowerCase());
+                         (bot.description && bot.description.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesCategory = selectedCategory === "all" || bot.category.toLowerCase() === selectedCategory;
     return matchesSearch && matchesCategory;
   });
