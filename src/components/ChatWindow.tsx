@@ -2,12 +2,8 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Send, MessageSquare, Users, Clock, Sparkles, X, Minimize2, Maximize2 } from "lucide-react";
+import { Send, X, ArrowLeft } from "lucide-react";
 import { useChatAI } from "@/hooks/useChatAI";
 
 interface ChatMessage {
@@ -19,84 +15,30 @@ interface ChatMessage {
   timestamp: Date;
 }
 
-interface ChatMode {
-  id: string;
-  name: string;
-  description: string;
-  icon: typeof MessageSquare;
-  systemPrompt: string;
-}
-
 interface ChatWindowProps {
   isOpen: boolean;
   onClose: () => void;
   initialMode?: string;
 }
 
-const chatModes: ChatMode[] = [
-  {
-    id: "one-on-one",
-    name: "One-on-One Chat",
-    description: "Have personal conversations with individual AI personalities",
-    icon: MessageSquare,
-    systemPrompt: "You are having a one-on-one conversation. Be engaging, helpful, and stay in character."
-  },
-  {
-    id: "debate",
-    name: "Debate Room",
-    description: "Watch AI personalities debate topics from different perspectives",
-    icon: Users,
-    systemPrompt: "You are participating in a structured debate. Present your arguments clearly and respond to opposing viewpoints respectfully."
-  },
-  {
-    id: "history",
-    name: "Talk With History",
-    description: "Converse with historical figures about their times and experiences",
-    icon: Clock,
-    systemPrompt: "You are a historical figure. Speak from your time period's perspective and share insights from your era."
-  },
-  {
-    id: "motivate",
-    name: "Motivate Me",
-    description: "Get inspired by motivational coaches and success mentors",
-    icon: Sparkles,
-    systemPrompt: "You are a motivational coach. Provide encouraging, actionable advice to help users achieve their goals."
-  },
-  {
-    id: "interview",
-    name: "Time Machine Interview",
-    description: "Interview famous personalities from across time and space",
-    icon: MessageSquare,
-    systemPrompt: "You are being interviewed about your life, work, and philosophy. Answer thoughtfully and authentically."
-  }
-];
-
-const ChatWindow = ({ isOpen, onClose, initialMode = "debate" }: ChatWindowProps) => {
+const ChatWindow = ({ isOpen, onClose, initialMode = "one-on-one" }: ChatWindowProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState("");
-  const [selectedMode, setSelectedMode] = useState<string>(initialMode);
-  const [selectedBots, setSelectedBots] = useState<string[]>([]);
-  const [isMinimized, setIsMinimized] = useState(false);
+  const [selectedBot, setSelectedBot] = useState<string>("");
   const [isTyping, setIsTyping] = useState(false);
+  const [showBotSelector, setShowBotSelector] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { sendMessage } = useChatAI();
 
-  // Update selected mode when initialMode changes
-  useEffect(() => {
-    if (initialMode) {
-      setSelectedMode(initialMode);
-    }
-  }, [initialMode]);
-
   const availableBots = [
-    { id: "einstein", name: "Dr. Einstein", avatar: "🧑‍🔬" },
-    { id: "maya", name: "Maya Therapist", avatar: "👩‍⚕️" },
-    { id: "captain", name: "Captain Adventure", avatar: "🏴‍☠️" },
-    { id: "mentor", name: "Biz Mentor Pro", avatar: "💼" },
-    { id: "tesla", name: "Tesla Inventor", avatar: "⚡" },
-    { id: "curie", name: "Marie Curie", avatar: "🧪" },
-    { id: "shakespeare", name: "Shakespeare", avatar: "🎭" },
-    { id: "lincoln", name: "Abraham Lincoln", avatar: "🎩" }
+    { id: "einstein", name: "Dr. Einstein", avatar: "🧑‍🔬", description: "Brilliant physicist with curiosity about the universe" },
+    { id: "maya", name: "Maya Therapist", avatar: "👩‍⚕️", description: "Compassionate therapist for emotional support" },
+    { id: "captain", name: "Captain Adventure", avatar: "🏴‍☠️", description: "Swashbuckling pirate with exciting tales" },
+    { id: "mentor", name: "Biz Mentor Pro", avatar: "💼", description: "Strategic business advisor and mentor" },
+    { id: "tesla", name: "Tesla Inventor", avatar: "⚡", description: "Visionary inventor passionate about technology" },
+    { id: "curie", name: "Marie Curie", avatar: "🧪", description: "Pioneering scientist and Nobel Prize winner" },
+    { id: "shakespeare", name: "Shakespeare", avatar: "🎭", description: "Master playwright and poet" },
+    { id: "lincoln", name: "Abraham Lincoln", avatar: "🎩", description: "16th President with wisdom about leadership" }
   ];
 
   const scrollToBottom = () => {
@@ -114,7 +56,7 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "debate" }: ChatWindowProps
     setIsTyping(true);
     
     try {
-      const response = await sendMessage(userMessage, bot.name, selectedMode);
+      const response = await sendMessage(userMessage, bot.name, initialMode);
       
       const botMessage: ChatMessage = {
         id: Date.now().toString() + bot.id,
@@ -143,7 +85,7 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "debate" }: ChatWindowProps
   };
 
   const handleSendMessage = async () => {
-    if (!inputMessage.trim() || selectedBots.length === 0) return;
+    if (!inputMessage.trim() || !selectedBot) return;
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
@@ -156,12 +98,7 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "debate" }: ChatWindowProps
     const messageToSend = inputMessage;
     setInputMessage("");
 
-    // Get responses from selected bots with staggered timing
-    for (let i = 0; i < selectedBots.length; i++) {
-      setTimeout(() => {
-        getAIResponse(messageToSend, selectedBots[i]);
-      }, i * 2000); // Stagger responses by 2 seconds
-    }
+    getAIResponse(messageToSend, selectedBot);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -171,176 +108,162 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "debate" }: ChatWindowProps
     }
   };
 
-  const currentMode = chatModes.find(mode => mode.id === selectedMode);
+  const selectBot = (botId: string) => {
+    setSelectedBot(botId);
+    setShowBotSelector(false);
+    setMessages([]);
+  };
+
+  const selectedBotData = availableBots.find(bot => bot.id === selectedBot);
 
   if (!isOpen) return null;
 
   return (
-    <div className={`fixed bottom-4 right-4 bg-white/95 border border-white/20 rounded-lg shadow-2xl backdrop-blur-sm transition-all duration-300 ${
-      isMinimized ? 'w-80 h-16' : 'w-96 h-[600px]'
-    }`}>
+    <div className="fixed inset-0 bg-white z-50 flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-white/10">
-        <div className="flex items-center space-x-2">
-          <MessageSquare className="w-5 h-5 text-purple-400" />
-          <span className="font-semibold text-slate-800">AI Chat Experience</span>
+      <div className="flex items-center justify-between p-4 border-b bg-white">
+        <div className="flex items-center space-x-3">
+          {!showBotSelector && selectedBotData && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowBotSelector(true)}
+              className="text-slate-600 hover:text-slate-800"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </Button>
+          )}
+          {selectedBotData && !showBotSelector && (
+            <>
+              <span className="text-2xl">{selectedBotData.avatar}</span>
+              <div>
+                <h2 className="font-semibold text-slate-800">{selectedBotData.name}</h2>
+                <p className="text-sm text-slate-500">{selectedBotData.description}</p>
+              </div>
+            </>
+          )}
+          {showBotSelector && (
+            <h2 className="font-semibold text-slate-800">Choose a Character</h2>
+          )}
         </div>
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsMinimized(!isMinimized)}
-            className="text-slate-600 hover:text-slate-800"
-          >
-            {isMinimized ? <Maximize2 className="w-4 h-4" /> : <Minimize2 className="w-4 h-4" />}
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClose}
-            className="text-slate-600 hover:text-slate-800"
-          >
-            <X className="w-4 h-4" />
-          </Button>
-        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onClose}
+          className="text-slate-600 hover:text-slate-800"
+        >
+          <X className="w-5 h-5" />
+        </Button>
       </div>
 
-      {!isMinimized && (
-        <>
-          {/* Mode Selection */}
-          <div className="p-4 border-b border-white/10">
-            <Select value={selectedMode} onValueChange={setSelectedMode}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select chat mode" />
-              </SelectTrigger>
-              <SelectContent>
-                {chatModes.map((mode) => (
-                  <SelectItem key={mode.id} value={mode.id}>
-                    <div className="flex items-center space-x-2">
-                      <mode.icon className="w-4 h-4" />
-                      <span>{mode.name}</span>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {currentMode && (
-              <p className="text-sm text-slate-600 mt-2">{currentMode.description}</p>
-            )}
-          </div>
-
-          {/* Bot Selection */}
-          <div className="p-4 border-b border-white/10">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-medium text-slate-700">Select AI Personalities:</p>
-              {selectedBots.length === 0 && (
-                <span className="text-xs text-red-500 animate-pulse">👆 Choose at least one!</span>
-              )}
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {availableBots.map((bot) => (
-                <Badge
-                  key={bot.id}
-                  variant={selectedBots.includes(bot.id) ? "default" : "secondary"}
-                  className={`cursor-pointer transition-all duration-200 ${
-                    selectedBots.includes(bot.id) 
-                      ? 'bg-purple-500 hover:bg-purple-600 text-white scale-105' 
-                      : `hover:bg-slate-200 ${selectedBots.length === 0 ? 'animate-pulse' : ''}`
-                  }`}
-                  onClick={() => {
-                    setSelectedBots(prev => 
-                      prev.includes(bot.id) 
-                        ? prev.filter(id => id !== bot.id)
-                        : [...prev, bot.id]
-                    );
-                  }}
-                >
-                  <span className="mr-1">{bot.avatar}</span>
-                  {bot.name}
-                </Badge>
-              ))}
-            </div>
-          </div>
-
-          {/* Messages */}
-          <ScrollArea className="flex-1 p-4 h-80">
-            <div className="space-y-4">
-              {messages.length === 0 && (
-                <div className="text-center text-slate-500 py-8">
-                  <MessageSquare className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                  <p>Select bots and start a conversation!</p>
-                </div>
-              )}
-              
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
+      {/* Content */}
+      <div className="flex-1 flex flex-col">
+        {showBotSelector ? (
+          /* Bot Selection Screen */
+          <div className="flex-1 p-6">
+            <div className="max-w-2xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {availableBots.map((bot) => (
                   <div
-                    className={`max-w-[80%] rounded-lg p-3 ${
-                      message.sender === 'user'
-                        ? 'bg-purple-500 text-white'
-                        : 'bg-slate-100 text-slate-800'
-                    }`}
+                    key={bot.id}
+                    onClick={() => selectBot(bot.id)}
+                    className="p-4 border rounded-lg hover:bg-slate-50 cursor-pointer transition-colors"
                   >
-                    {message.sender === 'bot' && (
-                      <div className="flex items-center space-x-2 mb-1">
-                        <span className="text-lg">{message.botAvatar}</span>
-                        <span className="text-sm font-medium">{message.botName}</span>
+                    <div className="flex items-start space-x-3">
+                      <span className="text-3xl">{bot.avatar}</span>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-slate-800">{bot.name}</h3>
+                        <p className="text-sm text-slate-600 mt-1">{bot.description}</p>
                       </div>
-                    )}
-                    <p className="text-sm">{message.content}</p>
-                    <p className={`text-xs mt-1 ${
-                      message.sender === 'user' ? 'text-purple-200' : 'text-slate-500'
-                    }`}>
-                      {message.timestamp.toLocaleTimeString()}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* Chat Interface */
+          <>
+            {/* Messages */}
+            <ScrollArea className="flex-1 px-4">
+              <div className="max-w-3xl mx-auto py-6 space-y-6">
+                {messages.length === 0 && (
+                  <div className="text-center py-12">
+                    <span className="text-6xl mb-4 block">{selectedBotData?.avatar}</span>
+                    <h3 className="text-xl font-semibold text-slate-800 mb-2">
+                      Chat with {selectedBotData?.name}
+                    </h3>
+                    <p className="text-slate-600">
+                      {selectedBotData?.description}
                     </p>
                   </div>
-                </div>
-              ))}
-              
-              {isTyping && (
-                <div className="flex justify-start">
-                  <div className="bg-slate-100 rounded-lg p-3">
-                    <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                      <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                )}
+                
+                {messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div className={`max-w-[80%] ${message.sender === 'user' ? 'order-2' : 'order-1'}`}>
+                      {message.sender === 'bot' && (
+                        <div className="flex items-center space-x-2 mb-2">
+                          <span className="text-xl">{message.botAvatar}</span>
+                          <span className="text-sm font-medium text-slate-700">{message.botName}</span>
+                        </div>
+                      )}
+                      <div
+                        className={`rounded-2xl px-4 py-3 ${
+                          message.sender === 'user'
+                            ? 'bg-blue-500 text-white ml-auto'
+                            : 'bg-slate-100 text-slate-800'
+                        }`}
+                      >
+                        <p className="whitespace-pre-wrap">{message.content}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
-              
-              <div ref={messagesEndRef} />
-            </div>
-          </ScrollArea>
+                ))}
+                
+                {isTyping && (
+                  <div className="flex justify-start">
+                    <div className="bg-slate-100 rounded-2xl px-4 py-3">
+                      <div className="flex space-x-1">
+                        <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                        <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                <div ref={messagesEndRef} />
+              </div>
+            </ScrollArea>
 
-          {/* Input */}
-          <div className="p-4 border-t border-white/10">
-            <div className="flex space-x-2">
-              <Textarea
-                value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Type your message..."
-                className="flex-1 min-h-[40px] max-h-[100px] resize-none"
-                disabled={selectedBots.length === 0}
-              />
-              <Button
-                onClick={handleSendMessage}
-                disabled={!inputMessage.trim() || selectedBots.length === 0}
-                className="bg-purple-500 hover:bg-purple-600 text-white"
-              >
-                <Send className="w-4 h-4" />
-              </Button>
+            {/* Input */}
+            <div className="border-t bg-white p-4">
+              <div className="max-w-3xl mx-auto">
+                <div className="flex space-x-3">
+                  <Input
+                    value={inputMessage}
+                    onChange={(e) => setInputMessage(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder={`Message ${selectedBotData?.name}...`}
+                    className="flex-1 rounded-full border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  />
+                  <Button
+                    onClick={handleSendMessage}
+                    disabled={!inputMessage.trim()}
+                    className="rounded-full bg-blue-500 hover:bg-blue-600 text-white px-4"
+                  >
+                    <Send className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
             </div>
-            {selectedBots.length === 0 && (
-              <p className="text-xs text-slate-500 mt-1">Select at least one bot to start chatting</p>
-            )}
-          </div>
-        </>
-      )}
+          </>
+        )}
+      </div>
     </div>
   );
 };
