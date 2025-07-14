@@ -121,59 +121,59 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "one-on-one" }: ChatWindowP
   return (
     <div className="fixed inset-0 bg-white z-50 flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b bg-white">
-        <div className="flex items-center space-x-3">
+      <div className="flex items-center justify-between p-3 sm:p-4 border-b bg-white">
+        <div className="flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
           {!showBotSelector && selectedBotData && (
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setShowBotSelector(true)}
-              className="text-slate-600 hover:text-slate-800"
+              className="text-slate-600 hover:text-slate-800 shrink-0"
             >
               <ArrowLeft className="w-4 h-4" />
             </Button>
           )}
           {selectedBotData && !showBotSelector && (
             <>
-              <span className="text-2xl">{selectedBotData.avatar}</span>
-              <div>
-                <h2 className="font-semibold text-slate-800">{selectedBotData.name}</h2>
-                <p className="text-sm text-slate-500">{selectedBotData.description}</p>
+              <span className="text-xl sm:text-2xl shrink-0">{selectedBotData.avatar}</span>
+              <div className="min-w-0 flex-1">
+                <h2 className="font-semibold text-slate-800 text-sm sm:text-base truncate">{selectedBotData.name}</h2>
+                <p className="text-xs sm:text-sm text-slate-500 truncate">{selectedBotData.description}</p>
               </div>
             </>
           )}
           {showBotSelector && (
-            <h2 className="font-semibold text-slate-800">Choose a Character</h2>
+            <h2 className="font-semibold text-slate-800 text-sm sm:text-base">Choose a Character</h2>
           )}
         </div>
         <Button
           variant="ghost"
           size="sm"
           onClick={onClose}
-          className="text-slate-600 hover:text-slate-800"
+          className="text-slate-600 hover:text-slate-800 shrink-0"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4 sm:w-5 sm:h-5" />
         </Button>
       </div>
 
       {/* Content */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col overflow-hidden">
         {showBotSelector ? (
           /* Bot Selection Screen */
-          <div className="flex-1 p-6">
+          <div className="flex-1 p-3 sm:p-6 overflow-y-auto">
             <div className="max-w-2xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 {availableBots.map((bot) => (
                   <div
                     key={bot.id}
                     onClick={() => selectBot(bot.id)}
-                    className="p-4 border rounded-lg hover:bg-slate-50 cursor-pointer transition-colors"
+                    className="p-3 sm:p-4 border rounded-lg hover:bg-slate-50 cursor-pointer transition-colors"
                   >
                     <div className="flex items-start space-x-3">
-                      <span className="text-3xl">{bot.avatar}</span>
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-slate-800">{bot.name}</h3>
-                        <p className="text-sm text-slate-600 mt-1">{bot.description}</p>
+                      <span className="text-2xl sm:text-3xl shrink-0">{bot.avatar}</span>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-slate-800 text-sm sm:text-base truncate">{bot.name}</h3>
+                        <p className="text-xs sm:text-sm text-slate-600 mt-1 line-clamp-2">{bot.description}</p>
                       </div>
                     </div>
                   </div>
@@ -185,15 +185,15 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "one-on-one" }: ChatWindowP
           /* Chat Interface */
           <>
             {/* Messages */}
-            <ScrollArea className="flex-1 px-4">
-              <div className="max-w-3xl mx-auto py-6 space-y-6">
+            <ScrollArea className="flex-1 px-3 sm:px-4">
+              <div className="max-w-3xl mx-auto py-4 sm:py-6 space-y-4 sm:space-y-6">
                 {messages.length === 0 && (
-                  <div className="text-center py-12">
-                    <span className="text-6xl mb-4 block">{selectedBotData?.avatar}</span>
-                    <h3 className="text-xl font-semibold text-slate-800 mb-2">
+                  <div className="text-center py-8 sm:py-12">
+                    <span className="text-4xl sm:text-6xl mb-4 block">{selectedBotData?.avatar}</span>
+                    <h3 className="text-lg sm:text-xl font-semibold text-slate-800 mb-2">
                       Chat with {selectedBotData?.name}
                     </h3>
-                    <p className="text-slate-600">
+                    <p className="text-sm sm:text-base text-slate-600 px-4">
                       {selectedBotData?.description}
                     </p>
                   </div>
@@ -204,21 +204,21 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "one-on-one" }: ChatWindowP
                     key={message.id}
                     className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
-                    <div className={`max-w-[80%] ${message.sender === 'user' ? 'order-2' : 'order-1'}`}>
+                    <div className={`max-w-[85%] sm:max-w-[80%] ${message.sender === 'user' ? 'order-2' : 'order-1'}`}>
                       {message.sender === 'bot' && (
                         <div className="flex items-center space-x-2 mb-2">
-                          <span className="text-xl">{message.botAvatar}</span>
-                          <span className="text-sm font-medium text-slate-700">{message.botName}</span>
+                          <span className="text-lg sm:text-xl">{message.botAvatar}</span>
+                          <span className="text-xs sm:text-sm font-medium text-slate-700">{message.botName}</span>
                         </div>
                       )}
                       <div
-                        className={`rounded-2xl px-4 py-3 ${
+                        className={`rounded-2xl px-3 sm:px-4 py-2 sm:py-3 ${
                           message.sender === 'user'
                             ? 'bg-blue-500 text-white ml-auto'
                             : 'bg-slate-100 text-slate-800'
                         }`}
                       >
-                        <p className="whitespace-pre-wrap">{message.content}</p>
+                        <p className="whitespace-pre-wrap text-sm sm:text-base break-words">{message.content}</p>
                       </div>
                     </div>
                   </div>
@@ -226,7 +226,7 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "one-on-one" }: ChatWindowP
                 
                 {isTyping && (
                   <div className="flex justify-start">
-                    <div className="bg-slate-100 rounded-2xl px-4 py-3">
+                    <div className="bg-slate-100 rounded-2xl px-3 sm:px-4 py-2 sm:py-3">
                       <div className="flex space-x-1">
                         <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div>
                         <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
@@ -241,20 +241,20 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "one-on-one" }: ChatWindowP
             </ScrollArea>
 
             {/* Input */}
-            <div className="border-t bg-white p-4">
+            <div className="border-t bg-white p-3 sm:p-4">
               <div className="max-w-3xl mx-auto">
-                <div className="flex space-x-3">
+                <div className="flex space-x-2 sm:space-x-3">
                   <Input
                     value={inputMessage}
                     onChange={(e) => setInputMessage(e.target.value)}
                     onKeyPress={handleKeyPress}
                     placeholder={`Message ${selectedBotData?.name}...`}
-                    className="flex-1 rounded-full border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    className="flex-1 rounded-full border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm sm:text-base"
                   />
                   <Button
                     onClick={handleSendMessage}
                     disabled={!inputMessage.trim()}
-                    className="rounded-full bg-blue-500 hover:bg-blue-600 text-white px-4"
+                    className="rounded-full bg-blue-500 hover:bg-blue-600 text-white px-3 sm:px-4 shrink-0"
                   >
                     <Send className="w-4 h-4" />
                   </Button>
