@@ -231,16 +231,21 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "debate" }: ChatWindowProps
 
           {/* Bot Selection */}
           <div className="p-4 border-b border-white/10">
-            <p className="text-sm font-medium text-slate-700 mb-2">Select AI Personalities:</p>
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm font-medium text-slate-700">Select AI Personalities:</p>
+              {selectedBots.length === 0 && (
+                <span className="text-xs text-red-500 animate-pulse">👆 Choose at least one!</span>
+              )}
+            </div>
             <div className="flex flex-wrap gap-2">
               {availableBots.map((bot) => (
                 <Badge
                   key={bot.id}
                   variant={selectedBots.includes(bot.id) ? "default" : "secondary"}
-                  className={`cursor-pointer transition-colors ${
+                  className={`cursor-pointer transition-all duration-200 ${
                     selectedBots.includes(bot.id) 
-                      ? 'bg-purple-500 hover:bg-purple-600' 
-                      : 'hover:bg-slate-200'
+                      ? 'bg-purple-500 hover:bg-purple-600 text-white scale-105' 
+                      : `hover:bg-slate-200 ${selectedBots.length === 0 ? 'animate-pulse' : ''}`
                   }`}
                   onClick={() => {
                     setSelectedBots(prev => 
