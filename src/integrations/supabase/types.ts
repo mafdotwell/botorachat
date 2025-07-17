@@ -88,6 +88,7 @@ export type Database = {
       bots: {
         Row: {
           avatar: string | null
+          billing_interval: string | null
           category: string
           created_at: string | null
           creator_id: string
@@ -110,6 +111,8 @@ export type Database = {
           reference_urls: string[] | null
           review_count: number | null
           status: string | null
+          subscription_duration: number | null
+          subscription_price: number | null
           system_requirements: Json | null
           tags: string[] | null
           tone: string | null
@@ -118,6 +121,7 @@ export type Database = {
         }
         Insert: {
           avatar?: string | null
+          billing_interval?: string | null
           category: string
           created_at?: string | null
           creator_id: string
@@ -140,6 +144,8 @@ export type Database = {
           reference_urls?: string[] | null
           review_count?: number | null
           status?: string | null
+          subscription_duration?: number | null
+          subscription_price?: number | null
           system_requirements?: Json | null
           tags?: string[] | null
           tone?: string | null
@@ -148,6 +154,7 @@ export type Database = {
         }
         Update: {
           avatar?: string | null
+          billing_interval?: string | null
           category?: string
           created_at?: string | null
           creator_id?: string
@@ -170,6 +177,8 @@ export type Database = {
           reference_urls?: string[] | null
           review_count?: number | null
           status?: string | null
+          subscription_duration?: number | null
+          subscription_price?: number | null
           system_requirements?: Json | null
           tags?: string[] | null
           tone?: string | null
@@ -253,35 +262,50 @@ export type Database = {
       purchases: {
         Row: {
           amount: number | null
+          auto_renew: boolean | null
+          billing_cycle: string | null
           bot_id: string
+          current_period_end: string | null
+          current_period_start: string | null
           expires_at: string | null
           id: string
           is_active: boolean | null
           purchase_type: string | null
           purchased_at: string | null
           stripe_payment_id: string | null
+          subscription_status: string | null
           user_id: string
         }
         Insert: {
           amount?: number | null
+          auto_renew?: boolean | null
+          billing_cycle?: string | null
           bot_id: string
+          current_period_end?: string | null
+          current_period_start?: string | null
           expires_at?: string | null
           id?: string
           is_active?: boolean | null
           purchase_type?: string | null
           purchased_at?: string | null
           stripe_payment_id?: string | null
+          subscription_status?: string | null
           user_id: string
         }
         Update: {
           amount?: number | null
+          auto_renew?: boolean | null
+          billing_cycle?: string | null
           bot_id?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
           expires_at?: string | null
           id?: string
           is_active?: boolean | null
           purchase_type?: string | null
           purchased_at?: string | null
           stripe_payment_id?: string | null
+          subscription_status?: string | null
           user_id?: string
         }
         Relationships: [
@@ -322,6 +346,35 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "reviews_bot_id_fkey"
+            columns: ["bot_id"]
+            isOneToOne: false
+            referencedRelation: "bots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wishlists: {
+        Row: {
+          bot_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          bot_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          bot_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wishlists_bot_id_fkey"
             columns: ["bot_id"]
             isOneToOne: false
             referencedRelation: "bots"

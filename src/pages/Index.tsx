@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,13 +9,15 @@ import { Search, Star, Users, Zap, Eye, Heart, MessageSquare, Scale, Clock, Spar
 import BotCard from "@/components/BotCard";
 import Header from "@/components/Header";
 import ChatWindow from "@/components/ChatWindow";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [selectedChatMode, setSelectedChatMode] = useState("");
-
-  const featuredBots = [
+  const [featuredBots, setFeaturedBots] = useState([
     {
       id: "1",
       name: "Dr. Einstein",
@@ -23,11 +25,12 @@ const Index = () => {
       category: "education",
       rating: 4.9,
       price: 9.99,
-      price_type: "one_time",
+      price_type: "subscription", // Updated to subscription
       description: "Physics tutor with Einstein's personality and wit",
       creator_id: "sciencestudio",
       downloads: 12500,
-      isAvr: true
+      isAvr: true,
+      isLiked: false
     },
     {
       id: "2", 
@@ -40,7 +43,8 @@ const Index = () => {
       description: "Empathetic counselor specializing in anxiety and stress",
       creator_id: "wellnessai",
       downloads: 8300,
-      isAvr: true
+      isAvr: true,
+      isLiked: false
     },
     {
       id: "3",
@@ -53,7 +57,8 @@ const Index = () => {
       description: "Swashbuckling storyteller for interactive adventures",
       creator_id: "gamemakers",
       downloads: 25600,
-      isAvr: false
+      isAvr: false,
+      isLiked: false
     },
     {
       id: "4",
@@ -62,13 +67,46 @@ const Index = () => {
       category: "business",
       rating: 4.8,
       price: 29.99,
-      price_type: "one_time",
+      price_type: "subscription", // Updated to subscription
       description: "Strategic business advisor with real-world experience",
       creator_id: "startupguru",
       downloads: 5200,
-      isAvr: true
+      isAvr: true,
+      isLiked: false
     }
-  ];
+  ]);
+
+  // Fetch wishlist data when user changes
+  useEffect(() => {
+    const fetchWishlistData = async () => {
+      if (!user) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from("wishlists")
+          .select("bot_id")
+          .eq("user_id", user.id);
+        
+        if (error) {
+          console.error("Error fetching wishlist:", error);
+          return;
+        }
+        
+        if (data && data.length > 0) {
+          const likedBotIds = new Set(data.map(item => item.bot_id));
+          
+          setFeaturedBots(prev => prev.map(bot => ({
+            ...bot,
+            isLiked: likedBotIds.has(bot.id)
+          })));
+        }
+      } catch (error) {
+        console.error("Error in wishlist fetch:", error);
+      }
+    };
+
+    fetchWishlistData();
+  }, [user]);
 
   const categories = [
     { name: "Education", icon: "📚", count: 1250 },

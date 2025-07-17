@@ -1,10 +1,14 @@
 
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star, Eye, Heart, Download } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 
 interface BotCardProps {
   bot: {
@@ -19,14 +23,61 @@ interface BotCardProps {
     creator_id: string;
     downloads: number;
     isAvr: boolean;
+    isLiked?: boolean;
   };
 }
 
 const BotCard = ({ bot }: BotCardProps) => {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [isLiked, setIsLiked] = useState(bot.isLiked || false);
+  const [isLiking, setIsLiking] = useState(false);
+
   const formatPrice = (price: number | null, priceType: string | null) => {
     if (!price || price === 0) return "Free";
     const formattedPrice = `$${price}`;
     return priceType === 'subscription' ? `${formattedPrice}/mo` : formattedPrice;
+  };
+  
+  const handleLikeToggle = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to add bots to your wishlist",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setIsLiking(true);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('toggle-wishlist', {
+        body: { botId: bot.id },
+      });
+      
+      if (error) throw error;
+      
+      setIsLiked(data.isLiked);
+      toast({
+        title: data.isLiked ? "Added to wishlist" : "Removed from wishlist",
+        description: data.isLiked 
+          ? `${bot.name} has been added to your wishlist` 
+          : `${bot.name} has been removed from your wishlist`,
+      });
+    } catch (error) {
+      console.error("Error toggling wishlist:", error);
+      toast({
+        title: "Action failed",
+        description: "Could not update your wishlist. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLiking(false);
+    }
   };
 
   return (
@@ -81,8 +132,14 @@ const BotCard = ({ bot }: BotCardProps) => {
       <CardFooter className="pt-3 flex items-center justify-between">
         <div className="text-lg font-semibold text-white">{formatPrice(bot.price, bot.price_type)}</div>
         <div className="flex gap-2">
-          <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white hover:bg-white/10 p-2">
-            <Heart className="w-4 h-4" />
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className={`${isLiked ? 'text-red-500' : 'text-slate-400'} hover:text-white hover:bg-white/10 p-2`}
+            onClick={handleLikeToggle}
+            disabled={isLiking}
+          >
+            <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
           </Button>
           <Button asChild variant="ghost" size="sm" className="text-slate-400 hover:text-white hover:bg-white/10 p-2">
             <Link to={`/bot/${bot.id}`}>

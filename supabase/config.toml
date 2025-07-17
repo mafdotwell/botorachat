@@ -1,1 +1,7 @@
 project_id = "uapuhcqwkeyleotyohiv"
+
+[functions.toggle-wishlist]
+verify_jwt = true
+
+[functions.create-subscription]
+verify_jwt = true
