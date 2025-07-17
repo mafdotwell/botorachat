@@ -17,69 +17,122 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [selectedChatMode, setSelectedChatMode] = useState("");
-  const [featuredBots, setFeaturedBots] = useState([
-    {
-      id: "1",
-      name: "Dr. Einstein",
-      avatar: "🧑‍🔬",
-      category: "education",
-      rating: 4.9,
-      price: 9.99,
-      price_type: "subscription", // Updated to subscription
-      description: "Physics tutor with Einstein's personality and wit",
-      creator_id: "sciencestudio",
-      subscribers: 12500,
-      isAvr: true,
-      isLiked: false
-    },
-    {
-      id: "2", 
-      name: "Maya Therapist",
-      avatar: "👩‍⚕️",
-      category: "therapy",
-      rating: 5.0,
-      price: 19.99,
-      price_type: "subscription",
-      description: "Empathetic counselor specializing in anxiety and stress",
-      creator_id: "wellnessai",
-      subscribers: 8300,
-      isAvr: true,
-      isLiked: false
-    },
-    {
-      id: "3",
-      name: "Captain Adventure",
-      avatar: "🏴‍☠️",
-      category: "entertainment", 
-      rating: 4.7,
-      price: 0,
-      price_type: "free",
-      description: "Swashbuckling storyteller for interactive adventures",
-      creator_id: "gamemakers",
-      subscribers: 25600,
-      isAvr: false,
-      isLiked: false
-    },
-    {
-      id: "4",
-      name: "Biz Mentor Pro",
-      avatar: "💼",
-      category: "business",
-      rating: 4.8,
-      price: 29.99,
-      price_type: "subscription", // Updated to subscription
-      description: "Strategic business advisor with real-world experience",
-      creator_id: "startupguru",
-      subscribers: 5200,
-      isAvr: true,
-      isLiked: false
-    }
+  const [featuredBots, setFeaturedBots] = useState<any[]>([]);
+  const [stats, setStats] = useState({
+    totalBots: 0,
+    totalCreators: 0,
+    totalSubscribers: 0,
+    satisfaction: 98
+  });
+  const [categories, setCategories] = useState([
+    { name: "Education", icon: "📚", count: 0 },
+    { name: "Entertainment", icon: "🎭", count: 0 },
+    { name: "Therapy", icon: "💚", count: 0 },
+    { name: "Business", icon: "💼", count: 0 }
   ]);
+
+  // Fetch data from database on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch published bots
+        const { data: botsData, error: botsError } = await supabase
+          .from('bots')
+          .select('*')
+          .eq('is_published', true)
+          .order('download_count', { ascending: false })
+          .limit(4);
+
+        if (botsError) {
+          console.error('Error fetching bots:', botsError);
+          return;
+        }
+
+        // Format bots data for BotCard component
+        if (botsData) {
+          const formattedBots = botsData.map(bot => ({
+            id: bot.id,
+            name: bot.name,
+            avatar: bot.avatar || '🤖',
+            category: bot.category,
+            rating: bot.rating || 0,
+            price: bot.price || 0,
+            price_type: bot.price_type || 'free',
+            description: bot.description || '',
+            creator_id: bot.creator_id,
+            subscribers: bot.download_count || 0,
+            isAvr: bot.is_avr_compatible || false,
+            isLiked: false
+          }));
+          setFeaturedBots(formattedBots);
+        }
+
+        // Fetch stats
+        const { data: allBots, error: statsError } = await supabase
+          .from('bots')
+          .select('download_count')
+          .eq('is_published', true);
+
+        if (!statsError && allBots) {
+          const totalBots = allBots.length;
+          const totalSubscribers = allBots.reduce((sum, bot) => sum + (bot.download_count || 0), 0);
+          
+          setStats(prev => ({
+            ...prev,
+            totalBots,
+            totalSubscribers
+          }));
+        }
+
+        // Fetch creators count
+        const { data: creatorsData, error: creatorsError } = await supabase
+          .from('creators')
+          .select('id');
+
+        if (!creatorsError && creatorsData) {
+          setStats(prev => ({
+            ...prev,
+            totalCreators: creatorsData.length
+          }));
+        }
+
+        // Fetch category counts
+        const categoryNames = ['education', 'entertainment', 'therapy', 'business'];
+        const categoryCounts = await Promise.all(
+          categoryNames.map(async (categoryName) => {
+            const { data, error } = await supabase
+              .from('bots')
+              .select('id')
+              .eq('category', categoryName)
+              .eq('is_published', true);
+            
+            return {
+              name: categoryName.charAt(0).toUpperCase() + categoryName.slice(1),
+              count: error ? 0 : (data?.length || 0)
+            };
+          })
+        );
+
+        setCategories(prev => prev.map(cat => {
+          const categoryData = categoryCounts.find(c => c.name === cat.name);
+          return {
+            ...cat,
+            count: categoryData ? categoryData.count : 0
+          };
+        }));
+
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   // Fetch wishlist data when user changes
   useEffect(() => {
     const fetchWishlistData = async () => {
-      if (!user) return;
+      if (!user || featuredBots.length === 0) return;
       
       try {
         const { data, error } = await supabase
@@ -106,14 +159,8 @@ const Index = () => {
     };
 
     fetchWishlistData();
-  }, [user]);
+  }, [user, featuredBots.length]);
 
-  const categories = [
-    { name: "Education", icon: "📚", count: 1250 },
-    { name: "Entertainment", icon: "🎭", count: 890 },
-    { name: "Therapy", icon: "💚", count: 640 },
-    { name: "Business", icon: "💼", count: 430 }
-  ];
 
   const chatExperiences = [
     {
@@ -240,19 +287,19 @@ const Index = () => {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-3xl font-bold text-white mb-2">15,000+</div>
+              <div className="text-3xl font-bold text-white mb-2">{stats.totalBots.toLocaleString()}+</div>
               <div className="text-slate-400">AI Personalities</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-white mb-2">5,000+</div>
+              <div className="text-3xl font-bold text-white mb-2">{stats.totalCreators.toLocaleString()}+</div>
               <div className="text-slate-400">Creators</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-white mb-2">250K+</div>
-              <div className="text-slate-400">Downloads</div>
+              <div className="text-3xl font-bold text-white mb-2">{stats.totalSubscribers.toLocaleString()}+</div>
+              <div className="text-slate-400">Subscriptions</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-white mb-2">98%</div>
+              <div className="text-3xl font-bold text-white mb-2">{stats.satisfaction}%</div>
               <div className="text-slate-400">Satisfaction</div>
             </div>
           </div>
