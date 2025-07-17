@@ -157,7 +157,7 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse }: 
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 h-full bg-background border-r border-border
+          fixed top-0 left-0 h-full bg-background border-r border-border flex flex-col
           transform transition-all duration-300 ease-in-out z-50
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
           lg:translate-x-0 lg:relative lg:z-auto
@@ -168,7 +168,7 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse }: 
         aria-label="Main navigation"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-border">
+        <div className="flex items-center justify-between p-4 border-b border-border flex-shrink-0">
           {!isCollapsed && <h2 className="text-lg font-semibold text-foreground">Botora</h2>}
           {isCollapsed && <div className="text-lg">🤖</div>}
           <div className="flex gap-1">
@@ -196,7 +196,7 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse }: 
         </div>
 
         {/* Main navigation */}
-        <div className="p-4 space-y-2">
+        <div className="p-4 space-y-2 flex-shrink-0">
           <Button 
             className={`w-full bg-primary hover:bg-primary/90 ${isCollapsed ? 'justify-center' : 'justify-start gap-2'}`}
             onClick={() => navigate('/')}
@@ -231,7 +231,7 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse }: 
 
         {/* Activity Stats */}
         {user && !isCollapsed && (
-          <div className="px-4 mb-4">
+          <div className="px-4 mb-4 flex-shrink-0">
             <div className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wider">
               Quick Stats
             </div>
@@ -261,7 +261,7 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse }: 
         )}
 
         {/* Scrollable content */}
-        <ScrollArea className="flex-1 px-4">
+        <div className="flex-1 overflow-y-auto px-4 min-h-0">
           {user && !isCollapsed && (
             <>
               {/* Recent Activity Section */}
@@ -373,10 +373,10 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse }: 
               <Activity className="h-6 w-6 mx-auto text-muted-foreground" />
             </div>
           )}
-        </ScrollArea>
+        </div>
 
         {/* Bottom navigation */}
-        <div className="border-t border-border p-4 space-y-1">
+        <div className="border-t border-border p-4 space-y-1 flex-shrink-0">
           <Button
             variant="ghost"
             className={`w-full text-muted-foreground hover:text-foreground ${isCollapsed ? 'justify-center' : 'justify-start gap-2'}`}

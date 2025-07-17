@@ -45,7 +45,7 @@ const AppContent = () => {
   }
   
   return (
-    <div className="min-h-screen flex w-full bg-background">
+    <div className="h-screen flex w-full bg-background overflow-hidden">
       <AppSidebar 
         isOpen={sidebarOpen} 
         onToggle={toggleSidebar}
@@ -53,15 +53,15 @@ const AppContent = () => {
         onToggleCollapse={toggleSidebarCollapse}
       />
       
-      <div className="flex-1 flex flex-col lg:ml-0">
+      <div className="flex-1 flex flex-col min-w-0">
         {/* Mobile header with hamburger */}
-        <div className="lg:hidden flex items-center justify-between p-4 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-30">
+        <header className="lg:hidden flex items-center justify-between p-4 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-30 flex-shrink-0">
           <SidebarToggle isOpen={sidebarOpen} onToggle={toggleSidebar} />
           <h1 className="text-lg font-semibold">Botora</h1>
           <div className="w-10" /> {/* Spacer for centering */}
-        </div>
+        </header>
 
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden">
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/marketplace" element={<Marketplace />} />
