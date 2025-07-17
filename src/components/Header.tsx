@@ -19,9 +19,9 @@ const Header = ({ onChatToggle }: HeaderProps) => {
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">E</span>
+              <span className="text-white font-bold text-xl">B</span>
             </div>
-            <span className="text-2xl font-bold text-white">EchoVerse</span>
+            <span className="text-2xl font-bold text-white">Botora</span>
           </Link>
 
           <nav className="hidden md:flex items-center space-x-8">

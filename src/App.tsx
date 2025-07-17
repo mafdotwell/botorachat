@@ -6,6 +6,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { useCrossAppAuth } from "@/hooks/useCrossAppAuth";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/AppSidebar";
 import Index from "./pages/Index";
 import Marketplace from "./pages/Marketplace";
 import BotDetails from "./pages/BotDetails";
@@ -33,38 +35,48 @@ const AppContent = () => {
   }
   
   return (
-    <Routes>
-      <Route path="/" element={<Index />} />
-      <Route path="/marketplace" element={<Marketplace />} />
-      <Route path="/bot/:id" element={<BotDetails />} />
-      <Route path="/creator/:id" element={<CreatorProfile />} />
-      <Route path="/creator" element={
-        <ProtectedRoute>
-          <CreatorStudio />
-        </ProtectedRoute>
-      } />
-      <Route path="/creator/new-bot" element={
-        <ProtectedRoute>
-          <CreateBot />
-        </ProtectedRoute>
-      } />
-      <Route path="/creator/edit-bot/:id" element={
-        <ProtectedRoute>
-          <CreateBot />
-        </ProtectedRoute>
-      } />
-      <Route path="/auth" element={
-        <PublicRoute>
-          <Auth />
-        </PublicRoute>
-      } />
-      <Route path="/profile" element={
-        <ProtectedRoute>
-          <UserProfile />
-        </ProtectedRoute>
-      } />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <AppSidebar />
+        <main className="flex-1">
+          <div className="sticky top-0 z-50 h-12 flex items-center border-b border-white/10 backdrop-blur-md bg-black/20">
+            <SidebarTrigger className="ml-4 text-white hover:bg-white/10" />
+          </div>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/marketplace" element={<Marketplace />} />
+            <Route path="/bot/:id" element={<BotDetails />} />
+            <Route path="/creator/:id" element={<CreatorProfile />} />
+            <Route path="/creator" element={
+              <ProtectedRoute>
+                <CreatorStudio />
+              </ProtectedRoute>
+            } />
+            <Route path="/creator/new-bot" element={
+              <ProtectedRoute>
+                <CreateBot />
+              </ProtectedRoute>
+            } />
+            <Route path="/creator/edit-bot/:id" element={
+              <ProtectedRoute>
+                <CreateBot />
+              </ProtectedRoute>
+            } />
+            <Route path="/auth" element={
+              <PublicRoute>
+                <Auth />
+              </PublicRoute>
+            } />
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <UserProfile />
+              </ProtectedRoute>
+            } />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+      </div>
+    </SidebarProvider>
   );
 };
 
