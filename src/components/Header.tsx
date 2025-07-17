@@ -21,7 +21,7 @@ const Header = ({ onChatToggle }: HeaderProps) => {
             <img 
               src="/lovable-uploads/968a6fad-b2c2-479b-ab85-0fa7f903d03b.png" 
               alt="Botora Logo" 
-              className="w-10 h-10"
+              className="w-10 h-10 rounded-lg bg-white/10 p-1"
             />
             <span className="text-2xl font-bold text-white">Botora</span>
           </Link>
@@ -33,9 +33,6 @@ const Header = ({ onChatToggle }: HeaderProps) => {
                 Creator Studio
               </Link>
             )}
-            <Link to="/docs" className="text-slate-300 hover:text-white transition-colors">
-              Documentation
-            </Link>
           </nav>
 
           <div className="flex items-center space-x-4">
