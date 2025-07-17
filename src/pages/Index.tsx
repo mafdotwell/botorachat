@@ -123,7 +123,7 @@ const Index = () => {
           <div className="mb-8">
             <Badge className="mb-4 bg-purple-500/20 text-purple-300 border-purple-500/30">
               <Zap className="w-4 h-4 mr-1" />
-              Next-Gen AI Marketplace
+              Next-Gen AI Personality Hub
             </Badge>
           </div>
           <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-purple-200 to-cyan-200 bg-clip-text text-transparent">
