@@ -199,11 +199,11 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse }: 
         <div className="p-4 space-y-2 flex-shrink-0">
           <Button 
             className={`w-full bg-primary hover:bg-primary/90 ${isCollapsed ? 'justify-center' : 'justify-start gap-2'}`}
-            onClick={() => navigate('/')}
-            aria-label="Home"
+            onClick={() => navigate('/marketplace')}
+            aria-label="New Chat"
           >
-            <Plus className="h-4 w-4" />
-            {!isCollapsed && "Home"}
+            <MessageSquare className="h-4 w-4" />
+            {!isCollapsed && "New Chat"}
           </Button>
           
           <Button 
