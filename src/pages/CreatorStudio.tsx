@@ -269,7 +269,17 @@ const CreatorStudio = () => {
                   <Card key={bot.id} className="bg-white/5 border-white/10 backdrop-blur-sm hover:bg-white/10 transition-colors">
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between mb-4">
-                        <div className="text-2xl">{bot.avatar || '🤖'}</div>
+                        <div className="w-10 h-10">
+                          {bot.avatar && bot.avatar.startsWith('http') ? (
+                            <img 
+                              src={bot.avatar} 
+                              alt={bot.name} 
+                              className="w-10 h-10 rounded-full object-cover"
+                            />
+                          ) : (
+                            <div className="text-2xl">{bot.avatar || '🤖'}</div>
+                          )}
+                        </div>
                         <div className="flex gap-2">
                           <Badge 
                             variant={bot.is_published ? "default" : "secondary"}

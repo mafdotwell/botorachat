@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star, Eye, Heart, Download } from "lucide-react";
 
 interface BotCardProps {
@@ -32,7 +33,15 @@ const BotCard = ({ bot }: BotCardProps) => {
     <Card className="bg-white/5 border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-105 cursor-pointer backdrop-blur-sm group">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between mb-3">
-          <div className="text-4xl">{bot.avatar}</div>
+          <Avatar className="w-12 h-12">
+            {bot.avatar && bot.avatar.startsWith('http') ? (
+              <AvatarImage src={bot.avatar} alt={bot.name} />
+            ) : (
+              <AvatarFallback className="text-2xl bg-white/10 border-white/20">
+                {bot.avatar || '🤖'}
+              </AvatarFallback>
+            )}
+          </Avatar>
           <div className="flex gap-2">
             {bot.isAvr && (
               <Badge className="bg-cyan-500/20 text-cyan-300 border-cyan-500/30 text-xs">

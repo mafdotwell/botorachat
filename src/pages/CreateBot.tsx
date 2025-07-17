@@ -378,6 +378,31 @@ const CreateBot = () => {
                 </Select>
               </div>
 
+              {/* Publishing Settings */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-white">Publishing Settings</h3>
+                
+                <div className="flex items-start space-x-3 p-4 rounded-lg bg-white/5 border border-white/10">
+                  <div className="mt-1">
+                    <Switch
+                      id="is-published"
+                      checked={formData.is_published}
+                      onCheckedChange={(checked) => handleInputChange('is_published', checked)}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="is-published" className="text-white font-medium cursor-pointer">
+                      Publish Bot
+                    </Label>
+                    <p className="text-sm text-slate-400">
+                      {formData.is_published 
+                        ? "Your bot is public and visible in the marketplace" 
+                        : "Your bot is private and only visible to you"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               <Separator className="bg-white/20" />
 
               {/* Advanced Abilities */}
@@ -624,17 +649,6 @@ const CreateBot = () => {
                   <Switch
                     checked={formData.is_avr_compatible}
                     onCheckedChange={(checked) => handleInputChange('is_avr_compatible', checked)}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label className="text-white">Publish Bot</Label>
-                    <p className="text-sm text-slate-400">Make your bot visible in the marketplace</p>
-                  </div>
-                  <Switch
-                    checked={formData.is_published}
-                    onCheckedChange={(checked) => handleInputChange('is_published', checked)}
                   />
                 </div>
               </div>
