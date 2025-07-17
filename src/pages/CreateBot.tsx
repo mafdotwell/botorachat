@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, Save, Eye, Plus, Trash2, FileText, Mic } from "lucide-react";
+import { ArrowLeft, Save, Eye, Plus, Trash2, FileText, Mic, Sparkles } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -74,6 +74,8 @@ const CreateBot = () => {
   const { id } = useParams();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [generatingDescription, setGeneratingDescription] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<{[key: string]: string}>({});
   const [formData, setFormData] = useState<BotFormData>({
     name: "",
     description: "",
@@ -169,8 +171,77 @@ const CreateBot = () => {
     }
   };
 
+  const generateDescription = async () => {
+    if (!formData.category) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please select a category first"
+      });
+      return;
+    }
+
+    setGeneratingDescription(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-bot-description', {
+        body: {
+          category: formData.category,
+          existingDescription: formData.description
+        }
+      });
+
+      if (error) throw error;
+
+      if (data.description) {
+        handleInputChange('description', data.description);
+        toast({
+          title: "Success",
+          description: "AI description generated successfully!"
+        });
+      }
+    } catch (error) {
+      console.error('Error generating description:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to generate description. Please try again."
+      });
+    } finally {
+      setGeneratingDescription(false);
+    }
+  };
+
+  const validateRequiredFields = () => {
+    const errors: {[key: string]: string} = {};
+    
+    if (!formData.name.trim()) {
+      errors.name = "Bot name is required";
+    }
+    
+    if (!formData.category) {
+      errors.category = "Category is required";
+    }
+    
+    if (!formData.description.trim()) {
+      errors.description = "Description is required";
+    }
+    
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateRequiredFields()) {
+      toast({
+        variant: "destructive",
+        title: "Validation Error",
+        description: "Please fill in all required fields"
+      });
+      return;
+    }
+    
     setLoading(true);
 
     try {
@@ -339,6 +410,9 @@ const CreateBot = () => {
                     className="bg-white/10 border-white/20 text-white placeholder:text-slate-400"
                     required
                   />
+                  {validationErrors.name && (
+                    <p className="text-sm text-red-400">{validationErrors.name}</p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -350,21 +424,8 @@ const CreateBot = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description" className="text-white">Description *</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => handleInputChange('description', e.target.value)}
-                  placeholder="Describe your bot's personality and capabilities"
-                  rows={4}
-                  className="bg-white/10 border-white/20 text-white placeholder:text-slate-400 resize-none"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
                 <Label htmlFor="category" className="text-white">Category *</Label>
-                <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)}>
+                <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)} required>
                   <SelectTrigger className="bg-white/10 border-white/20 text-white">
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
@@ -376,6 +437,43 @@ const CreateBot = () => {
                     ))}
                   </SelectContent>
                 </Select>
+                {validationErrors.category && (
+                  <p className="text-sm text-red-400">{validationErrors.category}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="description" className="text-white">Description *</Label>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={generateDescription}
+                    disabled={generatingDescription || !formData.category}
+                    className="border-white/20 text-white hover:bg-white/10 text-xs"
+                  >
+                    <Sparkles className="w-3 h-3 mr-1" />
+                    {generatingDescription ? 'Generating...' : 'Generate with AI'}
+                  </Button>
+                </div>
+                <Textarea
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) => handleInputChange('description', e.target.value)}
+                  placeholder={formData.category ? `Describe your ${formData.category.toLowerCase()} bot's personality and capabilities` : "Select a category first, then describe your bot's personality and capabilities"}
+                  rows={4}
+                  className="bg-white/10 border-white/20 text-white placeholder:text-slate-400 resize-none"
+                  required
+                />
+                <div className="flex justify-between items-center">
+                  {validationErrors.description && (
+                    <p className="text-sm text-red-400">{validationErrors.description}</p>
+                  )}
+                  <p className="text-sm text-slate-400 ml-auto">
+                    {formData.description.length}/500 characters
+                  </p>
+                </div>
               </div>
 
               {/* Publishing Settings */}
