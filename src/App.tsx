@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -6,8 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { useCrossAppAuth } from "@/hooks/useCrossAppAuth";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
+import { AppSidebar, SidebarToggle } from "@/components/AppSidebar";
 import Index from "./pages/Index";
 import Marketplace from "./pages/Marketplace";
 import BotDetails from "./pages/BotDetails";
@@ -22,6 +22,11 @@ const queryClient = new QueryClient();
 
 const AppContent = () => {
   const { isHandlingAuth } = useCrossAppAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
   
   if (isHandlingAuth) {
     return (
@@ -35,13 +40,18 @@ const AppContent = () => {
   }
   
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        <AppSidebar />
-        <main className="flex-1">
-          <div className="sticky top-0 z-50 h-12 flex items-center border-b border-white/10 backdrop-blur-md bg-black/20">
-            <SidebarTrigger className="ml-4 text-white hover:bg-white/10" />
-          </div>
+    <div className="min-h-screen flex w-full bg-background">
+      <AppSidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
+      
+      <div className="flex-1 flex flex-col lg:ml-0">
+        {/* Mobile header with hamburger */}
+        <div className="lg:hidden flex items-center justify-between p-4 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-30">
+          <SidebarToggle isOpen={sidebarOpen} onToggle={toggleSidebar} />
+          <h1 className="text-lg font-semibold">Botora</h1>
+          <div className="w-10" /> {/* Spacer for centering */}
+        </div>
+
+        <main className="flex-1 overflow-auto">
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/marketplace" element={<Marketplace />} />
@@ -76,7 +86,7 @@ const AppContent = () => {
           </Routes>
         </main>
       </div>
-    </SidebarProvider>
+    </div>
   );
 };
 
