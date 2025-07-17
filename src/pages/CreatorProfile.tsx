@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Star, Users, Heart, Eye, Calendar, MapPin, Link as LinkIcon } from "lucide-react";
-import Header from "@/components/Header";
+
 import BotCard from "@/components/BotCard";
 
 const CreatorProfile = () => {
@@ -94,7 +94,6 @@ const CreatorProfile = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      <Header />
       
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Profile Header */}

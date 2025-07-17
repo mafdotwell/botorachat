@@ -14,7 +14,9 @@ import {
   Activity,
   ChevronLeft,
   ChevronRight,
-  Store
+  Store,
+  Heart,
+  Palette
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -36,9 +38,10 @@ interface AppSidebarProps {
   onToggle: () => void;
   isCollapsed: boolean;
   onToggleCollapse: () => void;
+  onChatToggle?: () => void;
 }
 
-export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse }: AppSidebarProps) {
+export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse, onChatToggle }: AppSidebarProps) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [activity, setActivity] = useState<UserActivity>({
@@ -197,14 +200,16 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse }: 
 
         {/* Main navigation */}
         <div className="p-4 space-y-2 flex-shrink-0">
-          <Button 
-            className={`w-full bg-primary hover:bg-primary/90 ${isCollapsed ? 'justify-center' : 'justify-start gap-2'}`}
-            onClick={() => navigate('/marketplace')}
-            aria-label="New Chat"
-          >
-            <MessageSquare className="h-4 w-4" />
-            {!isCollapsed && "New Chat"}
-          </Button>
+          {onChatToggle && (
+            <Button 
+              className={`w-full bg-primary hover:bg-primary/90 ${isCollapsed ? 'justify-center' : 'justify-start gap-2'}`}
+              onClick={onChatToggle}
+              aria-label="Chat"
+            >
+              <MessageSquare className="h-4 w-4" />
+              {!isCollapsed && "Chat"}
+            </Button>
+          )}
           
           <Button 
             variant="ghost"
@@ -215,6 +220,16 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse }: 
             <Store className="h-4 w-4" />
             {!isCollapsed && "Marketplace"}
           </Button>
+
+          <Button 
+            variant="ghost"
+            className={`w-full text-muted-foreground hover:text-foreground ${isCollapsed ? 'justify-center' : 'justify-start gap-2'}`}
+            onClick={() => {/* TODO: Implement wishlist */}}
+            aria-label="Wishlist"
+          >
+            <Heart className="h-4 w-4" />
+            {!isCollapsed && "Wishlist"}
+          </Button>
           
           {user && (
             <Button 
@@ -223,7 +238,7 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse }: 
               onClick={() => navigate('/creator')}
               aria-label="Creator Studio"
             >
-              <Bot className="h-4 w-4" />
+              <Palette className="h-4 w-4" />
               {!isCollapsed && "Creator Studio"}
             </Button>
           )}
@@ -397,15 +412,28 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse }: 
             <HelpCircle className="h-4 w-4" />
             {!isCollapsed && "Help & Support"}
           </Button>
-          <Button
-            variant="ghost"
-            className={`w-full text-muted-foreground hover:text-foreground ${isCollapsed ? 'justify-center' : 'justify-start gap-2'}`}
-            onClick={() => navigate('/profile')}
-            aria-label="Profile"
-          >
-            <User className="h-4 w-4" />
-            {!isCollapsed && "Profile"}
-          </Button>
+          
+          {user ? (
+            <Button
+              variant="ghost"
+              className={`w-full text-muted-foreground hover:text-foreground ${isCollapsed ? 'justify-center' : 'justify-start gap-2'}`}
+              onClick={() => navigate('/profile')}
+              aria-label="Profile"
+            >
+              <User className="h-4 w-4" />
+              {!isCollapsed && "Profile"}
+            </Button>
+          ) : (
+            <Button
+              variant="ghost"
+              className={`w-full text-muted-foreground hover:text-foreground ${isCollapsed ? 'justify-center' : 'justify-start gap-2'}`}
+              onClick={() => navigate('/auth')}
+              aria-label="Sign In"
+            >
+              <User className="h-4 w-4" />
+              {!isCollapsed && "Sign In"}
+            </Button>
+          )}
         </div>
       </aside>
     </>

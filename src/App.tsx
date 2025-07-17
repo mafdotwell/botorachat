@@ -7,7 +7,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { useCrossAppAuth } from "@/hooks/useCrossAppAuth";
-import { AppSidebar, SidebarToggle } from "@/components/AppSidebar";
+import { AppSidebar } from "@/components/AppSidebar";
+import Header from "@/components/Header";
 import Index from "./pages/Index";
 import Marketplace from "./pages/Marketplace";
 import BotDetails from "./pages/BotDetails";
@@ -24,6 +25,7 @@ const AppContent = () => {
   const { isHandlingAuth } = useCrossAppAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -31,6 +33,10 @@ const AppContent = () => {
 
   const toggleSidebarCollapse = () => {
     setSidebarCollapsed(!sidebarCollapsed);
+  };
+
+  const toggleChat = () => {
+    setIsChatOpen(!isChatOpen);
   };
   
   if (isHandlingAuth) {
@@ -51,26 +57,15 @@ const AppContent = () => {
         onToggle={toggleSidebar}
         isCollapsed={sidebarCollapsed}
         onToggleCollapse={toggleSidebarCollapse}
+        onChatToggle={toggleChat}
       />
       
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Mobile header with hamburger */}
-        <header className="lg:hidden flex items-center justify-between p-4 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-20 flex-shrink-0">
-          <SidebarToggle isOpen={sidebarOpen} onToggle={toggleSidebar} />
-          <div className="flex items-center space-x-2">
-            <img 
-              src="/lovable-uploads/968a6fad-b2c2-479b-ab85-0fa7f903d03b.png" 
-              alt="Botora Logo" 
-              className="w-6 h-6"
-            />
-            <h1 className="text-lg font-semibold">Botora</h1>
-          </div>
-          <div className="w-10" /> {/* Spacer for centering */}
-        </header>
+        <Header onSidebarToggle={toggleSidebar} />
 
         <main className="flex-1 overflow-y-auto overflow-x-hidden">
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<Index isChatOpen={isChatOpen} onChatToggle={toggleChat} />} />
             <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/bot/:id" element={<BotDetails />} />
             <Route path="/creator/:id" element={<CreatorProfile />} />

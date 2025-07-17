@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star, Heart, Users, Share, Play, MessageSquare, Eye, User, AlertCircle, Loader2 } from "lucide-react";
-import Header from "@/components/Header";
+
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
 
@@ -209,7 +209,6 @@ const BotDetails = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      <Header />
       
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Breadcrumb */}

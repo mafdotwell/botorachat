@@ -13,7 +13,7 @@ import { ArrowLeft, Save, Eye, Plus, Trash2, FileText, Mic, Sparkles } from "luc
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import Header from "@/components/Header";
+
 import AvatarUpload from "@/components/AvatarUpload";
 import DocumentUpload from "@/components/DocumentUpload";
 import VoiceSelector from "@/components/VoiceSelector";
@@ -376,7 +376,6 @@ const CreateBot = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      <Header />
       
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="flex items-center gap-4 mb-8">

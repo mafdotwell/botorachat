@@ -7,15 +7,18 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Search, Star, Users, Zap, Eye, Heart, MessageSquare, Scale, Clock, Sparkles, Rocket } from "lucide-react";
 import BotCard from "@/components/BotCard";
-import Header from "@/components/Header";
 import ChatWindow from "@/components/ChatWindow";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
-const Index = () => {
+interface IndexProps {
+  isChatOpen: boolean;
+  onChatToggle: () => void;
+}
+
+const Index = ({ isChatOpen, onChatToggle }: IndexProps) => {
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
-  const [isChatOpen, setIsChatOpen] = useState(false);
   const [selectedChatMode, setSelectedChatMode] = useState("");
   const [featuredBots, setFeaturedBots] = useState<any[]>([]);
   const [stats, setStats] = useState({
@@ -195,12 +198,11 @@ const Index = () => {
 
   const handleChatExperienceSelect = (mode: string) => {
     setSelectedChatMode(mode);
-    setIsChatOpen(true);
+    onChatToggle();
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      <Header onChatToggle={() => setIsChatOpen(!isChatOpen)} />
       
       {/* Hero Section */}
       <section className="relative py-20 px-4">
@@ -271,7 +273,7 @@ const Index = () => {
 
           <div className="text-center">
             <Button 
-              onClick={() => setIsChatOpen(true)}
+              onClick={onChatToggle}
               size="lg" 
               className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white px-8 py-3"
             >
@@ -366,7 +368,7 @@ const Index = () => {
       {/* Chat Window */}
       <ChatWindow 
         isOpen={isChatOpen} 
-        onClose={() => setIsChatOpen(false)}
+        onClose={onChatToggle}
         initialMode={selectedChatMode}
       />
     </div>

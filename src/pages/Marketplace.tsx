@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, Filter, Grid, List } from "lucide-react";
-import Header from "@/components/Header";
+
 import BotCard from "@/components/BotCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -100,7 +100,6 @@ const Marketplace = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-        <Header />
         <div className="flex items-center justify-center py-20">
           <div className="text-white">Loading marketplace...</div>
         </div>
@@ -110,7 +109,6 @@ const Marketplace = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      <Header />
       
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
