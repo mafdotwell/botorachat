@@ -37,21 +37,14 @@ const Marketplace = () => {
 
   const categories = [
     "all", 
-    "education", 
-    "entertainment", 
-    "therapy", 
-    "business", 
-    "healthcare", 
-    "fitness", 
-    "productivity", 
-    "gaming", 
-    "social", 
-    "finance", 
-    "travel", 
-    "cooking", 
-    "art", 
-    "music", 
-    "sports"
+    "Education", 
+    "Entertainment", 
+    "Productivity",
+    "Health & Fitness", 
+    "Business", 
+    "Creative", 
+    "Technical", 
+    "Lifestyle"
   ];
   
   const sortOptions = ["popular", "rating", "price-low", "price-high", "newest"];
@@ -100,7 +93,7 @@ const Marketplace = () => {
   const filteredBots = bots.filter(bot => {
     const matchesSearch = bot.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          (bot.description && bot.description.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesCategory = selectedCategory === "all" || bot.category.toLowerCase() === selectedCategory;
+    const matchesCategory = selectedCategory === "all" || bot.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 

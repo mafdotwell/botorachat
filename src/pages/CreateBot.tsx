@@ -225,7 +225,7 @@ const CreateBot = () => {
 
       toast({
         title: "Success",
-        description: `Bot ${isEditing ? 'updated' : 'created'} successfully`
+        description: `Bot ${isEditing ? 'updated' : 'created'} successfully${!isEditing ? '. You can publish it from Creator Studio to make it visible in the marketplace.' : ''}`
       });
 
       navigate('/creator');
