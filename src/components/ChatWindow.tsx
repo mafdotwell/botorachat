@@ -3,8 +3,10 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, X, ArrowLeft } from "lucide-react";
+import { Send, X, ArrowLeft, Loader2 } from "lucide-react";
 import { useChatAI } from "@/hooks/useChatAI";
+import { supabase } from "@/integrations/supabase/client";
+import { Tables } from "@/integrations/supabase/types";
 
 interface ChatMessage {
   id: string;
@@ -27,19 +29,10 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "one-on-one" }: ChatWindowP
   const [selectedBot, setSelectedBot] = useState<string>("");
   const [isTyping, setIsTyping] = useState(false);
   const [showBotSelector, setShowBotSelector] = useState(true);
+  const [availableBots, setAvailableBots] = useState<Tables<'bots'>[]>([]);
+  const [loadingBots, setLoadingBots] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { sendMessage } = useChatAI();
-
-  const availableBots = [
-    { id: "einstein", name: "Dr. Einstein", avatar: "🧑‍🔬", description: "Brilliant physicist with curiosity about the universe" },
-    { id: "maya", name: "Maya Therapist", avatar: "👩‍⚕️", description: "Compassionate therapist for emotional support" },
-    { id: "captain", name: "Captain Adventure", avatar: "🏴‍☠️", description: "Swashbuckling pirate with exciting tales" },
-    { id: "mentor", name: "Biz Mentor Pro", avatar: "💼", description: "Strategic business advisor and mentor" },
-    { id: "tesla", name: "Tesla Inventor", avatar: "⚡", description: "Visionary inventor passionate about technology" },
-    { id: "curie", name: "Marie Curie", avatar: "🧪", description: "Pioneering scientist and Nobel Prize winner" },
-    { id: "shakespeare", name: "Shakespeare", avatar: "🎭", description: "Master playwright and poet" },
-    { id: "lincoln", name: "Abraham Lincoln", avatar: "🎩", description: "16th President with wisdom about leadership" }
-  ];
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -48,6 +41,35 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "one-on-one" }: ChatWindowP
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Fetch bots from database
+  useEffect(() => {
+    const fetchBots = async () => {
+      try {
+        setLoadingBots(true);
+        const { data: bots, error } = await supabase
+          .from('bots')
+          .select('*')
+          .eq('is_published', true)
+          .order('download_count', { ascending: false })
+          .limit(20);
+
+        if (error) {
+          console.error('Error fetching bots:', error);
+        } else {
+          setAvailableBots(bots || []);
+        }
+      } catch (error) {
+        console.error('Error fetching bots:', error);
+      } finally {
+        setLoadingBots(false);
+      }
+    };
+
+    if (isOpen) {
+      fetchBots();
+    }
+  }, [isOpen]);
 
   const getAIResponse = async (userMessage: string, botId: string) => {
     const bot = availableBots.find(b => b.id === botId);
@@ -62,7 +84,7 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "one-on-one" }: ChatWindowP
         id: Date.now().toString() + bot.id,
         sender: 'bot',
         botName: bot.name,
-        botAvatar: bot.avatar,
+        botAvatar: bot.avatar || '🤖',
         content: response,
         timestamp: new Date()
       };
@@ -74,7 +96,7 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "one-on-one" }: ChatWindowP
         id: Date.now().toString() + bot.id,
         sender: 'bot',
         botName: bot.name,
-        botAvatar: bot.avatar,
+        botAvatar: bot.avatar || '🤖',
         content: "I'm sorry, I'm having trouble responding right now. Please try again later.",
         timestamp: new Date()
       };
@@ -162,23 +184,42 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "one-on-one" }: ChatWindowP
           /* Bot Selection Screen */
           <div className="flex-1 p-3 sm:p-6 overflow-y-auto">
             <div className="max-w-2xl mx-auto">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                {availableBots.map((bot) => (
-                  <div
-                    key={bot.id}
-                    onClick={() => selectBot(bot.id)}
-                    className="p-3 sm:p-4 border rounded-lg hover:bg-slate-50 cursor-pointer transition-colors"
-                  >
-                    <div className="flex items-start space-x-3">
-                      <span className="text-2xl sm:text-3xl shrink-0">{bot.avatar}</span>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-slate-800 text-sm sm:text-base truncate">{bot.name}</h3>
-                        <p className="text-xs sm:text-sm text-slate-600 mt-1 line-clamp-2">{bot.description}</p>
+              {loadingBots ? (
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
+                  <span className="ml-2 text-slate-600">Loading personalities...</span>
+                </div>
+              ) : availableBots.length === 0 ? (
+                <div className="text-center py-12">
+                  <p className="text-slate-600">No personality bots available yet.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                  {availableBots.map((bot) => (
+                    <div
+                      key={bot.id}
+                      onClick={() => selectBot(bot.id)}
+                      className="p-3 sm:p-4 border rounded-lg hover:bg-slate-50 cursor-pointer transition-colors"
+                    >
+                      <div className="flex items-start space-x-3">
+                        <span className="text-2xl sm:text-3xl shrink-0">{bot.avatar || '🤖'}</span>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold text-slate-800 text-sm sm:text-base truncate">{bot.name}</h3>
+                          <p className="text-xs sm:text-sm text-slate-600 mt-1 line-clamp-2">{bot.description}</p>
+                          <div className="flex items-center mt-2 space-x-2">
+                            <span className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">{bot.category}</span>
+                            {bot.price && bot.price > 0 ? (
+                              <span className="text-xs text-green-600 font-medium">${bot.price}</span>
+                            ) : (
+                              <span className="text-xs text-blue-600 font-medium">Free</span>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         ) : (
@@ -189,7 +230,7 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "one-on-one" }: ChatWindowP
               <div className="max-w-3xl mx-auto py-4 sm:py-6 space-y-4 sm:space-y-6">
                 {messages.length === 0 && (
                   <div className="text-center py-8 sm:py-12">
-                    <span className="text-4xl sm:text-6xl mb-4 block">{selectedBotData?.avatar}</span>
+                    <span className="text-4xl sm:text-6xl mb-4 block">{selectedBotData?.avatar || '🤖'}</span>
                     <h3 className="text-lg sm:text-xl font-semibold text-slate-800 mb-2">
                       Chat with {selectedBotData?.name}
                     </h3>

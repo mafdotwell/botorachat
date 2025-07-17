@@ -18,9 +18,11 @@ const Header = ({ onChatToggle }: HeaderProps) => {
       <div className="max-w-6xl mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">B</span>
-            </div>
+            <img 
+              src="/lovable-uploads/968a6fad-b2c2-479b-ab85-0fa7f903d03b.png" 
+              alt="Botora Logo" 
+              className="w-10 h-10"
+            />
             <span className="text-2xl font-bold text-white">Botora</span>
           </Link>
 

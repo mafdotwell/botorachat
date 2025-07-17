@@ -57,7 +57,14 @@ const AppContent = () => {
         {/* Mobile header with hamburger */}
         <header className="lg:hidden flex items-center justify-between p-4 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-20 flex-shrink-0">
           <SidebarToggle isOpen={sidebarOpen} onToggle={toggleSidebar} />
-          <h1 className="text-lg font-semibold">Botora</h1>
+          <div className="flex items-center space-x-2">
+            <img 
+              src="/lovable-uploads/968a6fad-b2c2-479b-ab85-0fa7f903d03b.png" 
+              alt="Botora Logo" 
+              className="w-6 h-6"
+            />
+            <h1 className="text-lg font-semibold">Botora</h1>
+          </div>
           <div className="w-10" /> {/* Spacer for centering */}
         </header>
 
