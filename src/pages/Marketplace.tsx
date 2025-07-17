@@ -22,7 +22,7 @@ interface Bot {
   price_type: string | null;
   description: string | null;
   creator_id: string;
-  downloads: number;
+  subscribers: number;
   isAvr: boolean;
 }
 
@@ -73,7 +73,7 @@ const Marketplace = () => {
         price_type: bot.price_type,
         description: bot.description || '',
         creator_id: bot.creator_id,
-        downloads: bot.download_count || 0,
+        subscribers: bot.download_count || 0,
         isAvr: bot.is_avr_compatible || false
       })) || [];
 

@@ -47,7 +47,7 @@ const CreatorProfile = () => {
         price_type: "one_time",
         description: "Physics tutor with Einstein's personality and wit",
         creator_id: "sciencestudio",
-        downloads: 12500,
+        subscribers: 12500,
         isAvr: true
       },
       {
@@ -60,7 +60,7 @@ const CreatorProfile = () => {
         price_type: "one_time",
         description: "Master chef teaching cooking techniques with interactive kitchen simulation",
         creator_id: "sciencestudio",
-        downloads: 9800,
+        subscribers: 9800,
         isAvr: true
       },
       {
@@ -73,7 +73,7 @@ const CreatorProfile = () => {
         price_type: "one_time",
         description: "Nikola Tesla's genius mind for electrical engineering and innovation",
         creator_id: "sciencestudio",
-        downloads: 8200,
+        subscribers: 8200,
         isAvr: true
       },
       {
@@ -86,7 +86,7 @@ const CreatorProfile = () => {
         price_type: "one_time",
         description: "Marie Curie's pioneering spirit in chemistry and physics",
         creator_id: "sciencestudio",
-        downloads: 7400,
+        subscribers: 7400,
         isAvr: false
       }
     ]

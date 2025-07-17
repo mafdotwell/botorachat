@@ -28,7 +28,7 @@ const Index = () => {
       price_type: "subscription", // Updated to subscription
       description: "Physics tutor with Einstein's personality and wit",
       creator_id: "sciencestudio",
-      downloads: 12500,
+      subscribers: 12500,
       isAvr: true,
       isLiked: false
     },
@@ -42,7 +42,7 @@ const Index = () => {
       price_type: "subscription",
       description: "Empathetic counselor specializing in anxiety and stress",
       creator_id: "wellnessai",
-      downloads: 8300,
+      subscribers: 8300,
       isAvr: true,
       isLiked: false
     },
@@ -56,7 +56,7 @@ const Index = () => {
       price_type: "free",
       description: "Swashbuckling storyteller for interactive adventures",
       creator_id: "gamemakers",
-      downloads: 25600,
+      subscribers: 25600,
       isAvr: false,
       isLiked: false
     },
@@ -70,7 +70,7 @@ const Index = () => {
       price_type: "subscription", // Updated to subscription
       description: "Strategic business advisor with real-world experience",
       creator_id: "startupguru",
-      downloads: 5200,
+      subscribers: 5200,
       isAvr: true,
       isLiked: false
     }

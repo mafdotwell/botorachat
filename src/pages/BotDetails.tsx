@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star, Heart, Download, Share, Play, MessageSquare, Eye, User, AlertCircle, Loader2 } from "lucide-react";
+import { Star, Heart, Users, Share, Play, MessageSquare, Eye, User, AlertCircle, Loader2 } from "lucide-react";
 import Header from "@/components/Header";
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
@@ -260,8 +260,8 @@ const BotDetails = () => {
                         <span className="ml-1">({bot.review_count || 0} reviews)</span>
                       </div>
                       <div className="flex items-center">
-                        <Download className="w-5 h-5 mr-1" />
-                        <span>{(bot.download_count || 0).toLocaleString()} downloads</span>
+                        <Users className="w-5 h-5 mr-1" />
+                        <span>{(bot.download_count || 0).toLocaleString()} subscribers</span>
                       </div>
                     </div>
 
@@ -349,7 +349,7 @@ const BotDetails = () => {
                     </div>
                     <div className="mt-6 p-4 bg-cyan-500/10 border border-cyan-500/20 rounded-lg">
                       <p className="text-cyan-300 text-sm">
-                        💡 This is just a sample! Purchase the full bot for complete access.
+                        💡 This is just a sample! Subscribe to the bot for full access.
                       </p>
                     </div>
                   </CardContent>
@@ -435,7 +435,7 @@ const BotDetails = () => {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Purchase Card */}
+            {/* Subscription Card */}
             <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
               <CardContent className="p-6">
                 <div className="text-center mb-6">
@@ -454,10 +454,10 @@ const BotDetails = () => {
 
                 <div className="space-y-3">
                   <Button className="w-full bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700">
-                    Buy Now
+                    Subscribe Now
                   </Button>
                   <Button variant="outline" className="w-full border-white/20 text-white hover:bg-white/10">
-                    Add to Cart
+                    Start Free Trial
                   </Button>
                 </div>
 

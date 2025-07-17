@@ -5,7 +5,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star, Eye, Heart, Download } from "lucide-react";
+import { Star, Eye, Heart, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -21,7 +21,7 @@ interface BotCardProps {
     price_type: string | null;
     description: string | null;
     creator_id: string;
-    downloads: number;
+    subscribers: number;
     isAvr: boolean;
     isLiked?: boolean;
   };
@@ -122,8 +122,8 @@ const BotCard = ({ bot }: BotCardProps) => {
               <span>{bot.rating || 0}</span>
             </div>
             <div className="flex items-center">
-              <Download className="w-4 h-4 mr-1" />
-              <span>{bot.downloads.toLocaleString()}</span>
+              <Users className="w-4 h-4 mr-1" />
+              <span>{bot.subscribers.toLocaleString()}</span>
             </div>
           </div>
         </div>
