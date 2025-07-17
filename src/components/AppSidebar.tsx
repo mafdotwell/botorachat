@@ -157,9 +157,9 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse }: 
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 h-full bg-background border-r border-border flex flex-col
-          transform transition-all duration-300 ease-in-out z-50
-          ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+          fixed top-0 left-0 h-screen bg-background border-r border-border flex flex-col
+          transform transition-all duration-300 ease-in-out
+          ${isOpen ? 'translate-x-0 z-50' : '-translate-x-full z-40'}
           lg:translate-x-0 lg:relative lg:z-auto
           ${isCollapsed ? 'lg:w-16' : 'lg:w-64'}
           w-64
@@ -260,120 +260,122 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse }: 
           </div>
         )}
 
-        {/* Scrollable content */}
-        <div className="flex-1 overflow-y-auto px-4 min-h-0">
-          {user && !isCollapsed && (
-            <>
-              {/* Recent Activity Section */}
-              {activity.recentInteractions.length > 0 && (
-                <div className="mb-6">
-                  <div className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wider">
-                    Recent Activity
-                  </div>
-                  <div className="space-y-1">
-                    {activity.recentInteractions.slice(0, 5).map((interaction) => (
-                      <button
-                        key={interaction.id}
-                        className="w-full text-left p-2 rounded-lg hover:bg-muted/50 transition-colors group"
-                        onClick={() => navigate('/')}
-                      >
-                        <div className="flex items-center gap-2">
-                          <MessageSquare className="h-3 w-3 text-muted-foreground" />
-                          <div className="flex-1 min-w-0">
-                            <div className="text-sm truncate group-hover:text-foreground">
-                              {interaction.interaction_type === 'chat' ? 'Chat Session' : 
-                               interaction.interaction_type === 'purchase' ? 'Bot Purchase' :
-                               'Bot Interaction'}
-                            </div>
-                            <div className="text-xs text-muted-foreground">
-                              {formatDate(interaction.created_at)}
-                            </div>
-                          </div>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Recent Purchases */}
-              {activity.recentPurchases.length > 0 && (
-                <div className="mb-6">
-                  <div className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wider">
-                    Recent Purchases
-                  </div>
-                  <div className="space-y-1">
-                    {activity.recentPurchases.slice(0, 3).map((purchase) => (
-                      <button
-                        key={purchase.id}
-                        className="w-full text-left p-2 rounded-lg hover:bg-muted/50 transition-colors group"
-                        onClick={() => navigate('/marketplace')}
-                      >
-                        <div className="flex items-center gap-2">
-                          <div className="text-lg">{purchase.bots?.avatar || '🤖'}</div>
-                          <div className="flex-1 min-w-0">
-                            <div className="text-sm font-medium truncate group-hover:text-foreground">
-                              {purchase.bots?.name || 'Unknown Bot'}
-                            </div>
-                            <div className="text-xs text-muted-foreground">
-                              ${purchase.amount} • {formatDate(purchase.purchased_at)}
+        {/* Scrollable content area */}
+        <ScrollArea className="flex-1 px-4">
+          <div className="pb-4">
+            {user && !isCollapsed && (
+              <>
+                {/* Recent Activity Section */}
+                {activity.recentInteractions.length > 0 && (
+                  <div className="mb-6">
+                    <div className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wider">
+                      Recent Activity
+                    </div>
+                    <div className="space-y-1">
+                      {activity.recentInteractions.slice(0, 5).map((interaction) => (
+                        <button
+                          key={interaction.id}
+                          className="w-full text-left p-2 rounded-lg hover:bg-muted/50 transition-colors group"
+                          onClick={() => navigate('/')}
+                        >
+                          <div className="flex items-center gap-2">
+                            <MessageSquare className="h-3 w-3 text-muted-foreground" />
+                            <div className="flex-1 min-w-0">
+                              <div className="text-sm truncate group-hover:text-foreground">
+                                {interaction.interaction_type === 'chat' ? 'Chat Session' : 
+                                 interaction.interaction_type === 'purchase' ? 'Bot Purchase' :
+                                 'Bot Interaction'}
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                {formatDate(interaction.created_at)}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </button>
-                    ))}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
-            </>
-          )}
+                )}
 
-          {/* Collapsed state - show quick access icons */}
-          {user && isCollapsed && (
-            <div className="space-y-2 py-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="w-full"
-                onClick={() => navigate('/')}
-                aria-label="Home"
-              >
-                <Activity className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="w-full"
-                onClick={() => navigate('/creator')}
-                aria-label="Creator Studio"
-              >
-                <Bot className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="w-full"
-                onClick={() => navigate('/marketplace')}
-                aria-label="Marketplace"
-              >
-                <ShoppingCart className="h-4 w-4" />
-              </Button>
-            </div>
-          )}
+                {/* Recent Purchases */}
+                {activity.recentPurchases.length > 0 && (
+                  <div className="mb-6">
+                    <div className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wider">
+                      Recent Purchases
+                    </div>
+                    <div className="space-y-1">
+                      {activity.recentPurchases.slice(0, 3).map((purchase) => (
+                        <button
+                          key={purchase.id}
+                          className="w-full text-left p-2 rounded-lg hover:bg-muted/50 transition-colors group"
+                          onClick={() => navigate('/marketplace')}
+                        >
+                          <div className="flex items-center gap-2">
+                            <div className="text-lg">{purchase.bots?.avatar || '🤖'}</div>
+                            <div className="flex-1 min-w-0">
+                              <div className="text-sm font-medium truncate group-hover:text-foreground">
+                                {purchase.bots?.name || 'Unknown Bot'}
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                ${purchase.amount} • {formatDate(purchase.purchased_at)}
+                              </div>
+                            </div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
 
-          {!user && !isCollapsed && (
-            <div className="text-center py-8">
-              <Activity className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-              <p className="text-sm text-muted-foreground">Sign in to see your activity</p>
-            </div>
-          )}
+            {/* Collapsed state - show quick access icons */}
+            {user && isCollapsed && (
+              <div className="space-y-2 py-4">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="w-full"
+                  onClick={() => navigate('/')}
+                  aria-label="Home"
+                >
+                  <Activity className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="w-full"
+                  onClick={() => navigate('/creator')}
+                  aria-label="Creator Studio"
+                >
+                  <Bot className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="w-full"
+                  onClick={() => navigate('/marketplace')}
+                  aria-label="Marketplace"
+                >
+                  <ShoppingCart className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
 
-          {!user && isCollapsed && (
-            <div className="text-center py-8">
-              <Activity className="h-6 w-6 mx-auto text-muted-foreground" />
-            </div>
-          )}
-        </div>
+            {!user && !isCollapsed && (
+              <div className="text-center py-8">
+                <Activity className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+                <p className="text-sm text-muted-foreground">Sign in to see your activity</p>
+              </div>
+            )}
+
+            {!user && isCollapsed && (
+              <div className="text-center py-8">
+                <Activity className="h-6 w-6 mx-auto text-muted-foreground" />
+              </div>
+            )}
+          </div>
+        </ScrollArea>
 
         {/* Bottom navigation */}
         <div className="border-t border-border p-4 space-y-1 flex-shrink-0">
