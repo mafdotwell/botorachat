@@ -21,7 +21,7 @@ interface BotCardProps {
     price_type: string | null;
     description: string | null;
     creator_id: string;
-    subscribers: number;
+    subscribers?: number;
     isAvr: boolean;
     isLiked?: boolean;
   };
@@ -123,7 +123,7 @@ const BotCard = ({ bot }: BotCardProps) => {
             </div>
             <div className="flex items-center">
               <Users className="w-4 h-4 mr-1" />
-              <span>{bot.subscribers.toLocaleString()}</span>
+              <span>{(bot.subscribers || 0).toLocaleString()}</span>
             </div>
           </div>
         </div>
