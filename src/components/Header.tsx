@@ -27,9 +27,6 @@ const Header = ({ onChatToggle }: HeaderProps) => {
           </Link>
 
           <nav className="hidden md:flex items-center space-x-8">
-            <Link to="/marketplace" className="text-slate-300 hover:text-white transition-colors">
-              Marketplace
-            </Link>
             {user && (
               <Link to="/creator" className="text-slate-300 hover:text-white transition-colors flex items-center">
                 <Palette className="w-4 h-4 mr-1" />
