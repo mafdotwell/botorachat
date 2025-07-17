@@ -23,9 +23,14 @@ const queryClient = new QueryClient();
 const AppContent = () => {
   const { isHandlingAuth } = useCrossAppAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
+  };
+
+  const toggleSidebarCollapse = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
   };
   
   if (isHandlingAuth) {
@@ -41,7 +46,12 @@ const AppContent = () => {
   
   return (
     <div className="min-h-screen flex w-full bg-background">
-      <AppSidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
+      <AppSidebar 
+        isOpen={sidebarOpen} 
+        onToggle={toggleSidebar}
+        isCollapsed={sidebarCollapsed}
+        onToggleCollapse={toggleSidebarCollapse}
+      />
       
       <div className="flex-1 flex flex-col lg:ml-0">
         {/* Mobile header with hamburger */}

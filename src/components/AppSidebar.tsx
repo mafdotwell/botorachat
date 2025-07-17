@@ -10,7 +10,9 @@ import {
   MessageSquare,
   Star,
   ShoppingCart,
-  Activity
+  Activity,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -30,9 +32,11 @@ interface UserActivity {
 interface AppSidebarProps {
   isOpen: boolean;
   onToggle: () => void;
+  isCollapsed: boolean;
+  onToggleCollapse: () => void;
 }
 
-export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
+export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse }: AppSidebarProps) {
   const { user } = useAuth();
   const [activity, setActivity] = useState<UserActivity>({
     totalBots: 0,
@@ -150,42 +154,58 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 h-full w-64 bg-background border-r border-border
-          transform transition-transform duration-300 ease-in-out z-50
+          fixed top-0 left-0 h-full bg-background border-r border-border
+          transform transition-all duration-300 ease-in-out z-50
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
           lg:translate-x-0 lg:relative lg:z-auto
+          ${isCollapsed ? 'lg:w-16' : 'lg:w-64'}
+          w-64
         `}
         role="navigation"
         aria-label="Main navigation"
       >
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-border">
-          <h2 className="text-lg font-semibold text-foreground">Botora</h2>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="lg:hidden"
-            onClick={onToggle}
-            aria-label="Close sidebar"
-          >
-            <X className="h-4 w-4" />
-          </Button>
+          {!isCollapsed && <h2 className="text-lg font-semibold text-foreground">Botora</h2>}
+          {isCollapsed && <div className="text-lg">🤖</div>}
+          <div className="flex gap-1">
+            {/* Desktop collapse toggle */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="hidden lg:flex"
+              onClick={onToggleCollapse}
+              aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            >
+              {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+            </Button>
+            {/* Mobile close button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="lg:hidden"
+              onClick={onToggle}
+              aria-label="Close sidebar"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
         {/* Main action button */}
         <div className="p-4">
           <Button 
-            className="w-full justify-start gap-2 bg-primary hover:bg-primary/90"
+            className={`w-full bg-primary hover:bg-primary/90 ${isCollapsed ? 'justify-center' : 'justify-start gap-2'}`}
             onClick={() => {/* Navigate to new chat */}}
             aria-label="Start new chat"
           >
             <Plus className="h-4 w-4" />
-            New Chat
+            {!isCollapsed && "New Chat"}
           </Button>
         </div>
 
         {/* Activity Stats */}
-        {user && (
+        {user && !isCollapsed && (
           <div className="px-4 mb-4">
             <div className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wider">
               Quick Stats
@@ -217,7 +237,7 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
 
         {/* Scrollable content */}
         <ScrollArea className="flex-1 px-4">
-          {user && (
+          {user && !isCollapsed && (
             <>
               {/* Recent Activity Section */}
               {activity.recentInteractions.length > 0 && (
@@ -283,10 +303,49 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
             </>
           )}
 
-          {!user && (
+          {/* Collapsed state - show quick access icons */}
+          {user && isCollapsed && (
+            <div className="space-y-2 py-4">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="w-full"
+                onClick={() => {/* Navigate to activity */}}
+                aria-label="Activity"
+              >
+                <Activity className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="w-full"
+                onClick={() => {/* Navigate to bots */}}
+                aria-label="Bots"
+              >
+                <Bot className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="w-full"
+                onClick={() => {/* Navigate to purchases */}}
+                aria-label="Purchases"
+              >
+                <ShoppingCart className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+
+          {!user && !isCollapsed && (
             <div className="text-center py-8">
               <Activity className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
               <p className="text-sm text-muted-foreground">Sign in to see your activity</p>
+            </div>
+          )}
+
+          {!user && isCollapsed && (
+            <div className="text-center py-8">
+              <Activity className="h-6 w-6 mx-auto text-muted-foreground" />
             </div>
           )}
         </ScrollArea>
@@ -295,27 +354,30 @@ export function AppSidebar({ isOpen, onToggle }: AppSidebarProps) {
         <div className="border-t border-border p-4 space-y-1">
           <Button
             variant="ghost"
-            className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground"
+            className={`w-full text-muted-foreground hover:text-foreground ${isCollapsed ? 'justify-center' : 'justify-start gap-2'}`}
             onClick={() => {/* Navigate to settings */}}
+            aria-label="Settings"
           >
             <Settings className="h-4 w-4" />
-            Settings
+            {!isCollapsed && "Settings"}
           </Button>
           <Button
             variant="ghost"
-            className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground"
+            className={`w-full text-muted-foreground hover:text-foreground ${isCollapsed ? 'justify-center' : 'justify-start gap-2'}`}
             onClick={() => {/* Navigate to help */}}
+            aria-label="Help & Support"
           >
             <HelpCircle className="h-4 w-4" />
-            Help & Support
+            {!isCollapsed && "Help & Support"}
           </Button>
           <Button
             variant="ghost"
-            className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground"
+            className={`w-full text-muted-foreground hover:text-foreground ${isCollapsed ? 'justify-center' : 'justify-start gap-2'}`}
             onClick={() => {/* Navigate to profile */}}
+            aria-label="Profile"
           >
             <User className="h-4 w-4" />
-            Profile
+            {!isCollapsed && "Profile"}
           </Button>
         </div>
       </aside>
