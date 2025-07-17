@@ -14,7 +14,7 @@ const Header = ({ onChatToggle }: HeaderProps) => {
   const navigate = useNavigate();
 
   return (
-    <header className="border-b border-white/10 backdrop-blur-md bg-black/20 sticky top-0 z-50">
+    <header className="border-b border-white/10 backdrop-blur-md bg-black/20 sticky top-0 z-10">
       <div className="max-w-6xl mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-3">
