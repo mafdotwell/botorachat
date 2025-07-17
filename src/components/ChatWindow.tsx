@@ -45,20 +45,25 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "one-on-one" }: ChatWindowP
   // Fetch bots from database
   useEffect(() => {
     const fetchBots = async () => {
-      try {
-        setLoadingBots(true);
-        const { data: bots, error } = await supabase
-          .from('bots')
-          .select('*')
-          .eq('is_published', true)
-          .order('download_count', { ascending: false })
-          .limit(20);
+    try {
+      setLoadingBots(true);
+      const { data: botsData, error: botsError } = await supabase
+        .from('bots')
+        .select('*')
+        .eq('is_published', true)
+        .order('download_count', { ascending: false })
+        .limit(20);
 
-        if (error) {
-          console.error('Error fetching bots:', error);
-        } else {
-          setAvailableBots(bots || []);
-        }
+      if (botsError) {
+        console.error('Error fetching bots:', botsError);
+      } else {
+        // Format bots with proper fallbacks
+        const formattedBots = botsData?.map(bot => ({
+          ...bot,
+          name: bot.name || `Bot ${bot.id.slice(0, 8)}`
+        })) || [];
+        setAvailableBots(formattedBots);
+      }
       } catch (error) {
         console.error('Error fetching bots:', error);
       } finally {
@@ -204,7 +209,7 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "one-on-one" }: ChatWindowP
                       <div className="flex items-start space-x-3">
                         <span className="text-2xl sm:text-3xl shrink-0">{bot.avatar || '🤖'}</span>
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-slate-800 text-sm sm:text-base truncate">{bot.name || bot.id}</h3>
+                          <h3 className="font-semibold text-slate-800 text-sm sm:text-base truncate">{bot.name}</h3>
                           <p className="text-xs sm:text-sm text-slate-600 mt-1 line-clamp-2">{bot.description}</p>
                           <div className="flex items-center mt-2 space-x-2">
                             <span className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">{bot.category}</span>

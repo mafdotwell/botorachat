@@ -22,6 +22,7 @@ interface Bot {
   price_type: string | null;
   description: string | null;
   creator_id: string;
+  creator_username?: string;
   subscribers: number;
   isAvr: boolean;
 }
@@ -55,17 +56,34 @@ const Marketplace = () => {
 
   const fetchPublishedBots = async () => {
     try {
-      const { data, error } = await supabase
+      // First fetch bots
+      const { data: botsData, error: botsError } = await supabase
         .from('bots')
         .select('*')
         .eq('is_published', true)
         .order('download_count', { ascending: false });
 
-      if (error) throw error;
+      if (botsError) throw botsError;
 
-      const formattedBots = data?.map(bot => ({
+      // Then fetch creator profiles for all bot creators
+      const creatorIds = [...new Set(botsData?.map(bot => bot.creator_id) || [])];
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, username')
+        .in('id', creatorIds);
+
+      if (profilesError) {
+        console.error('Error fetching profiles:', profilesError);
+      }
+
+      // Create a map of creator_id to username
+      const creatorMap = new Map(
+        profilesData?.map(profile => [profile.id, profile.username]) || []
+      );
+
+      const formattedBots = botsData?.map(bot => ({
         id: bot.id,
-        name: bot.name,
+        name: bot.name || `Bot ${bot.id.slice(0, 8)}`,
         avatar: bot.avatar || '🤖',
         category: bot.category,
         rating: bot.rating || 0,
@@ -73,6 +91,7 @@ const Marketplace = () => {
         price_type: bot.price_type,
         description: bot.description || '',
         creator_id: bot.creator_id,
+        creator_username: creatorMap.get(bot.creator_id),
         subscribers: bot.download_count || 0,
         isAvr: bot.is_avr_compatible || false
       })) || [];

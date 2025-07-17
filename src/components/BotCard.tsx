@@ -21,6 +21,7 @@ interface BotCardProps {
     price_type: string | null;
     description: string | null;
     creator_id: string;
+    creator_username?: string;
     subscribers?: number;
     isAvr: boolean;
     isLiked?: boolean;
@@ -106,9 +107,9 @@ const BotCard = ({ bot }: BotCardProps) => {
         </div>
         <div>
           <h3 className="text-lg font-semibold text-white mb-1 group-hover:text-purple-300 transition-colors">
-            {bot.name}
+            {bot.name || "Unnamed Bot"}
           </h3>
-          <p className="text-sm text-slate-400">by Creator</p>
+          <p className="text-sm text-slate-400">by {bot.creator_username || "Unknown Creator"}</p>
         </div>
       </CardHeader>
 

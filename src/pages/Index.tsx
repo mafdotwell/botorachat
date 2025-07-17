@@ -51,11 +51,26 @@ const Index = ({ isChatOpen, onChatToggle }: IndexProps) => {
           return;
         }
 
-        // Format bots data for BotCard component
-        if (botsData) {
+        // Fetch creator profiles for the bots
+        if (botsData && botsData.length > 0) {
+          const creatorIds = [...new Set(botsData.map(bot => bot.creator_id))];
+          const { data: profilesData, error: profilesError } = await supabase
+            .from('profiles')
+            .select('id, username')
+            .in('id', creatorIds);
+
+          if (profilesError) {
+            console.error('Error fetching profiles:', profilesError);
+          }
+
+          // Create a map of creator_id to username
+          const creatorMap = new Map(
+            profilesData?.map(profile => [profile.id, profile.username]) || []
+          );
+
           const formattedBots = botsData.map(bot => ({
             id: bot.id,
-            name: bot.name,
+            name: bot.name || `Bot ${bot.id.slice(0, 8)}`,
             avatar: bot.avatar || '🤖',
             category: bot.category,
             rating: bot.rating || 0,
@@ -63,6 +78,7 @@ const Index = ({ isChatOpen, onChatToggle }: IndexProps) => {
             price_type: bot.price_type || 'free',
             description: bot.description || '',
             creator_id: bot.creator_id,
+            creator_username: creatorMap.get(bot.creator_id),
             subscribers: bot.download_count || 0,
             isAvr: bot.is_avr_compatible || false,
             isLiked: false
