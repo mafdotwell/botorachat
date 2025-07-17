@@ -12,6 +12,7 @@ import { ApiKeyManager } from './ApiKeyManager';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { User, ShoppingBag, Key, LogOut, Store, Palette, Edit } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import AvatarUpload from './AvatarUpload';
 
 interface UserPurchase {
   id: string;
@@ -31,11 +32,12 @@ interface UserProfile {
   username: string | null;
   full_name: string | null;
   bio: string | null;
+  avatar_url: string | null;
 }
 
 export const UserProfile = () => {
   const [purchases, setPurchases] = useState<UserPurchase[]>([]);
-  const [profile, setProfile] = useState<UserProfile>({ username: null, full_name: null, bio: null });
+  const [profile, setProfile] = useState<UserProfile>({ username: null, full_name: null, bio: null, avatar_url: null });
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [loading, setLoading] = useState(true);
   const { user, signOut } = useAuth();
@@ -79,12 +81,12 @@ export const UserProfile = () => {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('username, full_name, bio')
+        .select('username, full_name, bio, avatar_url')
         .eq('id', user!.id)
         .single();
 
       if (error && error.code !== 'PGRST116') throw error;
-      setProfile(data || { username: null, full_name: null, bio: null });
+      setProfile(data || { username: null, full_name: null, bio: null, avatar_url: null });
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -105,7 +107,8 @@ export const UserProfile = () => {
           email: user!.email!,
           username: profile.username,
           full_name: profile.full_name,
-          bio: profile.bio
+          bio: profile.bio,
+          avatar_url: profile.avatar_url
         });
 
       if (error) throw error;
@@ -139,8 +142,12 @@ export const UserProfile = () => {
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-full flex items-center justify-center">
-              <User className="w-8 h-8 text-white" />
+            <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-full flex items-center justify-center overflow-hidden">
+              {profile.avatar_url ? (
+                <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                <User className="w-8 h-8 text-white" />
+              )}
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -175,6 +182,13 @@ export const UserProfile = () => {
               <CardTitle className="text-white">Edit Profile</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              <div>
+                <Label className="text-white">Profile Image</Label>
+                <AvatarUpload 
+                  currentAvatar={profile.avatar_url || ''} 
+                  onAvatarChange={(avatarUrl) => setProfile({ ...profile, avatar_url: avatarUrl })}
+                />
+              </div>
               <div>
                 <Label htmlFor="username" className="text-white">Username</Label>
                 <Input
