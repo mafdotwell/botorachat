@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { 
   Plus,
   Settings,
@@ -46,6 +47,7 @@ interface AppSidebarProps {
 export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse, onChatToggle }: AppSidebarProps) {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [activity, setActivity] = useState<UserActivity>({
     totalBots: 0,
     totalPurchases: 0,
@@ -168,6 +170,14 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse, on
     });
   };
 
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    // Auto-close sidebar on mobile/tablet
+    if (isMobile && isOpen) {
+      onToggle();
+    }
+  };
+
   return (
     <>
       {/* Mobile backdrop */}
@@ -235,7 +245,7 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse, on
           <Button 
             variant="ghost"
             className={`w-full text-muted-foreground hover:text-foreground ${isCollapsed ? 'justify-center' : 'justify-start gap-2'}`}
-            onClick={() => navigate('/marketplace')}
+            onClick={() => handleNavigation('/marketplace')}
             aria-label="Marketplace"
           >
             <Store className="h-4 w-4" />
@@ -256,7 +266,7 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse, on
              <Button 
                variant="ghost"
                className={`w-full text-muted-foreground hover:text-foreground ${isCollapsed ? 'justify-center' : 'justify-start gap-2'}`}
-               onClick={() => navigate('/creator')}
+               onClick={() => handleNavigation('/creator')}
                aria-label="Creator Studio"
              >
                <Palette className="h-4 w-4" />
@@ -268,7 +278,7 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse, on
              <Button 
                variant="ghost"
                className={`w-full text-muted-foreground hover:text-foreground ${isCollapsed ? 'justify-center' : 'justify-start gap-2'}`}
-               onClick={() => navigate('/admin')}
+               onClick={() => handleNavigation('/admin')}
                aria-label="Admin Dashboard"
              >
                <Shield className="h-4 w-4" />
@@ -324,7 +334,7 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse, on
                         <button
                           key={interaction.id}
                           className="w-full text-left p-2 rounded-lg hover:bg-muted/50 transition-colors group"
-                          onClick={() => navigate('/')}
+                          onClick={() => handleNavigation('/')}
                         >
                           <div className="flex items-center gap-2">
                             <MessageSquare className="h-3 w-3 text-muted-foreground" />
@@ -356,7 +366,7 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse, on
                         <button
                           key={purchase.id}
                           className="w-full text-left p-2 rounded-lg hover:bg-muted/50 transition-colors group"
-                          onClick={() => navigate('/marketplace')}
+                          onClick={() => handleNavigation('/marketplace')}
                         >
                           <div className="flex items-center gap-2">
                             <div className="text-lg">{purchase.bots?.avatar || '🤖'}</div>
@@ -384,7 +394,7 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse, on
                   variant="ghost"
                   size="icon"
                   className="w-full"
-                  onClick={() => navigate('/')}
+                  onClick={() => handleNavigation('/')}
                   aria-label="Home"
                 >
                   <Activity className="h-4 w-4" />
@@ -393,7 +403,7 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse, on
                   variant="ghost"
                   size="icon"
                   className="w-full"
-                  onClick={() => navigate('/creator')}
+                  onClick={() => handleNavigation('/creator')}
                   aria-label="Creator Studio"
                 >
                   <Bot className="h-4 w-4" />
@@ -402,7 +412,7 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse, on
                   variant="ghost"
                   size="icon"
                   className="w-full"
-                  onClick={() => navigate('/marketplace')}
+                  onClick={() => handleNavigation('/marketplace')}
                   aria-label="Marketplace"
                 >
                   <ShoppingCart className="h-4 w-4" />
@@ -430,7 +440,7 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse, on
           <Button
             variant="ghost"
             className={`w-full text-muted-foreground hover:text-foreground ${isCollapsed ? 'justify-center' : 'justify-start gap-2'}`}
-            onClick={() => navigate('/profile')}
+            onClick={() => handleNavigation('/profile')}
             aria-label="Settings"
           >
             <Settings className="h-4 w-4" />
@@ -450,7 +460,7 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse, on
             <Button
               variant="ghost"
               className={`w-full text-muted-foreground hover:text-foreground ${isCollapsed ? 'justify-center' : 'justify-start gap-2'}`}
-              onClick={() => navigate('/profile')}
+              onClick={() => handleNavigation('/profile')}
               aria-label="Profile"
             >
               <User className="h-4 w-4" />
@@ -460,7 +470,7 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse, on
             <Button
               variant="ghost"
               className={`w-full text-muted-foreground hover:text-foreground ${isCollapsed ? 'justify-center' : 'justify-start gap-2'}`}
-              onClick={() => navigate('/auth')}
+              onClick={() => handleNavigation('/auth')}
               aria-label="Sign In"
             >
               <User className="h-4 w-4" />
