@@ -17,6 +17,8 @@ import CreatorStudio from "./pages/CreatorStudio";
 import CreateBot from "./pages/CreateBot";
 import Auth from "./pages/Auth";
 import AdminDashboard from "./pages/AdminDashboard";
+import DebateRooms from "./pages/DebateRooms";
+import DebateRoom from "./components/DebateRoom";
 import { UserProfile } from "./components/UserProfile";
 import NotFound from "./pages/NotFound";
 
@@ -106,6 +108,8 @@ const AppContent = () => {
                 <AdminDashboard />
               </ProtectedRoute>
             } />
+            <Route path="/debates" element={<DebateRooms />} />
+            <Route path="/debate/:roomId" element={<DebateRoom />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>

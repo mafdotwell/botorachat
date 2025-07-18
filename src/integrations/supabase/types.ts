@@ -226,6 +226,220 @@ export type Database = {
         }
         Relationships: []
       }
+      debate_feedback: {
+        Row: {
+          content: Json
+          created_at: string
+          debate_room_id: string
+          feedback_type: string
+          id: string
+        }
+        Insert: {
+          content: Json
+          created_at?: string
+          debate_room_id: string
+          feedback_type: string
+          id?: string
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          debate_room_id?: string
+          feedback_type?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "debate_feedback_debate_room_id_fkey"
+            columns: ["debate_room_id"]
+            isOneToOne: false
+            referencedRelation: "debate_rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      debate_messages: {
+        Row: {
+          audio_url: string | null
+          content: string
+          debate_room_id: string
+          duration_seconds: number | null
+          id: string
+          message_type: string
+          participant_id: string
+          round_type: string
+          timestamp: string
+        }
+        Insert: {
+          audio_url?: string | null
+          content: string
+          debate_room_id: string
+          duration_seconds?: number | null
+          id?: string
+          message_type?: string
+          participant_id: string
+          round_type: string
+          timestamp?: string
+        }
+        Update: {
+          audio_url?: string | null
+          content?: string
+          debate_room_id?: string
+          duration_seconds?: number | null
+          id?: string
+          message_type?: string
+          participant_id?: string
+          round_type?: string
+          timestamp?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "debate_messages_debate_room_id_fkey"
+            columns: ["debate_room_id"]
+            isOneToOne: false
+            referencedRelation: "debate_rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "debate_messages_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "debate_participants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      debate_participants: {
+        Row: {
+          ai_bot_id: string | null
+          debate_room_id: string
+          id: string
+          joined_at: string
+          participant_type: string
+          side: string
+          user_id: string | null
+        }
+        Insert: {
+          ai_bot_id?: string | null
+          debate_room_id: string
+          id?: string
+          joined_at?: string
+          participant_type: string
+          side: string
+          user_id?: string | null
+        }
+        Update: {
+          ai_bot_id?: string | null
+          debate_room_id?: string
+          id?: string
+          joined_at?: string
+          participant_type?: string
+          side?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "debate_participants_ai_bot_id_fkey"
+            columns: ["ai_bot_id"]
+            isOneToOne: false
+            referencedRelation: "bots"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "debate_participants_debate_room_id_fkey"
+            columns: ["debate_room_id"]
+            isOneToOne: false
+            referencedRelation: "debate_rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      debate_rooms: {
+        Row: {
+          created_at: string
+          creator_id: string
+          ended_at: string | null
+          id: string
+          mode: string
+          room_type: string
+          settings: Json | null
+          started_at: string | null
+          status: string
+          structure: Json
+          title: string
+          topic: string
+          topic_source: string
+        }
+        Insert: {
+          created_at?: string
+          creator_id: string
+          ended_at?: string | null
+          id?: string
+          mode: string
+          room_type?: string
+          settings?: Json | null
+          started_at?: string | null
+          status?: string
+          structure?: Json
+          title: string
+          topic: string
+          topic_source: string
+        }
+        Update: {
+          created_at?: string
+          creator_id?: string
+          ended_at?: string | null
+          id?: string
+          mode?: string
+          room_type?: string
+          settings?: Json | null
+          started_at?: string | null
+          status?: string
+          structure?: Json
+          title?: string
+          topic?: string
+          topic_source?: string
+        }
+        Relationships: []
+      }
+      debate_votes: {
+        Row: {
+          created_at: string
+          debate_room_id: string
+          id: string
+          reasoning: string | null
+          side_voted: string
+          voter_id: string | null
+          voter_type: string
+        }
+        Insert: {
+          created_at?: string
+          debate_room_id: string
+          id?: string
+          reasoning?: string | null
+          side_voted: string
+          voter_id?: string | null
+          voter_type: string
+        }
+        Update: {
+          created_at?: string
+          debate_room_id?: string
+          id?: string
+          reasoning?: string | null
+          side_voted?: string
+          voter_id?: string | null
+          voter_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "debate_votes_debate_room_id_fkey"
+            columns: ["debate_room_id"]
+            isOneToOne: false
+            referencedRelation: "debate_rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null

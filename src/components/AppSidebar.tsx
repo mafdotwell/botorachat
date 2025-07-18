@@ -18,7 +18,8 @@ import {
   Store,
   Heart,
   Palette,
-  Shield
+  Shield,
+  Users
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -260,6 +261,16 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse, on
           >
             <Heart className="h-4 w-4" />
             {!isCollapsed && "Wishlist"}
+          </Button>
+
+          <Button 
+            variant="ghost"
+            className={`w-full text-muted-foreground hover:text-foreground ${isCollapsed ? 'justify-center' : 'justify-start gap-2'}`}
+            onClick={() => handleNavigation('/debates')}
+            aria-label="Debates"
+          >
+            <Users className="h-4 w-4" />
+            {!isCollapsed && "Debates"}
           </Button>
           
            {user && (
