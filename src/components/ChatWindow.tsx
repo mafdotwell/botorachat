@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send, X, ArrowLeft, Loader2 } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useChatAI } from "@/hooks/useChatAI";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
@@ -162,7 +163,15 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "one-on-one" }: ChatWindowP
           )}
           {selectedBotData && !showBotSelector && (
             <>
-              <span className="text-xl sm:text-2xl shrink-0">{selectedBotData.avatar}</span>
+              <Avatar className="w-6 h-6 sm:w-8 sm:h-8 shrink-0">
+                {selectedBotData.avatar && selectedBotData.avatar.startsWith('http') ? (
+                  <AvatarImage src={selectedBotData.avatar} alt={selectedBotData.name} />
+                ) : (
+                  <AvatarFallback className="text-sm sm:text-lg">
+                    {selectedBotData.avatar || '🤖'}
+                  </AvatarFallback>
+                )}
+              </Avatar>
               <div className="min-w-0 flex-1">
                 <h2 className="font-semibold text-slate-800 text-sm sm:text-base truncate">{selectedBotData.name}</h2>
                 <p className="text-xs sm:text-sm text-slate-500 truncate">{selectedBotData.description}</p>
@@ -207,7 +216,15 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "one-on-one" }: ChatWindowP
                       className="p-3 sm:p-4 border rounded-lg hover:bg-slate-50 cursor-pointer transition-colors"
                     >
                       <div className="flex items-start space-x-3">
-                        <span className="text-2xl sm:text-3xl shrink-0">{bot.avatar || '🤖'}</span>
+                        <Avatar className="w-8 h-8 sm:w-12 sm:h-12 shrink-0">
+                          {bot.avatar && bot.avatar.startsWith('http') ? (
+                            <AvatarImage src={bot.avatar} alt={bot.name} />
+                          ) : (
+                            <AvatarFallback className="text-lg sm:text-2xl">
+                              {bot.avatar || '🤖'}
+                            </AvatarFallback>
+                          )}
+                        </Avatar>
                         <div className="flex-1 min-w-0">
                           <h3 className="font-semibold text-slate-800 text-sm sm:text-base truncate">{bot.name}</h3>
                           <p className="text-xs sm:text-sm text-slate-600 mt-1 line-clamp-2">{bot.description}</p>
@@ -235,7 +252,15 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "one-on-one" }: ChatWindowP
               <div className="max-w-3xl mx-auto py-4 sm:py-6 space-y-4 sm:space-y-6">
                 {messages.length === 0 && (
                   <div className="text-center py-8 sm:py-12">
-                    <span className="text-4xl sm:text-6xl mb-4 block">{selectedBotData?.avatar || '🤖'}</span>
+                    <Avatar className="w-16 h-16 sm:w-24 sm:h-24 mb-4 mx-auto">
+                      {selectedBotData?.avatar && selectedBotData.avatar.startsWith('http') ? (
+                        <AvatarImage src={selectedBotData.avatar} alt={selectedBotData.name} />
+                      ) : (
+                        <AvatarFallback className="text-2xl sm:text-4xl">
+                          {selectedBotData?.avatar || '🤖'}
+                        </AvatarFallback>
+                      )}
+                    </Avatar>
                     <h3 className="text-lg sm:text-xl font-semibold text-slate-800 mb-2">
                       Chat with {selectedBotData?.name}
                     </h3>
@@ -253,7 +278,15 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "one-on-one" }: ChatWindowP
                     <div className={`max-w-[85%] sm:max-w-[80%] ${message.sender === 'user' ? 'order-2' : 'order-1'}`}>
                       {message.sender === 'bot' && (
                         <div className="flex items-center space-x-2 mb-2">
-                          <span className="text-lg sm:text-xl">{message.botAvatar}</span>
+                          <Avatar className="w-5 h-5 sm:w-6 sm:h-6">
+                            {message.botAvatar && message.botAvatar.startsWith('http') ? (
+                              <AvatarImage src={message.botAvatar} alt={message.botName} />
+                            ) : (
+                              <AvatarFallback className="text-xs sm:text-sm">
+                                {message.botAvatar || '🤖'}
+                              </AvatarFallback>
+                            )}
+                          </Avatar>
                           <span className="text-xs sm:text-sm font-medium text-slate-700">{message.botName}</span>
                         </div>
                       )}
