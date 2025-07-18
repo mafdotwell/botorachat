@@ -16,7 +16,8 @@ import {
   ChevronRight,
   Store,
   Heart,
-  Palette
+  Palette,
+  Shield
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -41,6 +42,7 @@ interface AppSidebarProps {
   onChatToggle?: () => void;
 }
 
+
 export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse, onChatToggle }: AppSidebarProps) {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -54,12 +56,31 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse, on
     recentInteractions: []
   });
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     if (user) {
       fetchUserActivity();
+      checkAdminRole();
     }
   }, [user]);
+
+  const checkAdminRole = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user?.id)
+        .eq('role', 'admin')
+        .maybeSingle();
+
+      if (!error && data) {
+        setIsAdmin(true);
+      }
+    } catch (error) {
+      console.error('Error checking admin role:', error);
+    }
+  };
 
   const fetchUserActivity = async () => {
     try {
@@ -231,17 +252,29 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse, on
             {!isCollapsed && "Wishlist"}
           </Button>
           
-          {user && (
-            <Button 
-              variant="ghost"
-              className={`w-full text-muted-foreground hover:text-foreground ${isCollapsed ? 'justify-center' : 'justify-start gap-2'}`}
-              onClick={() => navigate('/creator')}
-              aria-label="Creator Studio"
-            >
-              <Palette className="h-4 w-4" />
-              {!isCollapsed && "Creator Studio"}
-            </Button>
-          )}
+           {user && (
+             <Button 
+               variant="ghost"
+               className={`w-full text-muted-foreground hover:text-foreground ${isCollapsed ? 'justify-center' : 'justify-start gap-2'}`}
+               onClick={() => navigate('/creator')}
+               aria-label="Creator Studio"
+             >
+               <Palette className="h-4 w-4" />
+               {!isCollapsed && "Creator Studio"}
+             </Button>
+           )}
+
+           {isAdmin && (
+             <Button 
+               variant="ghost"
+               className={`w-full text-muted-foreground hover:text-foreground ${isCollapsed ? 'justify-center' : 'justify-start gap-2'}`}
+               onClick={() => navigate('/admin')}
+               aria-label="Admin Dashboard"
+             >
+               <Shield className="h-4 w-4" />
+               {!isCollapsed && "Admin Dashboard"}
+             </Button>
+           )}
         </div>
 
         {/* Activity Stats */}

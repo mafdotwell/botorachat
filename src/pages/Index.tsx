@@ -81,7 +81,8 @@ const Index = ({ isChatOpen, onChatToggle }: IndexProps) => {
             creator_username: creatorMap.get(bot.creator_id),
             subscribers: bot.download_count || 0,
             isAvr: bot.is_avr_compatible || false,
-            isLiked: false
+            isLiked: false,
+            botora_creator_id: bot.botora_creator_id
           }));
           setFeaturedBots(formattedBots);
         }

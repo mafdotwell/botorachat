@@ -89,6 +89,7 @@ export type Database = {
         Row: {
           avatar: string | null
           billing_interval: string | null
+          botora_creator_id: string | null
           category: string
           created_at: string | null
           creator_id: string
@@ -122,6 +123,7 @@ export type Database = {
         Insert: {
           avatar?: string | null
           billing_interval?: string | null
+          botora_creator_id?: string | null
           category: string
           created_at?: string | null
           creator_id: string
@@ -155,6 +157,7 @@ export type Database = {
         Update: {
           avatar?: string | null
           billing_interval?: string | null
+          botora_creator_id?: string | null
           category?: string
           created_at?: string | null
           creator_id?: string
@@ -353,6 +356,27 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       wishlists: {
         Row: {
           bot_id: string
@@ -384,16 +408,32 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      admin_analytics: {
+        Row: {
+          bots_used: number | null
+          date: string | null
+          interaction_types: Json | null
+          total_interactions: number | null
+          unique_users: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       generate_unique_username: {
         Args: { base_email: string }
         Returns: string
       }
+      has_role: {
+        Args: {
+          _user_id: string
+          _role: Database["public"]["Enums"]["app_role"]
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "creator" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -520,6 +560,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "creator", "user"],
+    },
   },
 } as const

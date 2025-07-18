@@ -25,6 +25,7 @@ interface BotCardProps {
     subscribers?: number;
     isAvr: boolean;
     isLiked?: boolean;
+    botora_creator_id?: string | null;
   };
 }
 
@@ -109,7 +110,9 @@ const BotCard = ({ bot }: BotCardProps) => {
           <h3 className="text-lg font-semibold text-white mb-1 group-hover:text-purple-300 transition-colors">
             {bot.name || "Unnamed Bot"}
           </h3>
-          <p className="text-sm text-slate-400">by {bot.creator_username || "Unknown Creator"}</p>
+          <p className="text-sm text-slate-400">
+            by {bot.botora_creator_id ? "Botora" : (bot.creator_username || "Unknown Creator")}
+          </p>
         </div>
       </CardHeader>
 

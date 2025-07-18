@@ -16,6 +16,7 @@ import CreatorProfile from "./pages/CreatorProfile";
 import CreatorStudio from "./pages/CreatorStudio";
 import CreateBot from "./pages/CreateBot";
 import Auth from "./pages/Auth";
+import AdminDashboard from "./pages/AdminDashboard";
 import { UserProfile } from "./components/UserProfile";
 import NotFound from "./pages/NotFound";
 
@@ -92,6 +93,11 @@ const AppContent = () => {
             <Route path="/profile" element={
               <ProtectedRoute>
                 <UserProfile />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin" element={
+              <ProtectedRoute>
+                <AdminDashboard />
               </ProtectedRoute>
             } />
             <Route path="*" element={<NotFound />} />
