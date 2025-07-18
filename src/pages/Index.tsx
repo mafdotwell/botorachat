@@ -23,6 +23,8 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedChatMode, setSelectedChatMode] = useState("");
   const [featuredBots, setFeaturedBots] = useState<any[]>([]);
+  const [popularBots, setPopularBots] = useState<any[]>([]);
+  const [trendingBots, setTrendingBots] = useState<any[]>([]);
   const [stats, setStats] = useState({
     totalBots: 0,
     totalCreators: 0,
@@ -40,22 +42,45 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch published bots
-        const { data: botsData, error: botsError } = await supabase
+        // Fetch featured bots (highest rated)
+        const { data: featuredData, error: featuredError } = await supabase
+          .from('bots')
+          .select('*')
+          .eq('is_published', true)
+          .order('rating', { ascending: false })
+          .limit(8);
+
+        // Fetch popular bots (most downloads)
+        const { data: popularData, error: popularError } = await supabase
           .from('bots')
           .select('*')
           .eq('is_published', true)
           .order('download_count', { ascending: false })
-          .limit(4);
+          .limit(8);
 
-        if (botsError) {
-          console.error('Error fetching bots:', botsError);
+        // Fetch trending bots (recently created with good ratings)
+        const { data: trendingData, error: trendingError } = await supabase
+          .from('bots')
+          .select('*')
+          .eq('is_published', true)
+          .order('created_at', { ascending: false })
+          .limit(8);
+
+        if (featuredError || popularError || trendingError) {
+          console.error('Error fetching bots:', { featuredError, popularError, trendingError });
           return;
         }
 
-        // Fetch creator profiles for the bots
-        if (botsData && botsData.length > 0) {
-          const creatorIds = [...new Set(botsData.map(bot => bot.creator_id))];
+        // Collect all bot data
+        const allBotsData = [
+          ...(featuredData || []),
+          ...(popularData || []),
+          ...(trendingData || [])
+        ];
+
+        // Fetch creator profiles for all bots
+        if (allBotsData.length > 0) {
+          const creatorIds = [...new Set(allBotsData.map(bot => bot.creator_id))];
           const { data: profilesData, error: profilesError } = await supabase
             .from('profiles')
             .select('id, username')
@@ -70,7 +95,7 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
             profilesData?.map(profile => [profile.id, profile.username]) || []
           );
 
-          const formattedBots = botsData.map(bot => ({
+          const formatBots = (bots: any[]) => bots.map(bot => ({
             id: bot.id,
             name: bot.name || `Bot ${bot.id.slice(0, 8)}`,
             avatar: bot.avatar || '🤖',
@@ -86,7 +111,10 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
             isLiked: false,
             botora_creator_id: bot.botora_creator_id
           }));
-          setFeaturedBots(formattedBots);
+
+          setFeaturedBots(formatBots(featuredData || []));
+          setPopularBots(formatBots(popularData || []));
+          setTrendingBots(formatBots(trendingData || []));
         }
 
         // Fetch stats
@@ -154,7 +182,7 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
   // Fetch wishlist data when user changes
   useEffect(() => {
     const fetchWishlistData = async () => {
-      if (!user || featuredBots.length === 0) return;
+      if (!user || (featuredBots.length === 0 && popularBots.length === 0 && trendingBots.length === 0)) return;
       
       try {
         const { data, error } = await supabase
@@ -170,10 +198,14 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
         if (data && data.length > 0) {
           const likedBotIds = new Set(data.map(item => item.bot_id));
           
-          setFeaturedBots(prev => prev.map(bot => ({
+          const updateLikes = (bots: any[]) => bots.map(bot => ({
             ...bot,
             isLiked: likedBotIds.has(bot.id)
-          })));
+          }));
+          
+          setFeaturedBots(prev => updateLikes(prev));
+          setPopularBots(prev => updateLikes(prev));
+          setTrendingBots(prev => updateLikes(prev));
         }
       } catch (error) {
         console.error("Error in wishlist fetch:", error);
@@ -181,7 +213,7 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
     };
 
     fetchWishlistData();
-  }, [user, featuredBots.length]);
+  }, [user, featuredBots.length, popularBots.length, trendingBots.length]);
 
 
   const chatExperiences = [
@@ -347,20 +379,52 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
         </div>
       </section>
 
-      {/* Featured Bots */}
-      <section className="py-16 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between mb-12">
-            <h2 className="text-3xl font-bold text-white">Featured AI Personalities</h2>
-            <Button asChild variant="outline" className="border-white/20 text-white hover:bg-white/10">
-              <Link to="/marketplace">View All</Link>
-            </Button>
+      {/* Bot Sections */}
+      <section className="py-16 px-4 space-y-12">
+        <div className="max-w-7xl mx-auto">
+          
+          {/* Featured */}
+          <div>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-white">Featured</h2>
+            </div>
+            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+              {featuredBots.map((bot) => (
+                <div key={bot.id} className="flex-shrink-0 w-80">
+                  <BotCard bot={bot} onChatClick={onChatWithBot} variant="horizontal" />
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredBots.map((bot) => (
-              <BotCard key={bot.id} bot={bot} onChatClick={onChatWithBot} />
-            ))}
+
+          {/* Popular */}
+          <div>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-white">Popular</h2>
+            </div>
+            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+              {popularBots.map((bot) => (
+                <div key={bot.id} className="flex-shrink-0 w-80">
+                  <BotCard bot={bot} onChatClick={onChatWithBot} variant="horizontal" />
+                </div>
+              ))}
+            </div>
           </div>
+
+          {/* Trending */}
+          <div>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-white">Trending</h2>
+            </div>
+            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+              {trendingBots.map((bot) => (
+                <div key={bot.id} className="flex-shrink-0 w-80">
+                  <BotCard bot={bot} onChatClick={onChatWithBot} variant="horizontal" />
+                </div>
+              ))}
+            </div>
+          </div>
+
         </div>
       </section>
 
