@@ -93,11 +93,11 @@ const BotCard = ({ bot, onChatClick }: BotCardProps) => {
     <Card className="bg-white/5 border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-105 cursor-pointer backdrop-blur-sm group">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between mb-3">
-          <Avatar className="w-12 h-12">
+          <Avatar className="w-24 h-24">
             {bot.avatar && bot.avatar.startsWith('http') ? (
-              <AvatarImage src={bot.avatar} alt={bot.name} />
+              <AvatarImage src={bot.avatar} alt={bot.name} className="object-cover scale-110" />
             ) : (
-              <AvatarFallback className="text-2xl bg-white/10 border-white/20">
+              <AvatarFallback className="text-4xl bg-white/10 border-white/20">
                 {bot.avatar || '🤖'}
               </AvatarFallback>
             )}
