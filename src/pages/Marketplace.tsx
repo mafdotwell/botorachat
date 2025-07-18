@@ -27,7 +27,11 @@ interface Bot {
   isAvr: boolean;
 }
 
-const Marketplace = () => {
+interface MarketplaceProps {
+  onChatWithBot?: (botId: string) => void;
+}
+
+const Marketplace = ({ onChatWithBot }: MarketplaceProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "all");
@@ -228,7 +232,7 @@ const Marketplace = () => {
         {/* Bot Grid */}
         <div className={`grid ${viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" : "grid-cols-1"} gap-6`}>
           {filteredBots.map((bot) => (
-            <BotCard key={bot.id} bot={bot} />
+            <BotCard key={bot.id} bot={bot} onChatClick={onChatWithBot} />
           ))}
         </div>
 

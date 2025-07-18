@@ -27,6 +27,7 @@ const AppContent = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [selectedChatBot, setSelectedChatBot] = useState<string>("");
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -38,6 +39,11 @@ const AppContent = () => {
 
   const toggleChat = () => {
     setIsChatOpen(!isChatOpen);
+  };
+
+  const openChatWithBot = (botId: string) => {
+    setSelectedChatBot(botId);
+    setIsChatOpen(true);
   };
   
   if (isHandlingAuth) {
@@ -66,8 +72,8 @@ const AppContent = () => {
 
         <main className="flex-1 overflow-y-auto overflow-x-hidden">
           <Routes>
-            <Route path="/" element={<Index isChatOpen={isChatOpen} onChatToggle={toggleChat} />} />
-            <Route path="/marketplace" element={<Marketplace />} />
+            <Route path="/" element={<Index isChatOpen={isChatOpen} onChatToggle={toggleChat} selectedChatBot={selectedChatBot} onChatWithBot={openChatWithBot} />} />
+            <Route path="/marketplace" element={<Marketplace onChatWithBot={openChatWithBot} />} />
             <Route path="/bot/:id" element={<BotDetails />} />
             <Route path="/creator/:id" element={<CreatorProfile />} />
             <Route path="/creator" element={

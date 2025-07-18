@@ -14,9 +14,11 @@ import { useAuth } from "@/hooks/useAuth";
 interface IndexProps {
   isChatOpen: boolean;
   onChatToggle: () => void;
+  selectedChatBot: string;
+  onChatWithBot: (botId: string) => void;
 }
 
-const Index = ({ isChatOpen, onChatToggle }: IndexProps) => {
+const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: IndexProps) => {
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedChatMode, setSelectedChatMode] = useState("");
@@ -356,7 +358,7 @@ const Index = ({ isChatOpen, onChatToggle }: IndexProps) => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredBots.map((bot) => (
-              <BotCard key={bot.id} bot={bot} />
+              <BotCard key={bot.id} bot={bot} onChatClick={onChatWithBot} />
             ))}
           </div>
         </div>
@@ -387,6 +389,7 @@ const Index = ({ isChatOpen, onChatToggle }: IndexProps) => {
         isOpen={isChatOpen} 
         onClose={onChatToggle}
         initialMode={selectedChatMode}
+        initialBot={selectedChatBot}
       />
     </div>
   );

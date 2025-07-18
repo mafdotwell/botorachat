@@ -22,11 +22,12 @@ interface ChatWindowProps {
   isOpen: boolean;
   onClose: () => void;
   initialMode?: string;
+  initialBot?: string;
 }
 
 type ChatSize = 'small' | 'medium' | 'full';
 
-const ChatWindow = ({ isOpen, onClose, initialMode = "one-on-one" }: ChatWindowProps) => {
+const ChatWindow = ({ isOpen, onClose, initialMode = "one-on-one", initialBot }: ChatWindowProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [selectedBot, setSelectedBot] = useState<string>("");
@@ -45,6 +46,17 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "one-on-one" }: ChatWindowP
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Handle initial bot selection
+  useEffect(() => {
+    if (isOpen && initialBot && availableBots.length > 0) {
+      const botExists = availableBots.find(bot => bot.id === initialBot);
+      if (botExists) {
+        setSelectedBot(initialBot);
+        setShowBotSelector(false);
+      }
+    }
+  }, [isOpen, initialBot, availableBots]);
 
   // Fetch bots from database
   useEffect(() => {

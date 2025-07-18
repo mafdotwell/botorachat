@@ -5,7 +5,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star, Eye, Heart, Users } from "lucide-react";
+import { Star, Eye, Heart, Users, MessageCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -27,9 +27,10 @@ interface BotCardProps {
     isLiked?: boolean;
     botora_creator_id?: string | null;
   };
+  onChatClick?: (botId: string) => void;
 }
 
-const BotCard = ({ bot }: BotCardProps) => {
+const BotCard = ({ bot, onChatClick }: BotCardProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isLiked, setIsLiked] = useState(bot.isLiked || false);
@@ -80,6 +81,12 @@ const BotCard = ({ bot }: BotCardProps) => {
     } finally {
       setIsLiking(false);
     }
+  };
+
+  const handleChatClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onChatClick?.(bot.id);
   };
 
   return (
@@ -136,6 +143,17 @@ const BotCard = ({ bot }: BotCardProps) => {
       <CardFooter className="pt-3 flex items-center justify-between">
         <div className="text-lg font-semibold text-white">{formatPrice(bot.price, bot.price_type)}</div>
         <div className="flex gap-2">
+          {onChatClick && (
+            <Button 
+              variant="default" 
+              size="sm" 
+              className="text-white hover:bg-primary/90 px-3"
+              onClick={handleChatClick}
+            >
+              <MessageCircle className="w-4 h-4 mr-1" />
+              Chat
+            </Button>
+          )}
           <Button 
             variant="ghost" 
             size="sm" 
