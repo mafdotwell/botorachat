@@ -75,7 +75,7 @@ const Auth = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
       <Card className="w-full max-w-md bg-white/10 border-white/20 backdrop-blur-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-white">Welcome to PersonaVerse</CardTitle>
+          <CardTitle className="text-2xl font-bold text-white">Welcome to Botora</CardTitle>
           <CardDescription className="text-slate-300">
             Sign in to access AI personalities and manage your bots
           </CardDescription>
