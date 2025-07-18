@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, X, ArrowLeft, Loader2 } from "lucide-react";
+import { Send, X, ArrowLeft, Loader2, Minimize2, Maximize2, Square } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useChatAI } from "@/hooks/useChatAI";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,6 +24,8 @@ interface ChatWindowProps {
   initialMode?: string;
 }
 
+type ChatSize = 'small' | 'medium' | 'full';
+
 const ChatWindow = ({ isOpen, onClose, initialMode = "one-on-one" }: ChatWindowProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState("");
@@ -32,6 +34,7 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "one-on-one" }: ChatWindowP
   const [showBotSelector, setShowBotSelector] = useState(true);
   const [availableBots, setAvailableBots] = useState<Tables<'bots'>[]>([]);
   const [loadingBots, setLoadingBots] = useState(true);
+  const [chatSize, setChatSize] = useState<ChatSize>('full');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { sendMessage } = useChatAI();
 
@@ -144,10 +147,22 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "one-on-one" }: ChatWindowP
 
   const selectedBotData = availableBots.find(bot => bot.id === selectedBot);
 
+  const getSizeClasses = () => {
+    switch (chatSize) {
+      case 'small':
+        return 'fixed bottom-4 right-4 w-80 h-96 max-w-[calc(100vw-2rem)] max-h-[calc(100vh-2rem)]';
+      case 'medium':
+        return 'fixed bottom-4 right-4 w-96 h-[32rem] max-w-[calc(100vw-2rem)] max-h-[calc(100vh-2rem)]';
+      case 'full':
+      default:
+        return 'fixed inset-0';
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-white z-50 flex flex-col">
+    <div className={`${getSizeClasses()} bg-white z-50 flex flex-col rounded-lg shadow-xl border`}>
       {/* Header */}
       <div className="flex items-center justify-between p-3 sm:p-4 border-b bg-white">
         <div className="flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
@@ -182,14 +197,44 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "one-on-one" }: ChatWindowP
             <h2 className="font-semibold text-slate-800 text-sm sm:text-base">Choose a Character</h2>
           )}
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onClose}
-          className="text-slate-600 hover:text-slate-800 shrink-0"
-        >
-          <X className="w-4 h-4 sm:w-5 sm:h-5" />
-        </Button>
+        <div className="flex items-center space-x-1 shrink-0">
+          {/* Size controls */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setChatSize('small')}
+            className={`text-slate-600 hover:text-slate-800 ${chatSize === 'small' ? 'bg-slate-100' : ''}`}
+            title="Small"
+          >
+            <Minimize2 className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setChatSize('medium')}
+            className={`text-slate-600 hover:text-slate-800 ${chatSize === 'medium' ? 'bg-slate-100' : ''}`}
+            title="Medium"
+          >
+            <Square className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setChatSize('full')}
+            className={`text-slate-600 hover:text-slate-800 ${chatSize === 'full' ? 'bg-slate-100' : ''}`}
+            title="Full Screen"
+          >
+            <Maximize2 className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onClose}
+            className="text-slate-600 hover:text-slate-800"
+          >
+            <X className="w-4 h-4 sm:w-5 sm:h-5" />
+          </Button>
+        </div>
       </div>
 
       {/* Content */}
