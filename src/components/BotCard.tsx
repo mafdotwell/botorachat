@@ -5,7 +5,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star, Eye, Heart, Users, MessageCircle } from "lucide-react";
+import { Star, Heart, MessageCircle, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -90,87 +90,93 @@ const BotCard = ({ bot, onChatClick }: BotCardProps) => {
   };
 
   return (
-    <Card className="bg-white/5 border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-105 cursor-pointer backdrop-blur-sm group">
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between mb-3">
-          <Avatar className="w-24 h-24">
-            {bot.avatar && bot.avatar.startsWith('http') ? (
-              <AvatarImage src={bot.avatar} alt={bot.name} className="object-cover scale-110" />
-            ) : (
-              <AvatarFallback className="text-4xl bg-white/10 border-white/20">
-                {bot.avatar || '🤖'}
-              </AvatarFallback>
-            )}
-          </Avatar>
-          <div className="flex gap-2">
-            {bot.isAvr && (
-              <Badge className="bg-cyan-500/20 text-cyan-300 border-cyan-500/30 text-xs">
-                AR/VR
+    <Link to={`/bot/${bot.id}`} className="block">
+      <Card className="bg-card/40 border-border/40 backdrop-blur-sm hover:bg-card/60 transition-all duration-300 hover:scale-[1.02] cursor-pointer group overflow-hidden">
+        <CardHeader className="pb-4 pt-6">
+          <div className="flex flex-col items-center text-center space-y-3">
+            <Avatar className="w-20 h-20 ring-2 ring-border/20 group-hover:ring-primary/30 transition-all duration-300">
+              {bot.avatar && bot.avatar.startsWith('http') ? (
+                <AvatarImage src={bot.avatar} alt={bot.name} className="object-cover" />
+              ) : (
+                <AvatarFallback className="text-2xl bg-muted border-border/20 text-muted-foreground">
+                  {bot.avatar || '🤖'}
+                </AvatarFallback>
+              )}
+            </Avatar>
+            
+            <div className="space-y-1">
+              <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors leading-tight">
+                {bot.name || "Unnamed Bot"}
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                by {bot.botora_creator_id ? "Botora" : (bot.creator_username || "Unknown")}
+              </p>
+            </div>
+          </div>
+        </CardHeader>
+
+        <CardContent className="px-4 pb-4">
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground line-clamp-2 text-center leading-relaxed">
+              {bot.description || "No description available"}
+            </p>
+            
+            <div className="flex items-center justify-center gap-3">
+              {bot.isAvr && (
+                <Badge variant="secondary" className="text-xs px-2 py-1 bg-cyan-500/10 text-cyan-400 border-cyan-500/20">
+                  AR/VR
+                </Badge>
+              )}
+              <Badge variant="secondary" className="text-xs px-2 py-1 bg-primary/10 text-primary border-primary/20">
+                {bot.category}
               </Badge>
-            )}
-            <Badge variant="secondary" className="bg-purple-500/20 text-purple-300 border-purple-500/30 text-xs">
-              {bot.category}
-            </Badge>
-          </div>
-        </div>
-        <div>
-          <h3 className="text-lg font-semibold text-white mb-1 group-hover:text-purple-300 transition-colors">
-            {bot.name || "Unnamed Bot"}
-          </h3>
-          <p className="text-sm text-slate-400">
-            by {bot.botora_creator_id ? "Botora" : (bot.creator_username || "Unknown Creator")}
-          </p>
-        </div>
-      </CardHeader>
-
-      <CardContent className="py-3">
-        <p className="text-slate-300 text-sm mb-4 line-clamp-2">{bot.description}</p>
-        
-        <div className="flex items-center justify-between text-sm">
-          <div className="flex items-center space-x-4 text-slate-400">
-            <div className="flex items-center">
-              <Star className="w-4 h-4 text-yellow-400 mr-1 fill-current" />
-              <span>{bot.rating || 0}</span>
             </div>
-            <div className="flex items-center">
-              <Users className="w-4 h-4 mr-1" />
-              <span>{(bot.subscribers || 0).toLocaleString()}</span>
+            
+            <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Star className="w-3 h-3 text-yellow-500 fill-current" />
+                <span>{bot.rating || 0}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Users className="w-3 h-3" />
+                <span>{(bot.subscribers || 0).toLocaleString()}</span>
+              </div>
             </div>
           </div>
-        </div>
-      </CardContent>
+        </CardContent>
 
-      <CardFooter className="pt-3 flex items-center justify-between">
-        <div className="text-lg font-semibold text-white">{formatPrice(bot.price, bot.price_type)}</div>
-        <div className="flex gap-2">
-          {onChatClick && (
-            <Button 
-              variant="default" 
-              size="sm" 
-              className="text-white hover:bg-primary/90 px-3"
-              onClick={handleChatClick}
-            >
-              <MessageCircle className="w-4 h-4 mr-1" />
-              Chat
-            </Button>
-          )}
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className={`${isLiked ? 'text-red-500' : 'text-slate-400'} hover:text-white hover:bg-white/10 p-2`}
-            onClick={handleLikeToggle}
-            disabled={isLiking}
-          >
-            <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
-          </Button>
-          <Button asChild variant="ghost" size="sm" className="text-slate-400 hover:text-white hover:bg-white/10 p-2">
-            <Link to={`/bot/${bot.id}`}>
-              <Eye className="w-4 h-4" />
-            </Link>
-          </Button>
-        </div>
-      </CardFooter>
-    </Card>
+        <CardFooter className="px-4 pb-4 pt-2">
+          <div className="w-full flex items-center justify-between">
+            <div className="font-semibold text-foreground">
+              {formatPrice(bot.price, bot.price_type)}
+            </div>
+            
+            <div className="flex items-center gap-1">
+              {onChatClick && (
+                <Button 
+                  variant="default" 
+                  size="sm" 
+                  className="h-8 px-3 text-xs"
+                  onClick={handleChatClick}
+                >
+                  <MessageCircle className="w-3 h-3 mr-1" />
+                  Chat
+                </Button>
+              )}
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className={`h-8 w-8 p-0 ${isLiked ? 'text-red-500 hover:text-red-600' : 'text-muted-foreground hover:text-foreground'}`}
+                onClick={handleLikeToggle}
+                disabled={isLiking}
+              >
+                <Heart className={`w-3 h-3 ${isLiked ? 'fill-current' : ''}`} />
+              </Button>
+            </div>
+          </div>
+        </CardFooter>
+      </Card>
+    </Link>
   );
 };
 
