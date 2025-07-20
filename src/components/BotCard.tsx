@@ -9,6 +9,7 @@ import { Star, Heart, MessageCircle, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import AuthPrompt from "@/components/AuthPrompt";
 
 interface BotCardProps {
   bot: {
@@ -36,6 +37,8 @@ const BotCard = ({ bot, onChatClick, variant = "vertical" }: BotCardProps) => {
   const { toast } = useToast();
   const [isLiked, setIsLiked] = useState(bot.isLiked || false);
   const [isLiking, setIsLiking] = useState(false);
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+  const [authPromptType, setAuthPromptType] = useState<"wishlist" | "chat">("wishlist");
 
   const formatPrice = (price: number | null, priceType: string | null) => {
     if (!price || price === 0) return "Free";
@@ -48,11 +51,8 @@ const BotCard = ({ bot, onChatClick, variant = "vertical" }: BotCardProps) => {
     e.stopPropagation();
     
     if (!user) {
-      toast({
-        title: "Authentication required",
-        description: "Please sign in to add bots to your wishlist",
-        variant: "destructive",
-      });
+      setAuthPromptType("wishlist");
+      setShowAuthPrompt(true);
       return;
     }
     
@@ -87,6 +87,13 @@ const BotCard = ({ bot, onChatClick, variant = "vertical" }: BotCardProps) => {
   const handleChatClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    if (!user) {
+      setAuthPromptType("chat");
+      setShowAuthPrompt(true);
+      return;
+    }
+    
     onChatClick?.(bot.id);
   };
 
@@ -146,6 +153,12 @@ const BotCard = ({ bot, onChatClick, variant = "vertical" }: BotCardProps) => {
             </div>
           </CardContent>
         </Card>
+        <AuthPrompt 
+          isOpen={showAuthPrompt}
+          onClose={() => setShowAuthPrompt(false)}
+          trigger={authPromptType}
+          botName={bot.name}
+        />
       </Link>
     );
   }
@@ -237,6 +250,12 @@ const BotCard = ({ bot, onChatClick, variant = "vertical" }: BotCardProps) => {
           </div>
         </CardFooter>
       </Card>
+      <AuthPrompt 
+        isOpen={showAuthPrompt}
+        onClose={() => setShowAuthPrompt(false)}
+        trigger={authPromptType}
+        botName={bot.name}
+      />
     </Link>
   );
 };

@@ -7,7 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import DebateRoomCreator from '@/components/DebateRoomCreator';
+import AuthPrompt from '@/components/AuthPrompt';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/components/ui/use-toast';
 import { 
   MessageSquare, 
@@ -40,6 +42,7 @@ interface DebateRoom {
 
 const DebateRooms: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { toast } = useToast();
   const [rooms, setRooms] = useState<DebateRoom[]>([]);
   const [loading, setLoading] = useState(true);
@@ -47,6 +50,7 @@ const DebateRooms: React.FC = () => {
   const [filterMode, setFilterMode] = useState<string>('all');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [showCreator, setShowCreator] = useState(false);
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
 
   useEffect(() => {
     fetchRooms();
@@ -178,7 +182,13 @@ const DebateRooms: React.FC = () => {
           <h1 className="text-3xl font-bold">Debate Rooms</h1>
           <p className="text-muted-foreground">Join live debates or create your own</p>
         </div>
-        <Button onClick={() => setShowCreator(true)} className="flex items-center gap-2">
+        <Button onClick={() => {
+          if (!user) {
+            setShowAuthPrompt(true);
+            return;
+          }
+          setShowCreator(true);
+        }} className="flex items-center gap-2">
           <Plus className="h-4 w-4" />
           Create Room
         </Button>
@@ -261,7 +271,13 @@ const DebateRooms: React.FC = () => {
                 <p className="text-muted-foreground mb-4">
                   Be the first to create a debate room!
                 </p>
-                <Button onClick={() => setShowCreator(true)}>
+                <Button onClick={() => {
+                  if (!user) {
+                    setShowAuthPrompt(true);
+                    return;
+                  }
+                  setShowCreator(true);
+                }}>
                   Create Debate Room
                 </Button>
               </CardContent>
@@ -384,6 +400,13 @@ const DebateRooms: React.FC = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Auth Prompt */}
+      <AuthPrompt 
+        isOpen={showAuthPrompt}
+        onClose={() => setShowAuthPrompt(false)}
+        trigger="create"
+      />
     </div>
   );
 };

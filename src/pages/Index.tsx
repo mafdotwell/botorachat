@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Search, Star, Users, Zap, Eye, Heart, MessageSquare, Scale, Clock, Sparkles, Rocket } from "lucide-react";
 import BotCard from "@/components/BotCard";
 import ChatWindow from "@/components/ChatWindow";
+import AuthPrompt from "@/components/AuthPrompt";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -25,6 +26,8 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
   const [featuredBots, setFeaturedBots] = useState<any[]>([]);
   const [popularBots, setPopularBots] = useState<any[]>([]);
   const [trendingBots, setTrendingBots] = useState<any[]>([]);
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+  const [authPromptType, setAuthPromptType] = useState<"debate">("debate");
   const [stats, setStats] = useState({
     totalBots: 0,
     totalCreators: 0,
@@ -248,6 +251,11 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
   ];
 
   const handleChatExperienceSelect = (mode: string) => {
+    if (!user && mode === "debate") {
+      setShowAuthPrompt(true);
+      setAuthPromptType("debate");
+      return;
+    }
     setSelectedChatMode(mode);
     onChatToggle();
   };
@@ -454,6 +462,13 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
         onClose={onChatToggle}
         initialMode={selectedChatMode}
         initialBot={selectedChatBot}
+      />
+
+      {/* Auth Prompt */}
+      <AuthPrompt 
+        isOpen={showAuthPrompt}
+        onClose={() => setShowAuthPrompt(false)}
+        trigger={authPromptType}
       />
     </div>
   );
