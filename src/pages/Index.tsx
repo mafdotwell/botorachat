@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Search, Star, Users, Zap, Eye, Heart, MessageSquare, Scale, Clock, Sparkles, Rocket } from "lucide-react";
 import BotCard from "@/components/BotCard";
 import ChatWindow from "@/components/ChatWindow";
+import MultiBotChat from "@/components/MultiBotChat";
 import AuthPrompt from "@/components/AuthPrompt";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -19,6 +20,16 @@ interface IndexProps {
   onChatWithBot: (botId: string) => void;
 }
 
+const MULTI_BOT_EXPERIENCES = [
+  {
+    id: "multi-bot",
+    title: "Multi-Bot Conversation",
+    description: "Watch 2-4 AI personalities interact with each other",
+    icon: Users,
+    color: "from-indigo-500 to-purple-500"
+  }
+];
+
 const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: IndexProps) => {
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
@@ -28,6 +39,7 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
   const [trendingBots, setTrendingBots] = useState<any[]>([]);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const [authPromptType, setAuthPromptType] = useState<"debate">("debate");
+  const [multiBotChatOpen, setMultiBotChatOpen] = useState(false);
   const [stats, setStats] = useState({
     totalBots: 0,
     totalCreators: 0,
@@ -329,7 +341,7 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
 
           <div className="text-center">
             <Button 
-              onClick={onChatToggle}
+              onClick={() => setMultiBotChatOpen(true)}
               size="lg" 
               className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white px-8 py-3"
             >
@@ -478,6 +490,12 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
         onClose={onChatToggle}
         initialMode={selectedChatMode}
         initialBot={selectedChatBot}
+      />
+
+      {/* Multi-Bot Chat */}
+      <MultiBotChat 
+        isOpen={multiBotChatOpen} 
+        onClose={() => setMultiBotChatOpen(false)}
       />
 
       {/* Auth Prompt */}
