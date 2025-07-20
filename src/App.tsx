@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -9,6 +8,7 @@ import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { useCrossAppAuth } from "@/hooks/useCrossAppAuth";
 import { AppSidebar } from "@/components/AppSidebar";
 import Header from "@/components/Header";
+import FloatingHelpBot from "@/components/FloatingHelpBot";
 import Index from "./pages/Index";
 import Marketplace from "./pages/Marketplace";
 import BotDetails from "./pages/BotDetails";
@@ -114,6 +114,9 @@ const AppContent = () => {
           </Routes>
         </main>
       </div>
+      
+      {/* Global Floating Help Bot */}
+      <FloatingHelpBot />
     </div>
   );
 };
