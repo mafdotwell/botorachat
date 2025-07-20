@@ -3,9 +3,10 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, X, ArrowLeft, Loader2, Minimize2, Maximize2, Square } from "lucide-react";
+import { Send, X, ArrowLeft, Loader2, Minimize2, Maximize2, Square, Volume2, VolumeX } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useChatAI } from "@/hooks/useChatAI";
+import { useTextToSpeech } from "@/hooks/useTextToSpeech";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 
@@ -38,6 +39,7 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "one-on-one", initialBot }:
   const [chatSize, setChatSize] = useState<ChatSize>('full');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { sendMessage } = useChatAI();
+  const { speak, stop, isPlaying, isLoading } = useTextToSpeech();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -355,6 +357,33 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "one-on-one", initialBot }:
                         }`}
                       >
                         <p className="whitespace-pre-wrap text-sm sm:text-base break-words">{message.content}</p>
+                        {message.sender === 'bot' && (
+                          <div className="flex items-center justify-between mt-2">
+                            <div className="flex items-center space-x-2">
+                              <button
+                                onClick={() => speak(message.content)}
+                                disabled={isLoading}
+                                className="text-slate-500 hover:text-slate-700 transition-colors p-1 rounded"
+                                title="Listen"
+                              >
+                                {isLoading ? (
+                                  <Loader2 className="w-3 h-3 animate-spin" />
+                                ) : (
+                                  <Volume2 className="w-3 h-3" />
+                                )}
+                              </button>
+                              {isPlaying && (
+                                <button
+                                  onClick={stop}
+                                  className="text-slate-500 hover:text-slate-700 transition-colors p-1 rounded"
+                                  title="Stop"
+                                >
+                                  <VolumeX className="w-3 h-3" />
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
