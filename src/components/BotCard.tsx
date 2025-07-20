@@ -196,11 +196,6 @@ const BotCard = ({ bot, onChatClick, variant = "vertical" }: BotCardProps) => {
             </p>
             
             <div className="flex items-center justify-center gap-3">
-              {bot.isAvr && (
-                <Badge variant="secondary" className="text-xs px-2 py-1 bg-cyan-500/10 text-cyan-400 border-cyan-500/20">
-                  AR/VR
-                </Badge>
-              )}
               <Badge variant="secondary" className="text-xs px-2 py-1 bg-primary/10 text-primary border-primary/20">
                 {bot.category}
               </Badge>

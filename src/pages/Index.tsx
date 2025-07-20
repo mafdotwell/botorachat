@@ -276,7 +276,7 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
             Botora
           </h1>
           <p className="text-xl md:text-2xl text-slate-300 mb-8 max-w-3xl mx-auto">
-            Discover, buy, and create AI personality bots with immersive AR/VR experiences. 
+            Discover, buy, and create AI personality bots. 
             The future of digital companions is here.
           </p>
           
@@ -285,7 +285,7 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
             <div className="relative">
               <Search className="absolute left-4 top-4 h-5 w-5 text-slate-400" />
               <Input
-                placeholder="Search for AI personalities, creators, or AVR content..."
+                placeholder="Search for AI personalities, creators, or content..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-12 py-6 text-lg bg-white/10 border-white/20 text-white placeholder:text-slate-400 backdrop-blur-sm"
