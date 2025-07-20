@@ -190,6 +190,42 @@ export type Database = {
         }
         Relationships: []
       }
+      creator_waitlist: {
+        Row: {
+          contact_preferences: Json | null
+          created_at: string
+          creator_type: string
+          email: string
+          id: string
+          message: string | null
+          name: string
+          showcase_items: string[]
+          status: string
+        }
+        Insert: {
+          contact_preferences?: Json | null
+          created_at?: string
+          creator_type: string
+          email: string
+          id?: string
+          message?: string | null
+          name: string
+          showcase_items?: string[]
+          status?: string
+        }
+        Update: {
+          contact_preferences?: Json | null
+          created_at?: string
+          creator_type?: string
+          email?: string
+          id?: string
+          message?: string | null
+          name?: string
+          showcase_items?: string[]
+          status?: string
+        }
+        Relationships: []
+      }
       creators: {
         Row: {
           bio: string | null

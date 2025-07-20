@@ -295,9 +295,6 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white px-8 py-6 text-lg">
-              <Link to="/marketplace">Explore Marketplace</Link>
-            </Button>
-            <Button asChild variant="outline" size="lg" className="border-white/20 text-white hover:bg-white/10 px-8 py-6 text-lg">
               <Link to="/creator">Become a Creator</Link>
             </Button>
           </div>
@@ -373,7 +370,7 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
           <h2 className="text-3xl font-bold text-white mb-12 text-center">Browse by Category</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {categories.map((category) => (
-              <Link key={category.name} to={`/marketplace?category=${category.name.toLowerCase()}`}>
+              <Link key={category.name} to={`/bot-directory?category=${category.name.toLowerCase()}`}>
                 <Card className="bg-white/5 border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-105 cursor-pointer backdrop-blur-sm">
                   <CardContent className="p-6 text-center">
                     <div className="text-4xl mb-4">{category.icon}</div>
@@ -433,6 +430,25 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
             </div>
           </div>
 
+        </div>
+      </section>
+
+      {/* Explore More AI Personalities Section */}
+      <section className="py-16 px-4 bg-gradient-to-r from-purple-600/10 to-cyan-600/10 border-y border-white/10">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="mb-8">
+            <Badge className="mb-4 bg-cyan-500/20 text-cyan-300 border-cyan-500/30">
+              <Sparkles className="w-4 h-4 mr-1" />
+              Discover More
+            </Badge>
+          </div>
+          <h2 className="text-4xl font-bold text-white mb-6">Explore More AI Personalities</h2>
+          <p className="text-xl text-slate-300 mb-8">
+            Browse our complete collection of AI personalities. Find the perfect companion for any conversation or task.
+          </p>
+          <Button asChild size="lg" className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white px-8 py-6 text-lg">
+            <Link to="/bot-directory">Browse All AI Personalities</Link>
+          </Button>
         </div>
       </section>
 

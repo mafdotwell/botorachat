@@ -256,6 +256,16 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse, on
           <Button 
             variant="ghost"
             className={`w-full text-muted-foreground hover:text-foreground ${isCollapsed ? 'justify-center' : 'justify-start gap-2'}`}
+            onClick={() => handleNavigation('/bot-directory')}
+            aria-label="Bot Directory"
+          >
+            <Bot className="h-4 w-4" />
+            {!isCollapsed && "Bot Directory"}
+          </Button>
+
+          <Button 
+            variant="ghost"
+            className={`w-full text-muted-foreground hover:text-foreground ${isCollapsed ? 'justify-center' : 'justify-start gap-2'}`}
             onClick={() => {/* TODO: Implement wishlist */}}
             aria-label="Wishlist"
           >

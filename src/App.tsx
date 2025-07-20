@@ -11,6 +11,8 @@ import Header from "@/components/Header";
 import FloatingHelpBot from "@/components/FloatingHelpBot";
 import Index from "./pages/Index";
 import Marketplace from "./pages/Marketplace";
+import MarketplaceComingSoon from "./pages/MarketplaceComingSoon";
+import BotDirectory from "./pages/BotDirectory";
 import BotDetails from "./pages/BotDetails";
 import CreatorProfile from "./pages/CreatorProfile";
 import CreatorStudio from "./pages/CreatorStudio";
@@ -75,7 +77,8 @@ const AppContent = () => {
         <main className="flex-1 overflow-y-auto overflow-x-hidden">
           <Routes>
             <Route path="/" element={<Index isChatOpen={isChatOpen} onChatToggle={toggleChat} selectedChatBot={selectedChatBot} onChatWithBot={openChatWithBot} />} />
-            <Route path="/marketplace" element={<Marketplace onChatWithBot={openChatWithBot} />} />
+            <Route path="/marketplace" element={<MarketplaceComingSoon />} />
+            <Route path="/bot-directory" element={<BotDirectory onChatWithBot={openChatWithBot} />} />
             <Route path="/bot/:id" element={<BotDetails />} />
             <Route path="/creator/:id" element={<CreatorProfile />} />
             <Route path="/creator" element={
