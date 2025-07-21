@@ -13,7 +13,10 @@ import {
   BarChart3,
   Eye,
   Clock,
-  Star
+  Star,
+  Mail,
+  UserCheck,
+  Calendar
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -44,6 +47,18 @@ interface CategoryData {
   color: string;
 }
 
+interface WaitlistEntry {
+  id: string;
+  email: string;
+  name: string;
+  creator_type: string;
+  showcase_items: string[];
+  message: string | null;
+  status: string;
+  created_at: string;
+  contact_preferences: any;
+}
+
 const AdminDashboard = () => {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -59,6 +74,7 @@ const AdminDashboard = () => {
   });
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData[]>([]);
   const [categoryData, setCategoryData] = useState<CategoryData[]>([]);
+  const [waitlistEntries, setWaitlistEntries] = useState<WaitlistEntry[]>([]);
   const [activeTab, setActiveTab] = useState("overview");
 
   useEffect(() => {
@@ -183,6 +199,16 @@ const AdminDashboard = () => {
         setAnalyticsData(formattedAnalytics);
       }
 
+      // Fetch waitlist data
+      const { data: waitlistData, error: waitlistError } = await supabase
+        .from('creator_waitlist')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (!waitlistError && waitlistData) {
+        setWaitlistEntries(waitlistData);
+      }
+
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
       toast({
@@ -292,7 +318,7 @@ const AdminDashboard = () => {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 bg-white/5 border-white/10">
+          <TabsList className="grid w-full grid-cols-4 bg-white/5 border-white/10">
             <TabsTrigger value="overview" className="text-white data-[state=active]:bg-white/10">
               <BarChart3 className="w-4 h-4 mr-2" />
               Analytics
@@ -300,6 +326,10 @@ const AdminDashboard = () => {
             <TabsTrigger value="bots" className="text-white data-[state=active]:bg-white/10">
               <Bot className="w-4 h-4 mr-2" />
               Bot Management
+            </TabsTrigger>
+            <TabsTrigger value="waitlist" className="text-white data-[state=active]:bg-white/10">
+              <Mail className="w-4 h-4 mr-2" />
+              Waitlist
             </TabsTrigger>
             <TabsTrigger value="create" className="text-white data-[state=active]:bg-white/10">
               <Plus className="w-4 h-4 mr-2" />
@@ -419,6 +449,86 @@ const AdminDashboard = () => {
                     This section will include bot moderation, approval workflows, and performance monitoring.
                   </p>
                 </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="waitlist" className="space-y-6">
+            <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Mail className="w-5 h-5" />
+                  Creator Waitlist
+                </CardTitle>
+                <CardDescription className="text-slate-400">
+                  Manage creator applications for the marketplace
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {waitlistEntries.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Mail className="w-12 h-12 mx-auto mb-4 text-slate-400" />
+                    <p className="text-slate-400 mb-2">No waitlist entries yet</p>
+                    <p className="text-sm text-slate-500">
+                      Creator applications will appear here when users sign up for the marketplace waitlist.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {waitlistEntries.map((entry) => (
+                      <div key={entry.id} className="border border-white/10 rounded-lg p-4 bg-white/5">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                              <h3 className="text-white font-medium">{entry.name}</h3>
+                              <Badge 
+                                variant="outline" 
+                                className={`text-xs ${
+                                  entry.status === 'pending' 
+                                    ? 'border-yellow-500/50 text-yellow-300' 
+                                    : entry.status === 'approved'
+                                    ? 'border-green-500/50 text-green-300'
+                                    : 'border-red-500/50 text-red-300'
+                                }`}
+                              >
+                                {entry.status}
+                              </Badge>
+                            </div>
+                            <p className="text-slate-300 text-sm mb-2">{entry.email}</p>
+                            <div className="flex items-center gap-4 text-sm text-slate-400 mb-3">
+                              <span className="flex items-center gap-1">
+                                <UserCheck className="w-4 h-4" />
+                                {entry.creator_type}
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <Calendar className="w-4 h-4" />
+                                {new Date(entry.created_at).toLocaleDateString()}
+                              </span>
+                            </div>
+                            {entry.showcase_items.length > 0 && (
+                              <div className="mb-3">
+                                <p className="text-slate-400 text-sm mb-1">Showcase Items:</p>
+                                <div className="flex flex-wrap gap-2">
+                                  {entry.showcase_items.map((item, index) => (
+                                    <Badge key={index} variant="secondary" className="text-xs">
+                                      {item}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                            {entry.message && (
+                              <div className="bg-white/5 rounded p-3 border border-white/10">
+                                <p className="text-slate-400 text-sm mb-1">Message:</p>
+                                <p className="text-slate-300 text-sm">{entry.message}</p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
