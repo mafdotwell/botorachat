@@ -15,6 +15,7 @@ interface CreatorBot {
   name: string;
   description: string;
   category: string;
+  tags: string[];
   avatar: string;
   is_published: boolean;
   price: number;

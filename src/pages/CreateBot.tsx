@@ -37,6 +37,7 @@ interface KnowledgeSource {
 interface BotFormData {
   name: string;
   description: string;
+  category: string;
   tags: string[];
   avatar: string;
   price_type: string;
@@ -63,6 +64,7 @@ const CreateBot = () => {
   const [formData, setFormData] = useState<BotFormData>({
     name: "",
     description: "",
+    category: "general",
     tags: [],
     avatar: "🤖",
     price_type: "free",
@@ -127,6 +129,7 @@ const CreateBot = () => {
       setFormData({
         name: data.name,
         description: data.description || "",
+        category: data.category || "general",
         tags: data.tags || [],
         avatar: data.avatar || "🤖",
         price_type: data.price_type || "free",
@@ -248,6 +251,7 @@ const CreateBot = () => {
       const botData = {
         name: formData.name,
         description: formData.description,
+        category: formData.category,
         tags: formData.tags,
         avatar: formData.avatar,
         price_type: formData.price_type,
@@ -304,12 +308,8 @@ const CreateBot = () => {
   };
 
   const handleOutputTypeChange = (outputTypeId: string, checked: boolean) => {
-    setFormData(prev => ({
-      ...prev,
-      output_types: checked 
-        ? [...prev.output_types, outputTypeId]
-        : prev.output_types.filter(type => type !== outputTypeId)
-    }));
+    // This function can be removed as output_types is not part of our current form
+    console.log("Output type change:", outputTypeId, checked);
   };
 
   const addKnowledgeSource = () => {
