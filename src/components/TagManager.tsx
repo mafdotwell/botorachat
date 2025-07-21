@@ -19,7 +19,7 @@ const predefinedTags = [
   // Personality Traits
   "Friendly", "Professional", "Creative", "Analytical", "Empathetic", "Enthusiastic", "Patient", "Humorous", "Motivational", "Calm",
   // Use Cases
-  "Learning", "Gaming", "Cooking", "Travel", "Fitness", "Mental Health", "Productivity", "Innovation", "Strategy", "Operations",
+  "Learning", "Gaming", "Cooking", "Travel", "Fitness", "Mental Health", "Innovation", "Strategy", "Operations",
   // Content Types
   "Text Generation", "Image Analysis", "Data Processing", "Code Review", "Content Creation", "Storytelling", "Q&A", "Brainstorming"
 ];
