@@ -8,6 +8,7 @@ import { Plus, Bot, BarChart3, Settings, Eye, Edit, Trash2, Brain, Mic, Sparkles
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import BotCreationOptions from "@/components/BotCreationOptions";
 
 
 interface CreatorBot {
@@ -31,6 +32,7 @@ const CreatorStudio = () => {
   const { toast } = useToast();
   const [bots, setBots] = useState<CreatorBot[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showCreationOptions, setShowCreationOptions] = useState(false);
   const [stats, setStats] = useState({
     totalBots: 0,
     publishedBots: 0,
@@ -152,6 +154,15 @@ const CreatorStudio = () => {
     }
   };
 
+  const handleCreationOptionSelect = (option: string) => {
+    setShowCreationOptions(false);
+    if (option === 'personality') {
+      navigate('/creator/new-bot?focus=personality');
+    } else if (option === 'voice') {
+      navigate('/creator/new-bot?focus=voice');
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
@@ -171,14 +182,20 @@ const CreatorStudio = () => {
             <h1 className="text-3xl font-bold text-white mb-2">Creator Studio</h1>
             <p className="text-slate-300">Create and manage your AI personalities with advanced tools</p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex gap-3 relative">
             <Button 
-              onClick={() => navigate('/creator/new-bot')}
+              onClick={() => setShowCreationOptions(!showCreationOptions)}
               className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700"
             >
               <Plus className="w-4 h-4 mr-2" />
               Create AI Bot
             </Button>
+            
+            {showCreationOptions && (
+              <div className="absolute top-12 right-0 z-50 w-96 bg-slate-800/95 backdrop-blur-sm border border-white/10 rounded-lg p-4 shadow-2xl">
+                <BotCreationOptions onOptionSelect={handleCreationOptionSelect} />
+              </div>
+            )}
           </div>
         </div>
 
@@ -320,7 +337,9 @@ const CreatorStudio = () => {
                               className="w-10 h-10 rounded-full object-cover"
                             />
                           ) : (
-                            <div className="text-2xl">{bot.avatar || '🤖'}</div>
+                            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-semibold">
+                              {bot.name.charAt(0).toUpperCase()}
+                            </div>
                           )}
                         </div>
                         <div className="flex gap-2">

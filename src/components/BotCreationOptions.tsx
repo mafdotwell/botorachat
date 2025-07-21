@@ -24,22 +24,6 @@ const BotCreationOptions = ({ onOptionSelect }: BotCreationOptionsProps) => {
       icon: Mic,
       color: "from-blue-500 to-cyan-500",
       features: ["Voice selection", "Tone customization", "Speaking pace", "Language style"]
-    },
-    {
-      id: "visual",
-      title: "Create Visual Identity",
-      description: "Upload avatars or generate unique images with AI",
-      icon: Image,
-      color: "from-green-500 to-emerald-500",
-      features: ["Avatar upload", "AI image generation", "Style presets", "Image editing"]
-    },
-    {
-      id: "complete",
-      title: "Create Complete Bot",
-      description: "Full traditional creation with all options available",
-      icon: Bot,
-      color: "from-orange-500 to-red-500",
-      features: ["All-in-one creation", "Advanced settings", "Complete customization", "Expert mode"]
     }
   ];
 
