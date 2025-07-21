@@ -1,11 +1,10 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Bot, BarChart3, Settings, Eye, Edit, Trash2 } from "lucide-react";
+import { Plus, Bot, BarChart3, Settings, Eye, Edit, Trash2, Brain, Mic, Sparkles } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -169,15 +168,60 @@ const CreatorStudio = () => {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-white mb-2">Creator Studio</h1>
-            <p className="text-slate-300">Manage your AI personalities and track performance</p>
+            <p className="text-slate-300">Create and manage your AI personalities with advanced tools</p>
           </div>
-          <Button 
-            onClick={() => navigate('/creator/new-bot')}
-            className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Create New Bot
-          </Button>
+          <div className="flex gap-3">
+            <Button 
+              onClick={() => navigate('/creator/new-bot')}
+              className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Create AI Bot
+            </Button>
+          </div>
+        </div>
+
+        {/* Quick Creation Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <Card className="bg-white/5 border-white/10 backdrop-blur-sm hover:bg-white/10 transition-colors cursor-pointer">
+            <CardContent className="p-4 text-center">
+              <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <Bot className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-white font-medium mb-1">Quick Bot</h3>
+              <p className="text-sm text-slate-400">Simple 5-minute setup</p>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-white/5 border-white/10 backdrop-blur-sm hover:bg-white/10 transition-colors cursor-pointer">
+            <CardContent className="p-4 text-center">
+              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <Brain className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-white font-medium mb-1">Personality</h3>
+              <p className="text-sm text-slate-400">Design behavior & traits</p>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-white/5 border-white/10 backdrop-blur-sm hover:bg-white/10 transition-colors cursor-pointer">
+            <CardContent className="p-4 text-center">
+              <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <Mic className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-white font-medium mb-1">Voice & Tone</h3>
+              <p className="text-sm text-slate-400">Configure speech style</p>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-white/5 border-white/10 backdrop-blur-sm hover:bg-white/10 transition-colors cursor-pointer">
+            <CardContent className="p-4 text-center">
+              <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <Sparkles className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-white font-medium mb-1">AI Generator</h3>
+              <p className="text-sm text-slate-400">Generate with templates</p>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Stats Overview */}
@@ -290,6 +334,22 @@ const CreatorStudio = () => {
                       
                       <h3 className="text-lg font-semibold text-white mb-2">{bot.name}</h3>
                       <p className="text-slate-400 text-sm mb-4 line-clamp-2">{bot.description}</p>
+                      
+                      {/* Tags Display */}
+                      {bot.tags && bot.tags.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mb-4">
+                          {bot.tags.slice(0, 3).map((tag, index) => (
+                            <Badge key={index} variant="outline" className="text-xs border-white/20 text-slate-300">
+                              {tag}
+                            </Badge>
+                          ))}
+                          {bot.tags.length > 3 && (
+                            <Badge variant="outline" className="text-xs border-white/20 text-slate-400">
+                              +{bot.tags.length - 3}
+                            </Badge>
+                          )}
+                        </div>
+                      )}
                       
                       <div className="flex items-center justify-between text-sm text-slate-400 mb-4">
                         <span>{bot.category}</span>
