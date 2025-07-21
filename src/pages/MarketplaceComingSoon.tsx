@@ -363,7 +363,7 @@ const MarketplaceComingSoon = () => {
               <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-2">
                 <CheckCircle className="w-6 h-6 text-white" />
               </div>
-              <div className="text-sm font-medium text-white">Q1 2024</div>
+              <div className="text-sm font-medium text-white">07 2025</div>
               <div className="text-xs text-slate-400">Waitlist Opens</div>
             </div>
             <div className="hidden md:block w-16 h-px bg-white/20"></div>
@@ -371,7 +371,7 @@ const MarketplaceComingSoon = () => {
               <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-2">
                 <Clock className="w-6 h-6 text-slate-400" />
               </div>
-              <div className="text-sm font-medium text-white">Q2 2024</div>
+              <div className="text-sm font-medium text-white">09 2025</div>
               <div className="text-xs text-slate-400">Beta Testing</div>
             </div>
             <div className="hidden md:block w-16 h-px bg-white/20"></div>
@@ -379,7 +379,7 @@ const MarketplaceComingSoon = () => {
               <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-2">
                 <Rocket className="w-6 h-6 text-slate-400" />
               </div>
-              <div className="text-sm font-medium text-white">Q3 2024</div>
+              <div className="text-sm font-medium text-white">10 2025</div>
               <div className="text-xs text-slate-400">Public Launch</div>
             </div>
           </div>
