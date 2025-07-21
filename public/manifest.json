@@ -1,0 +1,63 @@
+{
+  "name": "Botora - AI Personality Marketplace",
+  "short_name": "Botora",
+  "description": "Discover, buy, and create AI personality bots with immersive experiences",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#00ffff",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["social", "entertainment", "productivity"],
+  "icons": [
+    {
+      "src": "/lovable-uploads/968a6fad-b2c2-479b-ab85-0fa7f903d03b.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/lovable-uploads/968a6fad-b2c2-479b-ab85-0fa7f903d03b.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/lovable-uploads/968a6fad-b2c2-479b-ab85-0fa7f903d03b.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Botora AI Personality Marketplace"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Browse Bots",
+      "short_name": "Browse",
+      "description": "Browse AI personality bots",
+      "url": "/bot-directory",
+      "icons": [
+        {
+          "src": "/lovable-uploads/968a6fad-b2c2-479b-ab85-0fa7f903d03b.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Create Bot",
+      "short_name": "Create",
+      "description": "Create your own AI personality bot",
+      "url": "/creator",
+      "icons": [
+        {
+          "src": "/lovable-uploads/968a6fad-b2c2-479b-ab85-0fa7f903d03b.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false
+}

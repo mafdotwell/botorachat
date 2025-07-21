@@ -3,23 +3,68 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Botora - AI Personality Marketplace</title>
     <meta name="description" content="Discover, buy, and create AI personality bots with immersive AR/VR experiences" />
     <meta name="author" content="Botora" />
-
+    <meta name="keywords" content="AI, chatbot, personality, marketplace, virtual assistant, artificial intelligence" />
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#00ffff" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Botora" />
+    <meta name="application-name" content="Botora" />
+    <meta name="msapplication-TileColor" content="#0f172a" />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- Icons -->
+    <link rel="icon" href="/lovable-uploads/968a6fad-b2c2-479b-ab85-0fa7f903d03b.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/lovable-uploads/968a6fad-b2c2-479b-ab85-0fa7f903d03b.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/lovable-uploads/968a6fad-b2c2-479b-ab85-0fa7f903d03b.png" />
+    
+    <!-- Preload critical resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    
+    <!-- Open Graph -->
     <meta property="og:title" content="Botora - AI Personality Marketplace" />
     <meta property="og:description" content="Discover, buy, and create AI personality bots with immersive AR/VR experiences" />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta property="og:url" content="https://botora.app" />
+    <meta property="og:site_name" content="Botora" />
 
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@echoverse_ai" />
+    <meta name="twitter:title" content="Botora - AI Personality Marketplace" />
+    <meta name="twitter:description" content="Discover, buy, and create AI personality bots with immersive AR/VR experiences" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
   </head>
 
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+              console.log('SW registered: ', registration);
+            })
+            .catch((registrationError) => {
+              console.log('SW registration failed: ', registrationError);
+            });
+        });
+      }
+    </script>
   </body>
 </html>
