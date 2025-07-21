@@ -276,37 +276,42 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
     <div className="min-h-screen bg-background">
       
       {/* Hero Section */}
-      <section className="relative py-20 px-4 bg-gradient-to-br from-primary/10 to-background">
-        <div className="max-w-6xl mx-auto text-center">
-          <div className="mb-8">
-            <Badge className="mb-4 bg-primary/90">
+      <section className="relative py-20 px-4 bg-gradient-hero overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 bg-gradient-primary opacity-5"></div>
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-float delay-1000"></div>
+        
+        <div className="max-w-6xl mx-auto text-center relative z-10">
+          <div className="mb-8 animate-fade-in">
+            <Badge className="mb-4 bg-gradient-primary text-primary-foreground shadow-glow animate-glow-pulse">
               <Zap className="w-4 h-4 mr-1" />
-              AI Personality Marketplace
+              Next-Gen AI Personality Hub
             </Badge>
           </div>
-          <h1 className="text-6xl md:text-8xl font-bold mb-6 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+          <h1 className="font-display text-6xl md:text-8xl font-bold mb-6 bg-gradient-primary bg-clip-text text-transparent animate-scale-in leading-tight">
             Botora
           </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-            Discover, buy, and create AI personality bots with immersive AR/VR experiences. 
+          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto animate-fade-in delay-200 leading-relaxed">
+            Discover, buy, and create AI personality bots with immersive experiences. 
             The future of digital companions is here.
           </p>
           
           {/* Search Bar */}
-          <div className="max-w-2xl mx-auto mb-12">
-            <div className="relative">
-              <Search className="absolute left-4 top-4 h-5 w-5 text-muted-foreground" />
+          <div className="max-w-2xl mx-auto mb-12 animate-slide-up delay-300">
+            <div className="relative group">
+              <Search className="absolute left-4 top-4 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
               <Input
                 placeholder="Search for AI personalities, creators, or content..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 py-6 text-lg"
+                className="pl-12 py-6 text-lg bg-card/50 border-border backdrop-blur-xl hover:border-primary/50 focus:border-primary transition-all shadow-elegant"
               />
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up delay-500">
+            <Button asChild size="lg" className="bg-gradient-primary hover:shadow-glow text-primary-foreground px-8 py-6 text-lg font-semibold transition-all duration-300 hover:scale-105">
               <Link to="/creator">Become a Creator</Link>
             </Button>
           </div>
@@ -314,26 +319,27 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
       </section>
 
       {/* Choose Your Experience Section */}
-      <section className="py-20 px-4">
+      <section className="py-20 px-4 bg-gradient-surface">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Choose Your Experience</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">Start conversations with AI personalities in different immersive modes</p>
+            <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-6">Choose Your Experience</h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">Start conversations with AI personalities in different immersive modes</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-            {chatExperiences.map((experience) => (
+            {chatExperiences.map((experience, index) => (
               <Card 
                 key={experience.id}
-                className="border-border hover:border-primary/50 transition-all duration-300 hover:scale-105 cursor-pointer"
+                className="bg-gradient-card border-border/50 hover:border-primary/50 transition-all duration-500 hover:scale-105 cursor-pointer backdrop-blur-xl shadow-elegant hover:shadow-glow group"
                 onClick={() => handleChatExperienceSelect(experience.id)}
+                style={{ animationDelay: `${index * 100}ms` }}
               >
                 <CardContent className="p-8 text-center">
-                  <div className={`w-20 h-20 mx-auto mb-6 rounded-3xl bg-gradient-to-r ${experience.color} flex items-center justify-center`}>
+                  <div className={`w-20 h-20 mx-auto mb-6 rounded-3xl bg-gradient-to-r ${experience.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-accent`}>
                     <experience.icon className="w-10 h-10 text-white" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-3">{experience.title}</h3>
-                  <p className="text-muted-foreground text-sm">{experience.description}</p>
+                  <h3 className="font-display text-xl font-semibold text-foreground mb-3">{experience.title}</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">{experience.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -343,7 +349,7 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
             <Button 
               onClick={() => setMultiBotChatOpen(true)}
               size="lg" 
-              className="px-8 py-4 text-lg"
+              className="bg-gradient-primary hover:shadow-glow text-primary-foreground px-10 py-4 text-lg font-semibold transition-all duration-300 hover:scale-105"
             >
               <Users className="w-6 h-6 mr-3" />
               Start Multi-Bot Conversation
@@ -353,24 +359,24 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 px-4 border-y border-border">
+      <section className="py-16 px-4 border-y border-white/10">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-3xl font-bold mb-2">{stats.totalBots.toLocaleString()}+</div>
-              <div className="text-muted-foreground">AI Personalities</div>
+              <div className="text-3xl font-bold text-white mb-2">{stats.totalBots.toLocaleString()}+</div>
+              <div className="text-slate-400">AI Personalities</div>
             </div>
             <div>
-              <div className="text-3xl font-bold mb-2">{stats.totalCreators.toLocaleString()}+</div>
-              <div className="text-muted-foreground">Creators</div>
+              <div className="text-3xl font-bold text-white mb-2">{stats.totalCreators.toLocaleString()}+</div>
+              <div className="text-slate-400">Creators</div>
             </div>
             <div>
-              <div className="text-3xl font-bold mb-2">{stats.totalSubscribers.toLocaleString()}+</div>
-              <div className="text-muted-foreground">Subscriptions</div>
+              <div className="text-3xl font-bold text-white mb-2">{stats.totalSubscribers.toLocaleString()}+</div>
+              <div className="text-slate-400">Subscriptions</div>
             </div>
             <div>
-              <div className="text-3xl font-bold mb-2">{stats.satisfaction}%</div>
-              <div className="text-muted-foreground">Satisfaction</div>
+              <div className="text-3xl font-bold text-white mb-2">{stats.satisfaction}%</div>
+              <div className="text-slate-400">Satisfaction</div>
             </div>
           </div>
         </div>
@@ -379,15 +385,15 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
       {/* Categories */}
       <section className="py-16 px-4">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold mb-12 text-center">Browse by Category</h2>
+          <h2 className="text-3xl font-bold text-white mb-12 text-center">Browse by Category</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {categories.map((category) => (
               <Link key={category.name} to={`/bot-directory?category=${category.name.toLowerCase()}`}>
-                <Card className="border-border hover:border-primary/50 transition-all duration-300 hover:scale-105 cursor-pointer">
+                <Card className="bg-white/5 border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-105 cursor-pointer backdrop-blur-sm">
                   <CardContent className="p-6 text-center">
                     <div className="text-4xl mb-4">{category.icon}</div>
-                    <h3 className="text-xl font-semibold mb-2">{category.name}</h3>
-                    <p className="text-muted-foreground">{category.count} bots</p>
+                    <h3 className="text-xl font-semibold text-white mb-2">{category.name}</h3>
+                    <p className="text-slate-400">{category.count} bots</p>
                   </CardContent>
                 </Card>
               </Link>
@@ -403,7 +409,7 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
           {/* Featured */}
           <div>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold">Featured</h2>
+              <h2 className="text-2xl font-bold text-white">Featured</h2>
             </div>
             <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
               {featuredBots.map((bot) => (
@@ -417,7 +423,7 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
           {/* Popular */}
           <div>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold">Popular</h2>
+              <h2 className="text-2xl font-bold text-white">Popular</h2>
             </div>
             <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
               {popularBots.map((bot) => (
@@ -431,7 +437,7 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
           {/* Trending */}
           <div>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold">Trending</h2>
+              <h2 className="text-2xl font-bold text-white">Trending</h2>
             </div>
             <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
               {trendingBots.map((bot) => (
