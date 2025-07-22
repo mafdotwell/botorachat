@@ -164,7 +164,15 @@ All colors MUST be HSL.
   /* Mobile layout adjustments */
   @media (max-width: 768px) {
     body {
-      padding-bottom: 80px; /* Space for bottom navigation */
+      padding-bottom: env(safe-area-inset-bottom, 0px); /* Safe area for mobile devices */
+    }
+  }
+  
+  /* Ensure mobile viewport is properly handled */
+  @media (max-width: 767px) {
+    .mobile-container {
+      min-height: 100vh;
+      min-height: 100dvh; /* Dynamic viewport height for mobile browsers */
     }
   }
 }

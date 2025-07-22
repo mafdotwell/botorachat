@@ -6,7 +6,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { useCrossAppAuth } from "@/hooks/useCrossAppAuth";
-import { AppSidebar } from "@/components/AppSidebar";
 import Header from "@/components/Header";
 import FloatingHelpBot from "@/components/FloatingHelpBot";
 import MobileBottomNav from "@/components/MobileBottomNav";
@@ -29,18 +28,8 @@ const queryClient = new QueryClient();
 
 const AppContent = () => {
   const { isHandlingAuth } = useCrossAppAuth();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [selectedChatBot, setSelectedChatBot] = useState<string>("");
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
-
-  const toggleSidebarCollapse = () => {
-    setSidebarCollapsed(!sidebarCollapsed);
-  };
 
   const toggleChat = () => {
     setIsChatOpen(!isChatOpen);
@@ -63,19 +52,12 @@ const AppContent = () => {
   }
   
   return (
-    <div className="h-screen flex w-full bg-background overflow-hidden">
-      <AppSidebar 
-        isOpen={sidebarOpen} 
-        onToggle={toggleSidebar}
-        isCollapsed={sidebarCollapsed}
-        onToggleCollapse={toggleSidebarCollapse}
-        onChatToggle={toggleChat}
-      />
-      
-      <div className="flex-1 flex flex-col min-w-0">
-        <Header onSidebarToggle={toggleSidebar} className="md:block hidden" />
+    <div className="min-h-screen flex flex-col w-full bg-background">
+      {/* Header - hidden on mobile, visible on desktop */}
+      <Header className="hidden md:block" />
 
-        <main className="flex-1 overflow-y-auto overflow-x-hidden">
+      {/* Main content area with mobile padding */}
+      <main className="flex-1 overflow-y-auto overflow-x-hidden pb-20 md:pb-0">
           <Routes>
             <Route path="/" element={<Index isChatOpen={isChatOpen} onChatToggle={toggleChat} selectedChatBot={selectedChatBot} onChatWithBot={openChatWithBot} />} />
             <Route path="/marketplace" element={<MarketplaceComingSoon />} />
@@ -117,7 +99,6 @@ const AppContent = () => {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
-      </div>
       
       {/* Mobile Bottom Navigation */}
       <MobileBottomNav />
