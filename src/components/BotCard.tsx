@@ -100,16 +100,16 @@ const BotCard = ({ bot, onChatClick, variant = "vertical" }: BotCardProps) => {
   if (variant === "horizontal") {
     return (
       <Link to={`/bot/${bot.id}`} className="block">
-        <Card className="bg-slate-800/60 border-slate-700/40 backdrop-blur-sm hover:bg-slate-800/80 transition-all duration-300 cursor-pointer group overflow-hidden h-24 md:h-28">
+        <Card className="bg-card/60 border-border/40 backdrop-blur-sm hover:bg-card/80 transition-all duration-300 cursor-pointer group overflow-hidden h-20 md:h-28">
           <CardContent className="p-3 md:p-4 h-full">
             <div className="flex gap-4 h-full">
               {/* Avatar */}
               <div className="flex-shrink-0">
-                <Avatar className="w-16 h-16 md:w-20 md:h-20 ring-1 ring-slate-600/30">
+                <Avatar className="w-12 h-12 md:w-20 md:h-20 ring-1 ring-border/30">
                   {bot.avatar && bot.avatar.startsWith('http') ? (
                     <AvatarImage src={bot.avatar} alt={bot.name} className="object-cover" />
                   ) : (
-                    <AvatarFallback className="text-lg bg-slate-700 text-slate-300">
+                    <AvatarFallback className="text-sm md:text-lg bg-muted text-muted-foreground">
                       {bot.avatar || '🤖'}
                     </AvatarFallback>
                   )}
@@ -119,20 +119,20 @@ const BotCard = ({ bot, onChatClick, variant = "vertical" }: BotCardProps) => {
               {/* Content */}
               <div className="flex-1 min-w-0 flex flex-col justify-between">
                 <div>
-                  <h3 className="font-semibold text-white text-xs md:text-sm mb-1 truncate">
+                  <h3 className="font-semibold text-foreground text-xs md:text-sm mb-1 truncate">
                     {bot.name || "Unnamed Bot"}
                   </h3>
-                  <p className="text-xs text-slate-400 mb-1 md:mb-2">
+                  <p className="text-xs text-muted-foreground mb-1 md:mb-2">
                     By @{bot.botora_creator_id ? "Botora" : (bot.creator_username || "Unknown")}
                   </p>
-                  <p className="text-xs text-slate-400 line-clamp-1 md:line-clamp-2">
+                  <p className="text-xs text-muted-foreground line-clamp-1 md:line-clamp-2">
                     {bot.description || "No description available"}
                   </p>
                 </div>
                 
                 {/* Footer */}
                 <div className="flex items-center justify-between mt-1 md:mt-2">
-                  <div className="flex items-center gap-3 text-xs text-slate-400">
+                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
                     <MessageCircle className="w-2.5 h-2.5 md:w-3 md:h-3" />
                     <span>{(bot.subscribers || 0) > 1000000 ? `${(bot.subscribers / 1000000).toFixed(1)}m` : `${(bot.subscribers || 0) / 1000}k`}</span>
                   </div>
@@ -141,7 +141,7 @@ const BotCard = ({ bot, onChatClick, variant = "vertical" }: BotCardProps) => {
                     <Button 
                       variant="ghost" 
                       size="sm"
-                      className={`h-5 w-5 md:h-6 md:w-6 p-0 ${isLiked ? 'text-red-500 hover:text-red-600' : 'text-slate-400 hover:text-slate-300'}`}
+                      className={`h-5 w-5 md:h-6 md:w-6 p-0 ${isLiked ? 'text-red-500 hover:text-red-600' : 'text-muted-foreground hover:text-foreground'}`}
                       onClick={handleLikeToggle}
                       disabled={isLiking}
                     >

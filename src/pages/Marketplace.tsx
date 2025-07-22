@@ -131,38 +131,38 @@ const Marketplace = ({ onChatWithBot }: MarketplaceProps) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-background mobile-container">
       
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-4 md:py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">AI Marketplace</h1>
-          <p className="text-slate-300 text-lg">Discover amazing AI personalities and AR/VR experiences</p>
+        <div className="mb-6 md:mb-8">
+          <h1 className="text-2xl md:text-4xl font-bold text-foreground mb-2 md:mb-4">AI Marketplace</h1>
+          <p className="text-muted-foreground text-sm md:text-lg">Discover amazing AI personalities and AR/VR experiences</p>
         </div>
 
         {/* Search and Filters */}
-        <Card className="bg-white/5 border-white/10 backdrop-blur-sm mb-8">
-          <CardContent className="p-6">
+        <Card className="bg-card/40 border-border/40 backdrop-blur-sm mb-6 md:mb-8">
+          <CardContent className="p-4 md:p-6">
             <div className="flex flex-col lg:flex-row gap-4 items-center">
               {/* Search */}
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search AI personalities..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-slate-400"
+                  className="pl-10 bg-background/50 border-border text-foreground placeholder:text-muted-foreground"
                 />
               </div>
 
               {/* Category Filter */}
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="w-full lg:w-[200px] bg-white/10 border-white/20 text-white">
+                <SelectTrigger className="w-full lg:w-[200px] bg-background/50 border-border text-foreground">
                   <SelectValue placeholder="Category" />
                 </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-700">
+                <SelectContent>
                   {categories.map((category) => (
-                    <SelectItem key={category} value={category} className="text-white hover:bg-slate-700">
+                    <SelectItem key={category} value={category}>
                       {category.charAt(0).toUpperCase() + category.slice(1)}
                     </SelectItem>
                   ))}
@@ -171,25 +171,25 @@ const Marketplace = ({ onChatWithBot }: MarketplaceProps) => {
 
               {/* Sort */}
               <Select defaultValue="popular">
-                <SelectTrigger className="w-full lg:w-[200px] bg-white/10 border-white/20 text-white">
+                <SelectTrigger className="w-full lg:w-[200px] bg-background/50 border-border text-foreground">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-700">
-                  <SelectItem value="popular" className="text-white hover:bg-slate-700">Most Popular</SelectItem>
-                  <SelectItem value="rating" className="text-white hover:bg-slate-700">Highest Rated</SelectItem>
-                  <SelectItem value="price-low" className="text-white hover:bg-slate-700">Price: Low to High</SelectItem>
-                  <SelectItem value="price-high" className="text-white hover:bg-slate-700">Price: High to Low</SelectItem>
-                  <SelectItem value="newest" className="text-white hover:bg-slate-700">Newest</SelectItem>
+                <SelectContent>
+                  <SelectItem value="popular">Most Popular</SelectItem>
+                  <SelectItem value="rating">Highest Rated</SelectItem>
+                  <SelectItem value="price-low">Price: Low to High</SelectItem>
+                  <SelectItem value="price-high">Price: High to Low</SelectItem>
+                  <SelectItem value="newest">Newest</SelectItem>
                 </SelectContent>
               </Select>
 
               {/* View Toggle */}
-              <div className="flex border border-white/20 rounded-lg overflow-hidden">
+              <div className="flex border border-border rounded-lg overflow-hidden">
                 <Button
                   variant={viewMode === "grid" ? "secondary" : "ghost"}
                   size="sm"
                   onClick={() => setViewMode("grid")}
-                  className="rounded-none bg-white/10 border-white/20 text-white hover:bg-white/20"
+                  className="rounded-none"
                 >
                   <Grid className="w-4 h-4" />
                 </Button>
@@ -197,7 +197,7 @@ const Marketplace = ({ onChatWithBot }: MarketplaceProps) => {
                   variant={viewMode === "list" ? "secondary" : "ghost"}
                   size="sm"
                   onClick={() => setViewMode("list")}
-                  className="rounded-none bg-white/10 border-white/20 text-white hover:bg-white/20"
+                  className="rounded-none"
                 >
                   <List className="w-4 h-4" />
                 </Button>

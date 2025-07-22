@@ -124,7 +124,7 @@ const FloatingHelpBot = () => {
 
   if (!isOpen) {
     return (
-      <div className="fixed bottom-24 right-4 md:bottom-6 md:right-6 z-40">
+      <div className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-40">
         <Button
           onClick={toggleChat}
           size="sm"
@@ -137,7 +137,7 @@ const FloatingHelpBot = () => {
   }
 
   return (
-    <div className="fixed bottom-24 right-4 md:bottom-6 md:right-6 z-40">
+    <div className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-40">
       <Card 
         className={`w-96 transition-all duration-300 shadow-2xl ${
           isMinimized ? 'h-12 md:h-14' : 'h-80 md:h-96'

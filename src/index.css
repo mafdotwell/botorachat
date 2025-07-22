@@ -161,18 +161,40 @@ All colors MUST be HSL.
     padding-bottom: env(safe-area-inset-bottom);
   }
   
+  /* Mobile-first responsive utilities */
+  .mobile-container {
+    min-height: 100vh;
+    min-height: 100dvh; /* Dynamic viewport height for mobile browsers */
+  }
+  
+  /* Mobile content padding to account for bottom nav */
+  .mobile-content {
+    padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+  }
+  
   /* Mobile layout adjustments */
   @media (max-width: 768px) {
     body {
       padding-bottom: env(safe-area-inset-bottom, 0px); /* Safe area for mobile devices */
     }
+    
+    /* Ensure content doesn't get hidden behind bottom nav */
+    main {
+      padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+    }
   }
   
   /* Ensure mobile viewport is properly handled */
   @media (max-width: 767px) {
-    .mobile-container {
-      min-height: 100vh;
-      min-height: 100dvh; /* Dynamic viewport height for mobile browsers */
+    /* Additional mobile-specific styles */
+    .container {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+    
+    /* Optimize touch targets for mobile */
+    button, a {
+      min-height: 44px; /* iOS recommended minimum touch target */
     }
   }
 }
