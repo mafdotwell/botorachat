@@ -273,10 +273,10 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       
       {/* Hero Section */}
-      <section className="relative py-20 px-4 bg-gradient-hero overflow-hidden">
+      <section className="relative py-12 md:py-20 px-4 bg-gradient-hero overflow-hidden">
         {/* Animated background elements */}
         <div className="absolute inset-0 bg-gradient-primary opacity-5"></div>
         <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-float"></div>
@@ -289,16 +289,16 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
               Next-Gen AI Personality Hub
             </Badge>
           </div>
-          <h1 className="font-display text-6xl md:text-8xl font-bold mb-6 bg-gradient-primary bg-clip-text text-transparent animate-scale-in leading-tight">
+          <h1 className="font-display text-4xl sm:text-6xl md:text-8xl font-bold mb-6 bg-gradient-primary bg-clip-text text-transparent animate-scale-in leading-tight">
             Botora
           </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto animate-fade-in delay-200 leading-relaxed">
+          <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto animate-fade-in delay-200 leading-relaxed px-4">
             Discover, buy, and create AI personality bots with immersive experiences. 
             The future of digital companions is here.
           </p>
           
           {/* Search Bar */}
-          <div className="max-w-2xl mx-auto mb-12 animate-slide-up delay-300">
+          <div className="max-w-2xl mx-auto mb-8 md:mb-12 animate-slide-up delay-300 px-4">
             <div className="relative group">
               <Search className="absolute left-4 top-4 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
               <Input
@@ -310,7 +310,7 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up delay-500">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up delay-500 px-4">
             <Button asChild size="lg" className="bg-gradient-primary hover:shadow-glow text-primary-foreground px-8 py-6 text-lg font-semibold transition-all duration-300 hover:scale-105">
               <Link to="/creator">Become a Creator</Link>
             </Button>
@@ -319,14 +319,14 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
       </section>
 
       {/* Choose Your Experience Section */}
-      <section className="py-20 px-4 bg-gradient-surface">
+      <section className="py-12 md:py-20 px-4 bg-gradient-surface">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-6">Choose Your Experience</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">Start conversations with AI personalities in different immersive modes</p>
+            <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">Choose Your Experience</h2>
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed px-4">Start conversations with AI personalities in different immersive modes</p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-8 md:mb-12">
             {chatExperiences.map((experience, index) => (
               <Card 
                 key={experience.id}
@@ -335,11 +335,11 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 <CardContent className="p-8 text-center">
-                  <div className={`w-20 h-20 mx-auto mb-6 rounded-3xl bg-gradient-to-r ${experience.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-accent`}>
-                    <experience.icon className="w-10 h-10 text-white" />
+                  <div className={`w-16 h-16 md:w-20 md:h-20 mx-auto mb-4 md:mb-6 rounded-3xl bg-gradient-to-r ${experience.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-accent`}>
+                    <experience.icon className="w-8 h-8 md:w-10 md:h-10 text-white" />
                   </div>
-                  <h3 className="font-display text-xl font-semibold text-foreground mb-3">{experience.title}</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">{experience.description}</p>
+                  <h3 className="font-display text-lg md:text-xl font-semibold text-foreground mb-2 md:mb-3">{experience.title}</h3>
+                  <p className="text-muted-foreground text-xs md:text-sm leading-relaxed">{experience.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -348,10 +348,10 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
           <div className="text-center">
             <Button 
               onClick={() => setMultiBotChatOpen(true)}
-              size="lg" 
-              className="bg-gradient-primary hover:shadow-glow text-primary-foreground px-10 py-4 text-lg font-semibold transition-all duration-300 hover:scale-105"
+              size="lg"
+              className="bg-gradient-primary hover:shadow-glow text-primary-foreground px-8 md:px-10 py-3 md:py-4 text-base md:text-lg font-semibold transition-all duration-300 hover:scale-105"
             >
-              <Users className="w-6 h-6 mr-3" />
+              <Users className="w-5 h-5 md:w-6 md:h-6 mr-2 md:mr-3" />
               Start Multi-Bot Conversation
             </Button>
           </div>
@@ -359,41 +359,41 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 px-4 border-y border-white/10">
+      <section className="py-12 md:py-16 px-4 border-y border-white/10">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 text-center">
             <div>
-              <div className="text-3xl font-bold text-white mb-2">{stats.totalBots.toLocaleString()}+</div>
-              <div className="text-slate-400">AI Personalities</div>
+              <div className="text-2xl md:text-3xl font-bold text-white mb-1 md:mb-2">{stats.totalBots.toLocaleString()}+</div>
+              <div className="text-slate-400 text-sm md:text-base">AI Personalities</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-white mb-2">{stats.totalCreators.toLocaleString()}+</div>
-              <div className="text-slate-400">Creators</div>
+              <div className="text-2xl md:text-3xl font-bold text-white mb-1 md:mb-2">{stats.totalCreators.toLocaleString()}+</div>
+              <div className="text-slate-400 text-sm md:text-base">Creators</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-white mb-2">{stats.totalSubscribers.toLocaleString()}+</div>
-              <div className="text-slate-400">Subscriptions</div>
+              <div className="text-2xl md:text-3xl font-bold text-white mb-1 md:mb-2">{stats.totalSubscribers.toLocaleString()}+</div>
+              <div className="text-slate-400 text-sm md:text-base">Subscriptions</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-white mb-2">{stats.satisfaction}%</div>
-              <div className="text-slate-400">Satisfaction</div>
+              <div className="text-2xl md:text-3xl font-bold text-white mb-1 md:mb-2">{stats.satisfaction}%</div>
+              <div className="text-slate-400 text-sm md:text-base">Satisfaction</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Categories */}
-      <section className="py-16 px-4">
+      <section className="py-12 md:py-16 px-4">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-white mb-12 text-center">Browse by Category</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-8 md:mb-12 text-center">Browse by Category</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {categories.map((category) => (
               <Link key={category.name} to={`/bot-directory?category=${category.name.toLowerCase()}`}>
                 <Card className="bg-white/5 border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-105 cursor-pointer backdrop-blur-sm">
-                  <CardContent className="p-6 text-center">
-                    <div className="text-4xl mb-4">{category.icon}</div>
-                    <h3 className="text-xl font-semibold text-white mb-2">{category.name}</h3>
-                    <p className="text-slate-400">{category.count} bots</p>
+                  <CardContent className="p-4 md:p-6 text-center">
+                    <div className="text-3xl md:text-4xl mb-3 md:mb-4">{category.icon}</div>
+                    <h3 className="text-lg md:text-xl font-semibold text-white mb-1 md:mb-2">{category.name}</h3>
+                    <p className="text-slate-400 text-sm md:text-base">{category.count} bots</p>
                   </CardContent>
                 </Card>
               </Link>
@@ -403,17 +403,17 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
       </section>
 
       {/* Bot Sections */}
-      <section className="py-16 px-4 space-y-12">
+      <section className="py-12 md:py-16 px-4 space-y-8 md:space-y-12">
         <div className="max-w-7xl mx-auto">
           
           {/* Featured */}
           <div>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-white">Featured</h2>
+              <h2 className="text-xl md:text-2xl font-bold text-white">Featured</h2>
             </div>
-            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+            <div className="flex gap-3 md:gap-4 overflow-x-auto pb-4 scrollbar-hide">
               {featuredBots.map((bot) => (
-                <div key={bot.id} className="flex-shrink-0 w-80">
+                <div key={bot.id} className="flex-shrink-0 w-72 md:w-80">
                   <BotCard bot={bot} onChatClick={onChatWithBot} variant="horizontal" />
                 </div>
               ))}
@@ -423,11 +423,11 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
           {/* Popular */}
           <div>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-white">Popular</h2>
+              <h2 className="text-xl md:text-2xl font-bold text-white">Popular</h2>
             </div>
-            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+            <div className="flex gap-3 md:gap-4 overflow-x-auto pb-4 scrollbar-hide">
               {popularBots.map((bot) => (
-                <div key={bot.id} className="flex-shrink-0 w-80">
+                <div key={bot.id} className="flex-shrink-0 w-72 md:w-80">
                   <BotCard bot={bot} onChatClick={onChatWithBot} variant="horizontal" />
                 </div>
               ))}
@@ -437,11 +437,11 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
           {/* Trending */}
           <div>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-white">Trending</h2>
+              <h2 className="text-xl md:text-2xl font-bold text-white">Trending</h2>
             </div>
-            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+            <div className="flex gap-3 md:gap-4 overflow-x-auto pb-4 scrollbar-hide">
               {trendingBots.map((bot) => (
-                <div key={bot.id} className="flex-shrink-0 w-80">
+                <div key={bot.id} className="flex-shrink-0 w-72 md:w-80">
                   <BotCard bot={bot} onChatClick={onChatWithBot} variant="horizontal" />
                 </div>
               ))}
@@ -452,7 +452,7 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
       </section>
 
       {/* Explore More AI Personalities Section */}
-      <section className="py-16 px-4 bg-gradient-to-r from-purple-600/10 to-cyan-600/10 border-y border-white/10">
+      <section className="py-12 md:py-16 px-4 bg-gradient-to-r from-purple-600/10 to-cyan-600/10 border-y border-white/10">
         <div className="max-w-4xl mx-auto text-center">
           <div className="mb-8">
             <Badge className="mb-4 bg-cyan-500/20 text-cyan-300 border-cyan-500/30">
@@ -460,33 +460,33 @@ const Index = ({ isChatOpen, onChatToggle, selectedChatBot, onChatWithBot }: Ind
               Discover More
             </Badge>
           </div>
-          <h2 className="text-4xl font-bold text-white mb-6">Explore More AI Personalities</h2>
-          <p className="text-xl text-slate-300 mb-8">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4 md:mb-6 px-4">Explore More AI Personalities</h2>
+          <p className="text-lg md:text-xl text-slate-300 mb-6 md:mb-8 px-4">
             Browse our complete collection of AI personalities. Find the perfect companion for any conversation or task.
           </p>
-          <Button asChild size="lg" className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white px-8 py-6 text-lg">
+          <Button asChild size="lg" className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white px-6 md:px-8 py-4 md:py-6 text-base md:text-lg">
             <Link to="/bot-directory">Browse All AI Personalities</Link>
           </Button>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4">
+      <section className="py-12 md:py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-white mb-6">Ready to Create Your AI Personality?</h2>
-          <p className="text-xl text-slate-300 mb-8">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4 md:mb-6 px-4">Ready to Create Your AI Personality?</h2>
+          <p className="text-lg md:text-xl text-slate-300 mb-6 md:mb-8 px-4">
             Join thousands of creators building the next generation of digital companions with our intuitive Creator Studio.
           </p>
-          <Button asChild size="lg" className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white px-8 py-6 text-lg">
+          <Button asChild size="lg" className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white px-6 md:px-8 py-4 md:py-6 text-base md:text-lg">
             <Link to="/creator">Start Creating</Link>
           </Button>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 py-12 px-4">
+      <footer className="border-t border-white/10 py-8 md:py-12 px-4">
         <div className="max-w-6xl mx-auto text-center text-slate-400">
-          <p>&copy; 2024 Botora. Building the future of AI personalities.</p>
+          <p className="text-sm md:text-base">&copy; 2024 Botora. Building the future of AI personalities.</p>
         </div>
       </footer>
 

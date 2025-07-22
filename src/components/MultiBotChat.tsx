@@ -429,8 +429,8 @@ ${conversationContext}`;
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-7xl h-[90vh] flex flex-col">
+    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-2 md:p-4">
+      <Card className="w-full max-w-7xl h-[95vh] md:h-[90vh] flex flex-col">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <div className="flex items-center gap-4">
             <CardTitle className="flex items-center gap-2">
@@ -454,7 +454,7 @@ ${conversationContext}`;
 
         <CardContent className="flex-1 flex gap-4 min-h-0">
           {/* Settings Panel */}
-          <div className="w-80 space-y-4 flex-shrink-0">
+          <div className="w-full md:w-80 space-y-4 flex-shrink-0 md:block hidden">
             <div>
               <Label htmlFor="topic">Conversation Topic</Label>
               <Input
@@ -639,7 +639,7 @@ ${conversationContext}`;
           </div>
 
           {/* Chat Area */}
-          <div className="flex-1 flex flex-col min-h-0">
+          <div className="flex-1 flex flex-col min-h-0 w-full">
             <div className="relative flex-1">
               <ScrollArea 
                 className="h-full border rounded-lg"

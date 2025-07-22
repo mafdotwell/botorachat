@@ -155,4 +155,16 @@ All colors MUST be HSL.
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+  
+  /* Safe area padding for mobile devices */
+  .safe-area-pb {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  /* Mobile layout adjustments */
+  @media (max-width: 768px) {
+    body {
+      padding-bottom: 80px; /* Space for bottom navigation */
+    }
+  }
 }

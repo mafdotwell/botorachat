@@ -164,12 +164,12 @@ const ChatWindow = ({ isOpen, onClose, initialMode = "one-on-one", initialBot }:
   const getSizeClasses = () => {
     switch (chatSize) {
       case 'small':
-        return 'fixed bottom-4 right-4 w-80 h-96 max-w-[calc(100vw-2rem)] max-h-[calc(100vh-2rem)]';
+        return 'fixed bottom-20 right-4 md:bottom-4 md:right-4 w-80 h-96 max-w-[calc(100vw-2rem)] max-h-[calc(100vh-6rem)] md:max-h-[calc(100vh-2rem)]';
       case 'medium':
-        return 'fixed bottom-4 right-4 w-96 h-[32rem] max-w-[calc(100vw-2rem)] max-h-[calc(100vh-2rem)]';
+        return 'fixed bottom-20 right-4 md:bottom-4 md:right-4 w-96 h-[32rem] max-w-[calc(100vw-2rem)] max-h-[calc(100vh-6rem)] md:max-h-[calc(100vh-2rem)]';
       case 'full':
       default:
-        return 'fixed inset-0';
+        return 'fixed inset-0 md:inset-0';
     }
   };
 

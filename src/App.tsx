@@ -9,6 +9,7 @@ import { useCrossAppAuth } from "@/hooks/useCrossAppAuth";
 import { AppSidebar } from "@/components/AppSidebar";
 import Header from "@/components/Header";
 import FloatingHelpBot from "@/components/FloatingHelpBot";
+import MobileBottomNav from "@/components/MobileBottomNav";
 import Index from "./pages/Index";
 import Marketplace from "./pages/Marketplace";
 import MarketplaceComingSoon from "./pages/MarketplaceComingSoon";
@@ -72,7 +73,7 @@ const AppContent = () => {
       />
       
       <div className="flex-1 flex flex-col min-w-0">
-        <Header onSidebarToggle={toggleSidebar} />
+        <Header onSidebarToggle={toggleSidebar} className="md:block hidden" />
 
         <main className="flex-1 overflow-y-auto overflow-x-hidden">
           <Routes>
@@ -117,6 +118,9 @@ const AppContent = () => {
           </Routes>
         </main>
       </div>
+      
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav />
       
       {/* Global Floating Help Bot */}
       <FloatingHelpBot />

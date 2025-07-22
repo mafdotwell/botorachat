@@ -124,23 +124,23 @@ const FloatingHelpBot = () => {
 
   if (!isOpen) {
     return (
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="fixed bottom-24 right-4 md:bottom-6 md:right-6 z-40">
         <Button
           onClick={toggleChat}
-          size="lg"
-          className="h-14 w-14 rounded-full bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
+          size="sm"
+          className="h-12 w-12 md:h-14 md:w-14 rounded-full bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
         >
-          <HelpCircle className="h-6 w-6 text-white" />
+          <HelpCircle className="h-5 w-5 md:h-6 md:w-6 text-white" />
         </Button>
       </div>
     );
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-24 right-4 md:bottom-6 md:right-6 z-40">
       <Card 
         className={`w-96 transition-all duration-300 shadow-2xl ${
-          isMinimized ? 'h-14' : 'h-96'
+          isMinimized ? 'h-12 md:h-14' : 'h-80 md:h-96'
         } bg-background/95 backdrop-blur-sm border-border`}
       >
         <CardHeader className="pb-2 px-4 py-3 border-b border-border">

@@ -182,7 +182,7 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse, on
   return (
     <>
       {/* Mobile backdrop */}
-      {isOpen && (
+      {isOpen && isMobile && (
         <div 
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
           onClick={onToggle}
@@ -192,12 +192,13 @@ export function AppSidebar({ isOpen, onToggle, isCollapsed, onToggleCollapse, on
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 h-screen bg-background border-r border-border flex flex-col
+          fixed top-0 left-0 h-screen bg-background border-r border-border flex flex-col z-30
           transform transition-all duration-300 ease-in-out
-          ${isOpen ? 'translate-x-0 z-50' : '-translate-x-full z-40'}
+          ${isOpen ? 'translate-x-0' : '-translate-x-full'}
           lg:translate-x-0 lg:relative lg:z-auto
           ${isCollapsed ? 'lg:w-16' : 'lg:w-64'}
           w-64
+          ${isMobile ? 'hidden' : ''}
         `}
         role="navigation"
         aria-label="Main navigation"

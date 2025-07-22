@@ -2,14 +2,19 @@
 import { Link } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface HeaderProps {
   onSidebarToggle: () => void;
+  className?: string;
 }
 
-const Header = ({ onSidebarToggle }: HeaderProps) => {
+const Header = ({ onSidebarToggle, className }: HeaderProps) => {
   return (
-    <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-20 flex-shrink-0">
+    <header className={cn(
+      "border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-20 flex-shrink-0",
+      className
+    )}>
       <div className="flex items-center justify-between px-4 py-3">
         <Button
           variant="ghost"
